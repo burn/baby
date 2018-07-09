@@ -147,7 +147,7 @@ else
   elif [[ "$x" == "okay"    ]]; then luajit tests.lua
   elif [[ "$x" == "push"    ]]; then
      git status
-     git commit -am "commiting"
+     git commit -am "$(date +"Committed %D")"
      git push
   else
     g=$(basename $x ".lua")
