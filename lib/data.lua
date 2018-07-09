@@ -72,7 +72,7 @@ function Data:head(columns)
     push(it, self.all.cols); push(it, self[xy][ako]) end end
 
 function Data:best()
-  order = function (x,y) oo(x);oo(y); 
+  local order = function (x,y) oo(x);oo(y); 
     oo(self.rows[1])
     print(x.dom(self))
     return x.dom(self) > y.dom(self) end
