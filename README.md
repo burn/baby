@@ -1,13 +1,11 @@
 <a href="http://tiny.cc/burning"><img src="etc/img/burn.png"></a><br clear=all>
-[home](http://tiny.cc/burning) | [code](https://github.com/burn/burn) | [discuss](https://github.com/burn/burn/issues)
+[home](http://tiny.cc/burning) | [code](https://github.com/burn/burn) | [discuss](https://github.com/burn/burn/issues) | [license](https://github.com/burn/burn/blob/master/LICENSE.md)
 
 # Readme
 
 <img width=300  src="etc/img/burn-wide.png">
 
 Because learning is not the filling  a pail, but the lighting of a fire. 
-
-v0.1 (c) 2018, Tim Menzies, BSD 2-clause license
 
 ## Help
 

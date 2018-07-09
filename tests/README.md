@@ -1,5 +1,6 @@
 <a href="http://tiny.cc/burning"><img src="../etc/img/burn.png"></a><br clear=all>
-[home](http://tiny.cc/burning) | [code](https://github.com/burn/burn) | [discuss](https://github.com/burn/burn/issues)
+[home](http://tiny.cc/burning) | [code](https://github.com/burn/burn) | [discuss](https://github.com/burn/burn/issues) | [license](https://github.com/burn/burn/blob/master/LICENSE.md)
+
 
 # Tesing BURN
 
