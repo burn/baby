@@ -7,7 +7,7 @@
 BSD 2-Clause License
 
 burn: multi-objective rule learning     
-Copyright (c) 2018 Tim Menzies http//menzies.us    
+Copyright (c) 2018 Tim Menzies http://menzies.us    
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
