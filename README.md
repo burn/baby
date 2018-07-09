@@ -1,5 +1,5 @@
 <a href="http://git.io/burning"><img src="etc/img/burn.png"></a><br clear=all>
-[home](http://git.io/burning) | [code]() | [src]()
+[home](http://tiny.cc/burning) | [code]() | [src]()
 
 # Readme
 
