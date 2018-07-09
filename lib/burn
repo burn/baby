@@ -144,12 +144,14 @@ else
   elif [[ "$x" == "doc"     ]]; then doc
   elif [[ "$x" == "help"    ]]; then help
   elif [[ "$x" == "license" ]]; then copyright
-  elif [[ "$x" == "okay"    ]]; then luajit tests.lua
+  elif [[ "$x" == "okay"    ]]; then doc; luajit tests.lua
   elif [[ "$x" == "push"    ]]; then
+     doc
      git status
      git commit -am "$(date +"Committed %D")"
      git push
   else
+    doc
     g=$(basename $x ".lua")
     MAIN="$g" luajit "$g.lua"
   fi

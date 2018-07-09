@@ -71,36 +71,45 @@ function Data:head(columns)
     push(it, self.all[ako]); push(it, self[xy].cols)
     push(it, self.all.cols); push(it, self[xy][ako]) end end
 
+-- ### Data:best()
+-- For the best rows, set as `row.best=true'.
+-- (the top `The.data.best` rows as computed
+-- by the domination score).
 function Data:best()
-  local order = function (x,y) oo(x);oo(y); 
-    oo(self.rows[1])
-    print(x.dom(self))
-    return x.dom(self) > y.dom(self) end
-  print(3)
+  local order = function(x,y) 
+	          return x:dom(self) > y:dom(self) end
   table.sort(self.rows, order)
-  for i=1, math.floor( #rows*The.data.best ) do
+  for i=1, math.floor( #self.rows*The.data.best ) do 
     self.rows[i].best = true end end
 
 -------------------------------------------------
 -- ## Row Methods
-function Row:doms(j, nums) 
-  local s1, s2, n, z = 0, 0, #self.y.nums, The.zip
+
+-- ### Row:dominates(row2:row, nums: list of Num): boolean
+-- Returns true if self dominates row2.
+-- Computed using the row cells found in `nums`
+-- and the Zilter continuous domination indicator
+-- (so should work for many more goals than just 2).
+function Row:dominates(j, nums) 
+  local s1, s2, n, z = 0, 0, #nums, The.zip
   for _,num in pairs(nums) do
     local a = self.cells[ num.pos ]
-    local b = j[ num.pos ]
+    local b =          j[ num.pos ]
     a       = (a - num.lo) / (num.hi - num.lo + z)
     b       = (b - num.lo) / (num.hi - num.lo + z)
     s1      = s1 - 10^(num.w * (a - b) / n)
     s2      = s2 - 10^(num.w * (b - a) / n) end
   return s1 / n < s2 / n end
- 
+
+-- ### Row:dom(d: data): integer
+-- Returns a count how how rows in `d` are domianted by self.
+-- This can be a slow computation so we cache the result
+-- and just return the cacbe if we need it again.
 function Row:dom(d)
-  oo(d)
   if not self._dom then
+    self._dom = 0
     for _,row in pairs(d.rows) do
-      oo(row)
-      print(3)
-      if self:doms(row.cells, d.y.nums) then
+      if self:dominates(row.cells, d.y.nums) then
  	self._dom = self._dom + 1  end end end
   return self._dom end
 
@@ -109,8 +118,8 @@ function Row:dom(d)
 do
   local function dataOkay(f)
     roguesOkay()
-    return Data:new():csv("../data/".. f .. ".csv") end
-  
+    return Data:new():csv("../data/".. f .. ".csv") end 
+
   function autoOkay()      dataOkay("auto") end
   function auto10KOkay()   dataOkay("auto10K") end
   function auto1000KOkay() dataOkay("auto1000K") end
@@ -126,10 +135,16 @@ do
     local d = dataOkay("auto")
     local n = #d.rows
     d:best() 
-    hi = #d.rows
-    for i=1,10     do print(i, join(d.rows[i].cells)) end
-    for i=hi-10,hi do print(i, join(d.rows[i].cells)) end end end
-
+    local hi = #d.rows
+    local show = function(i) 
+		   local t={}
+                   for _,num in pairs(d.y.nums) do 
+	             push(d.rows[i].cells[num.pos], t) end 
+	           print(join(t)) end
+    for i=1,10     do show(i) end
+    print()
+    for i=hi-10,hi do show(i) end end
+end
 -------------------------------------------------
 -- ## Main Stuff
 
