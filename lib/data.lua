@@ -22,7 +22,7 @@ Data = Any:new{
   y  ={nums={}, syms={}, cols={},  -- all dependent columns
        less={}, more={}}}  
 
-Row = Any:new{cells, dom=0, best=false}
+Row = Any:new{cells, _dom, best=false}
 
 -------------------------------------------------
 -- ## Data Methods
@@ -59,28 +59,34 @@ function Data:head(columns)
                {"<" ,Num, "y","nums", less},
                {">" ,Num, "y","nums", more},
                {"!" ,Sym, "y","syms", klass}}
-  local function which(txt,t)
-    for _,u in pairs(all) do   --    for all header types
-      if string.find(txt, u[1]) then t=u end end
-    return t end
+  local function which(txt)
+    for i=2,#all do
+      if string.find(txt,all[i][1]) then return all[i] end end
+    return all[1] end -- first item is the default
 
   for pos,txt in pairs(columns) do 
-    local _,what,xy,ako,also = unpack( which(txt,all[1]) )
+    local _,what,xy,ako,also = unpack( which(txt) )
     local it = what:new{pos=pos,txt=txt}
     if also then also(it) end 
     push(it, self.all[ako]); push(it, self[xy].cols)
-    push(it, self.all.cols); push(it, self[xy][ako]) 
-  end end
+    push(it, self.all.cols); push(it, self[xy][ako]) end end
+
+function Data:best()
+  table.sort(self.rows, function (x,y) 
+	     return x.dom(self.rows, self.y.nums) > 
+	            y.dom(self.rows, self.y.nums) end)
+  for i=1, math.floor( #rows*The.data.best ) do
+    self.rows[i].best = true end end
+
 
 -------------------------------------------------
 -- ## Row Methods
 --
-function Data:dominate(i,j) 
-  oo(i)
+function Row:dominates(j, nums) 
   local s1, s2, n, z = 0, 0, #self.y.nums, The.zip
-  for pos,num in pairs(self.y,nums) do
-    local a = i.cells[ pos ]
-    local b = j.cells[ pos ]
+  for pos,num in pairs(nums) do
+    local a = self.cells[ pos ]
+    local b = j.cells[    pos ]
     print(a,b,num)
     oo(num)
     a       = (a - num.lo) / (num.hi - num.lo + z)
@@ -88,17 +94,14 @@ function Data:dominate(i,j)
     s1      = s1 - 10^(num.w * (a - b) / n)
     s2      = s2 - 10^(num.w * (b - a) / n) end
   return s1 / n < s2 / n end
+ 
+function Row:dom(rows, nums)
+  if not self._dom then
+    for _,row in pairs(rows) do
+      if self:dominates(row, nums) then
+ 	self._dom = self._dom + 1  end end end
+  return self._dom end
 
-function Data:dominates()
-  for _,r1 in pairs(self.rows) do
-    for _,r2 in pairs(self.rows) do
-      if self:dominate(r1, r2) then
-	r1.dom = r1.dom + 1 end end end 
-  table.sort(self.rows, 
-             function (x,y) return x.dom > y.dom end)
-  for i=1,#rows*The.data.best do
-    self.rows[i].best = true end end
-	   
 -------------------------------------------------
 -- ## Test Stuff
 do

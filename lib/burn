@@ -47,6 +47,7 @@ EOF
 mkdir -p $Tmp $Doc
 
 cat<<EOF>$Tmp/vimrc
+	colorscheme slate 
         set backupdir-=.
 	set backupdir^=~/tmp,/tmp
 	set nocompatible              " required
@@ -76,7 +77,6 @@ cat<<EOF>$Tmp/vimrc
 	set smartcase
 	set showmatch
 	set hlsearch
-	colorscheme delek 
 	set hlsearch!
 	nnoremap <F3> :set hlsearch!<CR>
 	set ruler

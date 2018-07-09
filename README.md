@@ -11,8 +11,6 @@ v0.1 (c) 2018, Tim Menzies, BSD 2-clause license
 
 ## Help
 
-cd lib
-
 command| notes
 ------------ | -------------
 ./burn FILE   |     	run FILE.awk
@@ -25,7 +23,7 @@ command| notes
 ./burn help	|	show help
 
 As a side-effect of running ./burn, the directory
-"/Users/timm/opt/lua/burn/doc" is updated with current versions of the
+"$HOME/opt/lua/burn/doc" is updated with current versions of the
 html generated from the \*.lua files in this directory.
 
 Note that this code cannot load any X.lua file for
