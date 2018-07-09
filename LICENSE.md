@@ -1,6 +1,13 @@
+
+<a href="http://tiny.cc/burning"><img src="etc/img/burn.png"></a><br clear=all>
+[home](http://tiny.cc/burning) | [code](https://github.com/burn/burn) | [discuss](https://github.com/burn/burn/issues) | [license](https://github.com/burn/burn/blob/master/LICENSE.md)
+
+# LICENSE
+
 BSD 2-Clause License
 
-Copyright (c) 2018, burn
+burn: multi-objective rule learning     
+Copyright (c) 2018 Tim Menzies http//menzies.us    
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
