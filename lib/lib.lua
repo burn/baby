@@ -1,12 +1,3 @@
--- The file is part of the _BURN_ project (learing multi-objective rules).   
--- _Because learning is not the filling  a pail, but the lighting of a fire._
---
--- [home](http://tiny.cc/burning) | 
--- [doc](https://github.com/burn/burn/blob/master/README.md) |
--- [code](https://github.com/burn/burn) | 
--- [discuss](https://github.com/burn/burn/issues) | 
--- [license](https://github.com/burn/burn/blob/master/LICENSE.md)
-
 require "the"
 
 -------------------------------------------------------------
