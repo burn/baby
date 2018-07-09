@@ -3,11 +3,14 @@
 
 # Readme
 
+<img align=right src="etc/img/burn-small.png">
 v0.1 (c) 2018, Tim Menzies, BSD 2-clause license
 
-Learning is not the filling  a pail, but the lighting). 
+Because learning is not the filling  a pail, but the lighting of a fire. 
 
-Help
+<br clear=all>
+
+## Help
 
 cd lib
 
