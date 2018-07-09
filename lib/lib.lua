@@ -1,3 +1,12 @@
+-- The file is part of the _BURN_ project (learing multi-objective rules).   
+-- _Because learning is not the filling  a pail, but the lighting of a fire._
+--
+-- [home](http://tiny.cc/burning) | 
+-- [doc](https://github.com/burn/burn/blob/master/README.md) |
+-- [code](https://github.com/burn/burn) | 
+-- [discuss](https://github.com/burn/burn/issues) | 
+-- [license](https://github.com/burn/burn/blob/master/LICENSE.md)
+
 require "the"
 
 -------------------------------------------------------------
@@ -129,7 +138,7 @@ function oo(data)
   local function go(x,       str,sep)  
     if type(x) ~= "table" then return tostring(x) end
     if seen[x]            then return "..." end
-    --seen[x] = true
+    seen[x] = true
     for k,v in ordered(x) do
       str = str .. sep .. k .. ": " .. go(v, "{","")
       sep = ", " end 
