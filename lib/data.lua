@@ -72,33 +72,35 @@ function Data:head(columns)
     push(it, self.all.cols); push(it, self[xy][ako]) end end
 
 function Data:best()
-  table.sort(self.rows, function (x,y) 
-	     return x.dom(self.rows, self.y.nums) > 
-	            y.dom(self.rows, self.y.nums) end)
+  order = function (x,y) oo(x);oo(y); 
+    oo(self.rows[1])
+    print(x.dom(self))
+    return x.dom(self) > y.dom(self) end
+  print(3)
+  table.sort(self.rows, order)
   for i=1, math.floor( #rows*The.data.best ) do
     self.rows[i].best = true end end
 
-
 -------------------------------------------------
 -- ## Row Methods
---
-function Row:dominates(j, nums) 
+function Row:doms(j, nums) 
   local s1, s2, n, z = 0, 0, #self.y.nums, The.zip
-  for pos,num in pairs(nums) do
-    local a = self.cells[ pos ]
-    local b = j.cells[    pos ]
-    print(a,b,num)
-    oo(num)
+  for _,num in pairs(nums) do
+    local a = self.cells[ num.pos ]
+    local b = j[ num.pos ]
     a       = (a - num.lo) / (num.hi - num.lo + z)
     b       = (b - num.lo) / (num.hi - num.lo + z)
     s1      = s1 - 10^(num.w * (a - b) / n)
     s2      = s2 - 10^(num.w * (b - a) / n) end
   return s1 / n < s2 / n end
  
-function Row:dom(rows, nums)
+function Row:dom(d)
+  oo(d)
   if not self._dom then
-    for _,row in pairs(rows) do
-      if self:dominates(row, nums) then
+    for _,row in pairs(d.rows) do
+      oo(row)
+      print(3)
+      if self:doms(row.cells, d.y.nums) then
  	self._dom = self._dom + 1  end end end
   return self._dom end
 
@@ -123,7 +125,7 @@ do
   function domOkay()
     local d = dataOkay("auto")
     local n = #d.rows
-    d:dominates() 
+    d:best() 
     hi = #d.rows
     for i=1,10     do print(i, join(d.rows[i].cells)) end
     for i=hi-10,hi do print(i, join(d.rows[i].cells)) end end end
