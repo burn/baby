@@ -5,9 +5,9 @@
 
 <img width=300  src="etc/img/burn-wide.png">
 
-v0.1 (c) 2018, Tim Menzies, BSD 2-clause license
-
 Because learning is not the filling  a pail, but the lighting of a fire. 
+
+v0.1 (c) 2018, Tim Menzies, BSD 2-clause license
 
 ## Help
 
