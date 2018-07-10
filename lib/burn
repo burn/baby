@@ -47,7 +47,7 @@ EOF
 mkdir -p $Tmp $Doc
 
 cat<<EOF>$Tmp/vimrc
-	colorscheme slate 
+	colorscheme torte 
         set backupdir-=.
 	set backupdir^=~/tmp,/tmp
 	set nocompatible              " required
@@ -65,7 +65,7 @@ cat<<EOF>$Tmp/vimrc
 	set splitbelow
 	set mouse=a
 	set title
-	set number
+	set nonumber
 	autocmd BufEnter * cd %:p:h
 	set showmatch
 	set matchtime=15
