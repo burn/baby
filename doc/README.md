@@ -3,4 +3,11 @@
 
 # Documentation
 
-For annotated, web-readable, source lists, please see http://burn.github.io.
+- See [../README.md],
+for a tutorial on the  use of BURN. 
+- See http://burn.github.io.
+for annotated, web-readable, source listings. 
+- And for lots of small 
+examples of how to use this code, look for any lib/\*.lua function
+that ends in `Okay`.
+

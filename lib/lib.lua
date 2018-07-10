@@ -19,8 +19,8 @@ function close(m,n,e)
 
 -- ### min(x:number, y:number): number
 -- ### max(x:number, y:number): number
-function max(a,b) if a > b then return a else return b end
-function min(a,b) if a < b then return a else return b end
+function max(a,b) if a > b then return a else return b end end
+function min(a,b) if a < b then return a else return b end end
 
 -- ### rand()
 -- Return a random number 0..1. To set the random number seed,
@@ -49,7 +49,7 @@ function ordered(t)
       i=i+1; return tmp[i], t[tmp[i]] end end end
 
 -- ### sorted(t:table [,f:function]): table
--- Sorts table `t` using `f` (defaults to "`lt`").
+-- Returns table `t`, sorted using `f` (defaults to "`lt`").
 function sorted(t, f)
   f = f or function (x,y) return x<y end
   table.sort(t,f)
@@ -78,6 +78,27 @@ function push(x,t)
 -- Converts a table to a string.
 function join(t, sep)
   return table.concat(t, sep or ", ") end
+
+--- ### any(t: table): table
+-- Extract any one item from a table
+function any(t)
+  local pos =  math.floor(0.5 + rand() * #t)
+  return t[ min(#t,max(1,pos)) ] end
+
+--- ### anys(t: table, n:integer): table
+-- Extract any `n` items from  `t` (using sampling with replacement).
+function anys(t,n)
+  t=shuffle(t)
+  a,b  = {},{}
+  for i=1,n    do a[#a+1] = t[i] end
+  for i=n+1,#t do b[#b+1] = t[i] end
+  return a,b end
+
+-- ### merge(t1: table, t2: table): table
+-- Add `t2` to the end of `t1`. Returns the modified `t1`.
+function merge(t1,t2)
+  for _,x in pairs(t2) do t1[#t1+1] = x end
+  return t1 end 
 
 -- ### shuffle(t: table): t
 -- Elements in `t` are rearranged randomly.

@@ -26,7 +26,7 @@ Row = Any:new{cells, _dom, best=false}
 
 -------------------------------------------------
 -- ## Data Methods
---
+
 -- ### Data:csv(file: string)
 -- Read data in  from `file`. Return `self`.
 function Data:csv(file)
@@ -71,18 +71,6 @@ function Data:head(columns)
     push(it, self.all[ako]); push(it, self[xy].cols)
     push(it, self.all.cols); push(it, self[xy][ako]) end end
 
--- ### Data:best()
--- For the best rows, set as `row.best=true'.
--- (the top `The.data.best` rows as computed
--- by the domination score).
-function Data:best()
-  local gt= function(x,y) return 
-    x:dom(self, self.rows) > y:dom(self,self.rows) end
-  table.sort(self.rows, gt)
-  local most = #self.rows*The.data.best 
-  for i=1, most do 
-    self.rows[i].best = true end end
-
 -------------------------------------------------
 -- ## Row Methods
 
@@ -110,23 +98,38 @@ function Row:dom(data, others)
     if self:dominates(row.cells, data.y.nums) then n=n+1 end end 
   return n end
 
-function Data:dom(x)
-  local somes  = min(100, #self.rows)
-  local bests  = somes * 0.2
+-- ### Data:bests()
+-- For the best rows, set as `row.best=true'.
+-- (the top `The.data.best` rows as computed
+-- by the domination score).
+function Data:bests(x)
+  local want  = min(512, #self.rows * The.data.best)
+  local nbest = want*0.2
+  local regrow= 2*nbest
 
-  function bestOrRest(rows, rank, best,rest)
-    order = function (x,y) return x[1] > y[1] end
-    local before = slice(rows,1,somes)
-    local after  = slice(rows,somes + 1, #rows)
-    for _,row in pairs(before) do 
-      push({row:dom(self, before), row}, rank)  end
-    for pos, pair in pairs( sorted(ranks,order) ) do
-      if  i<bests then push( pair[2], best ) 
-      else             push( pair[2], rest ) end end
-    return best,rest, after end
+  local function bestOrRest(rows)
+    local tmp, best, rest = {},{},{}
+    local order = function (x,y) return x[1] > y[1] end
+    for _,row in pairs(rows) do 
+      tmp[#tmp+1] = {row:dom(self, rows), row} end
+    for pos, pair in pairs( sorted(tmp, order) ) do
+      if pos > want then break end
+      if pos > nbest then push(pair[2],rest) 
+                     else push(pair[2], best) end end
+    return best,rest,rest[1] end
 
-   best,rest,after = bestOrRest(shuffle(self.rows), {},{},{})
-end
+  local seen,todo = anys(self.rows, want)
+  local best, rest, bad = bestOrRest(seen)
+  for _,row in pairs(todo) do
+     if  row:dominates(bad.cells, self.y.nums) then -- keep all best
+       best[ #best+1] = row  
+     else -- keep a random sample of rest
+       rest [ int(0.5 + rand() *#rest) ] = row end 
+     if #best >= regrow then 
+       best,rest,bad = bestOrRest(merge(best,rest)) end end
+  best = bestOrRest(merge(best,rest)) 
+  for _,row in pairs(best) do row.best = true end 
+  return best,rest end
 
 -------------------------------------------------
 -- ## Test Stuff
@@ -149,16 +152,8 @@ do
   function domOkay()
     local d = dataOkay("auto")
     local n = #d.rows
-    d:best() 
-    local hi = #d.rows
-    local show = function(i) 
-		   local t={}
-                   for _,num in pairs(d.y.nums) do 
-	             push(d.rows[i].cells[num.pos], t) end 
-	           print(join(t)) end
-    for i=1,10     do show(i) end
-    print()
-    for i=hi-10,hi do show(i) end end
+    local best,rest = d:bests()  end
+    for _,one in pairs(best) do print(join(one.cells)) end
 end
 -------------------------------------------------
 -- ## Main Stuff
