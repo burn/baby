@@ -76,10 +76,11 @@ function Data:head(columns)
 -- (the top `The.data.best` rows as computed
 -- by the domination score).
 function Data:best()
-  local order = function(x,y) 
-	          return x:dom(self) > y:dom(self) end
-  table.sort(self.rows, order)
-  for i=1, math.floor( #self.rows*The.data.best ) do 
+  local gt= function(x,y) return 
+    x:dom(self, self.rows) > y:dom(self,self.rows) end
+  table.sort(self.rows, gt)
+  local most = #self.rows*The.data.best 
+  for i=1, most do 
     self.rows[i].best = true end end
 
 -------------------------------------------------
@@ -103,15 +104,29 @@ function Row:dominates(j, nums)
 
 -- ### Row:dom(d: data): integer
 -- Returns a count how how rows in `d` are domianted by self.
--- This can be a slow computation so we cache the result
--- and just return the cacbe if we need it again.
-function Row:dom(d)
-  if not self._dom then
-    self._dom = 0
-    for _,row in pairs(d.rows) do
-      if self:dominates(row.cells, d.y.nums) then
- 	self._dom = self._dom + 1  end end end
-  return self._dom end
+function Row:dom(data, others)
+  local n = 0
+  for _,row in pairs(others) do
+    if self:dominates(row.cells, data.y.nums) then n=n+1 end end 
+  return n end
+
+function Data:dom(x)
+  local somes  = min(100, #self.rows)
+  local bests  = somes * 0.2
+
+  function bestOrRest(rows, rank, best,rest)
+    order = function (x,y) return x[1] > y[1] end
+    local before = slice(rows,1,somes)
+    local after  = slice(rows,somes + 1, #rows)
+    for _,row in pairs(before) do 
+      push({row:dom(self, before), row}, rank)  end
+    for pos, pair in pairs( sorted(ranks,order) ) do
+      if  i<bests then push( pair[2], best ) 
+      else             push( pair[2], rest ) end end
+    return best,rest, after end
+
+   best,rest,after = bestOrRest(shuffle(self.rows), {},{},{})
+end
 
 -------------------------------------------------
 -- ## Test Stuff

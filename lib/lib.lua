@@ -17,6 +17,11 @@ function close(m,n,e)
   e = e and e or 1
   return math.abs(m-n)/n <= e/100 end
 
+-- ### min(x:number, y:number): number
+-- ### max(x:number, y:number): number
+function max(a,b) if a > b then return a else return b end
+function min(a,b) if a < b then return a else return b end
+
 -- ### rand()
 -- Return a random number 0..1. To set the random number seed,
 -- use `rseed(n:int)`.
@@ -26,7 +31,7 @@ do
   local modulus   = 2147483647
   local multipler = 16807
   function rseed(n) seed = n or seed0 end
-  local function rand() -- park miller 
+  function rand() -- park miller 
     seed = (multipler * seed) % modulus
     return seed / modulus end end
 
@@ -43,12 +48,26 @@ function ordered(t)
     if i < #tmp then 
       i=i+1; return tmp[i], t[tmp[i]] end end end
 
+-- ### sorted(t:table [,f:function]): table
+-- Sorts table `t` using `f` (defaults to "`lt`").
+function sorted(t, f)
+  f = f or function (x,y) return x<y end
+  table.sort(t,f)
+  return t end
+
 -- ### member(x,t:table)
 -- Returns true if x is in x
-local function member(x,t)
+function member(x,t)
   for _,y in pairs(t) do
     if x== y then return true end end
   return false end
+
+-- ### slice(t:table,i:integer, j:integer): table
+-- Return items `i` to `j` of table `t`.
+function slice(t, i,j)
+  local out={}
+  for k=i,j do out[#out+1] = t[k] end
+  return out end
 
 -- ### push(x, t:table): x
 -- Pushes `x` to the end of table `t`. Returns `x`.  
@@ -59,6 +78,20 @@ function push(x,t)
 -- Converts a table to a string.
 function join(t, sep)
   return table.concat(t, sep or ", ") end
+
+-- ### shuffle(t: table): t
+-- Elements in `t` are rearranged randomly.
+function shuffle( t )
+  for i= 1,#t do
+    local j = i + math.floor((#t - i) * rand() + 0.5)
+    t[i],t[j] = t[j], t[i] end
+  return t end
+
+function shuffleOkay()
+  local t= {}
+  rseed(1)
+  for i = 1,9  do t[i] = i end
+  for _ = 1,10 do print( join(shuffle(t), "") )  end end
 
 -------------------------------------------------------------
 -- ## Environment Stuff
@@ -206,8 +239,35 @@ function anyOkay()
   x.sub = y
   y.sub = x
   x.lname="tim"; x.fname="menzies"
-  assert(y.id == 1 + x.id)
-  oo(x)
-end
+  assert(y.id == 1 + x.id) end
 
-main{lib=tests}
+-------------------------------------------------------------
+-- ## Sampling Stuff
+
+Sample = Any:new{max=The.sample.max, n=0, all}
+function Sample:ready() self.all = {} end
+
+-- Sample:inc(x): x
+-- Keep at most `max` number of items (selected at random).
+function Sample:inc(x)
+  self.n = self.n + 1
+  local now = #self.all
+  if now < self.max then self.all[ self.n ] = x 
+  else if rand() < now/self.n then
+    self.all[ int( 1+ rand() * now ) ] = x end end
+  return x end
+
+function sampleOkay()
+  rseed(1)
+  local s=Sample:new()
+  for i=1,100000 do s:inc(i) end
+  table.sort(s.all)
+  print(join(s.all)) end
+
+-- main{lib=tests}
+main{lib = sampleOkay}
+
+local out = {}
+for i=1,100 do out[ #out+1 ] = int(1+ rand() * 10) end
+table.sort(out)
+print( join(out,",") )

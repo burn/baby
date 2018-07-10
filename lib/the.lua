@@ -6,11 +6,7 @@ function defaults() return {
   zip =   10^(-32),
   here=   os.getenv("Lure"),
   data=   { best = 0.2 },
-  sample= { b=200,
-            most=512,
-            epsilon=1.01,
-            fmtstr="%20s",
-            fmtnum="%5.3f",
+  sample= { max=64,
             cliffsDelta=0.147 -- small,medium,large=0.147,0.33,0.474
             },
   tree=   { ish=1.02,
