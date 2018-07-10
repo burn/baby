@@ -3,9 +3,9 @@
 
 # README
 
-<img width=300  src="etc/img/burn-wide.png">
+<img width=550 height=250 src="etc/img/burn-wide.png">
 
-Because learning is not the filling  a pail, but the lighting of a fire. 
+Because learning is not the filling of a pail, but the lighting of a fire. 
 
 ## Help
 
