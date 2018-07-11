@@ -117,6 +117,7 @@ help() {
   cat<<-EOF
 	./$What FILE       	run FILE.awk
 	./$What ed FILE		edit FILE 
+	./$What eds 		edit all *.lua in VIM tab mode 
 	./$What okay 		run all tests
 	./$What zap 		delete generated files (forces recompile)
 	./$What pull		get from git
@@ -141,15 +142,16 @@ if [ -z "$1" ]; then
 else
   x=$1
   shift
-  if   [[ "$x" == "ed"      ]]; then vim -u $Tmp/vimrc $1
-  elif [[ "$x" == "zap"     ]]; then rm -f $Doc/*.md
-  elif [[ "$x" == "pull"    ]]; then git pull
-  elif [[ "$x" == "doc"     ]]; then doc
-  elif [[ "$x" == "help"    ]]; then help
-  elif [[ "$x" == "license" ]]; then copyright
-  elif [[ "$x" == "okay"    ]]; then doc; luajit tests.lua
+  if   [[ "$x" == "ed"       ]]; then vim -u $Tmp/vimrc -O $1 -O lib.lua 
+  elif [[ "$x" == "eds"      ]]; then vim -u $Tmp/vimrc -p *.lua 
+  elif [[ "$x" == "zap"      ]]; then rm -f $Doc/*.md
+  elif [[ "$x" == "pull"     ]]; then git pull
+  elif [[ "$x" == "doc"      ]]; then doc
+  elif [[ "$x" == "help"     ]]; then help
+  elif [[ "$x" == "license"  ]]; then copyright
+  elif [[ "$x" == "okay"     ]]; then doc; luajit tests.lua
   elif [[ "$x" == "annotate" ]]; then doc; (cd ../../burn.github.io; make)
-  elif [[ "$x" == "push"    ]]; then
+  elif [[ "$x" == "push"     ]]; then
      doc
      git status
      git commit -am "$(date +"Committed %D")"
