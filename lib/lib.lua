@@ -161,8 +161,7 @@ end
 -- ### say(s)
 -- Print a string to the screen with no new line.
 function say(s)
-  io.write(s)
-  io.flush()
+  io.write(s).flush()
 end
 
 -- ### scan(s:string): string

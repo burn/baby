@@ -162,7 +162,7 @@ function weatherOkay()
 
 function domOkay()
   	 print(100000)
-  local d = dataOkay("auto")
+  local d = dataOkay("auto10K")
   local n = #d.rows
   print(n)
   local best,rest = d:bests()  
