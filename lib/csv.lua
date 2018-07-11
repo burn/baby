@@ -30,10 +30,12 @@ function csv(file)
 	        then use[ #use+1 ] = i end end end
           for i= 1,#use do -- grab the columns we want
             row[ #row+1 ] = scan( cells[use[i]] ) end
-          return row end end end end end 
+          return row end end end end 
+end 
           
 function csvOkay()
   for row in csv("../data/weather.csv") do
-     print(table.concat(row,", ")) end end
+     print(table.concat(row,", ")) end 
+end
 
 main{csv=csvOkay}

@@ -31,14 +31,16 @@ Row = Any:new{cells, _dom, best=false}
 -- Read data in  from `file`. Return `self`.
 function Data:csv(file)
   for row in csv(file) do self:inc(row) end 
-  return self end
+  return self 
+end
 
 -- ### Data:inc(row: list)
 -- If this is the first row, interpret `row` as the column headers.
 -- Otherwise, read `row` as data.
 function Data:inc(row)
   if   self.header then self:data(row) 
-  else self.header=row; self:head(row) end end
+  else self.header=row; self:head(row) end 
+end
 
 -- ### Data:data(row: list)
 -- Add `row` to `self.rows`. Increment the header statistics
@@ -46,7 +48,8 @@ function Data:inc(row)
 function Data:data(row) 
    push( Row:new{cells=row}, self.rows )
    for _,thing in pairs(self.all.cols) do
-     thing:inc( row[thing.pos ] ) end end
+     thing:inc( row[thing.pos ] ) end 
+end
 
 -- ### Data:head(row: list)
 -- Build the data headers.
@@ -69,7 +72,8 @@ function Data:head(columns)
     local it = what:new{pos=pos,txt=txt}
     if also then also(it) end 
     push(it, self.all[ako]); push(it, self[xy].cols)
-    push(it, self.all.cols); push(it, self[xy][ako]) end end
+    push(it, self.all.cols); push(it, self[xy][ako]) end 
+end
 
 -------------------------------------------------
 -- ## Row Methods
@@ -88,7 +92,8 @@ function Row:dominates(j, nums)
     b       = (b - num.lo) / (num.hi - num.lo + z)
     s1      = s1 - 10^(num.w * (a - b) / n)
     s2      = s2 - 10^(num.w * (b - a) / n) end
-  return s1 / n < s2 / n end
+  return s1 / n < s2 / n 
+end
 
 -- ### Row:dom(d: data): integer
 -- Returns a count how how rows in `d` are domianted by self.
@@ -96,7 +101,8 @@ function Row:dom(data, others)
   local n = 0
   for _,row in pairs(others) do
     if self:dominates(row.cells, data.y.nums) then n=n+1 end end 
-  return n end
+  return n 
+end
 
 -- ### Data:bests()
 -- For the best rows, set as `row.best=true'.
@@ -129,7 +135,8 @@ function Data:bests(x)
        best,rest,bad = bestOrRest(merge(best,rest)) end end
   best = bestOrRest(merge(best,rest)) 
   for _,row in pairs(best) do row.best = true end 
-  return best,rest end
+  return best,rest 
+end
 
 -------------------------------------------------
 -- ## Test Stuff

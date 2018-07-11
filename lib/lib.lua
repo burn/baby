@@ -15,7 +15,8 @@ match = function (s,p)    return string.match(s,p) ~= nil end
 -- (default value for e = 1).
 function close(m,n,e) 
   e = e and e or 1
-  return math.abs(m-n)/n <= e/100 end
+  return math.abs(m-n)/n <= e/100 
+end
 
 -- ### min(x:number, y:number): number
 -- ### max(x:number, y:number): number
@@ -33,7 +34,8 @@ do
   function rseed(n) seed = n or seed0 end
   function rand() -- park miller 
     seed = (multipler * seed) % modulus
-    return seed / modulus end end
+    return seed / modulus end 
+end
 
 -------------------------------------------------------------
 -- ## Table Stuff
@@ -46,44 +48,51 @@ function ordered(t)
   table.sort(tmp)
   return function () 
     if i < #tmp then 
-      i=i+1; return tmp[i], t[tmp[i]] end end end
+      i=i+1; return tmp[i], t[tmp[i]] end end 
+end
 
 -- ### sorted(t:table [,f:function]): table
 -- Returns table `t`, sorted using `f` (defaults to "`lt`").
 function sorted(t, f)
   f = f or function (x,y) return x<y end
   table.sort(t,f)
-  return t end
+  return t 
+end
 
 -- ### member(x,t:table)
 -- Returns true if x is in x
 function member(x,t)
   for _,y in pairs(t) do
     if x== y then return true end end
-  return false end
+  return false 
+end
 
 -- ### slice(t:table,i:integer, j:integer): table
 -- Return items `i` to `j` of table `t`.
 function slice(t, i,j)
   local out={}
   for k=i,j do out[#out+1] = t[k] end
-  return out end
+  return out 
+end
 
 -- ### push(x, t:table): x
 -- Pushes `x` to the end of table `t`. Returns `x`.  
 function push(x,t) 
-  t[ #t+1 ] = x; return x end
+  t[ #t+1 ] = x; return x 
+end
 
 -- ### join(t:table [,sep:string]): string
 -- Converts a table to a string.
 function join(t, sep)
-  return table.concat(t, sep or ", ") end
+  return table.concat(t, sep or ", ") 
+end
 
 --- ### any(t: table): table
 -- Extract any one item from a table
 function any(t)
   local pos =  math.floor(0.5 + rand() * #t)
-  return t[ min(#t,max(1,pos)) ] end
+  return t[ min(#t,max(1,pos)) ] 
+end
 
 --- ### anys(t: table, n:integer): table
 -- Extract any `n` items from  `t` (using sampling with replacement).
@@ -92,13 +101,15 @@ function anys(t,n)
   a,b  = {},{}
   for i=1,n    do a[#a+1] = t[i] end
   for i=n+1,#t do b[#b+1] = t[i] end
-  return a,b end
+  return a,b 
+end
 
 -- ### merge(t1: table, t2: table): table
 -- Add `t2` to the end of `t1`. Returns the modified `t1`.
 function merge(t1,t2)
   for _,x in pairs(t2) do t1[#t1+1] = x end
-  return t1 end 
+  return t1 
+end 
 
 -- ### shuffle(t: table): t
 -- Elements in `t` are rearranged randomly.
@@ -106,13 +117,15 @@ function shuffle( t )
   for i= 1,#t do
     local j = i + math.floor((#t - i) * rand() + 0.5)
     t[i],t[j] = t[j], t[i] end
-  return t end
+  return t 
+end
 
 function shuffleOkay()
   local t= {}
   rseed(1)
   for i = 1,9  do t[i] = i end
-  for _ = 1,10 do print( join(shuffle(t), "") )  end end
+  for _ = 1,10 do print( join(shuffle(t), "") )  end 
+end
 
 -------------------------------------------------------------
 -- ## Environment Stuff
@@ -139,7 +152,8 @@ function args(settings,ignore, updates)
           settings[flag] = a2 or a1
           i = i + 1 end end end
     i = i + 1 end
-  return settings end
+  return settings 
+end
 
 -------------------------------------------------------------
 -- ## String  Stuff
@@ -158,7 +172,8 @@ function split(s, sep)
   local t, sep = {}, sep or ","
   local notsep = "([^" ..sep.. "]+)"
   for y in string.gmatch(s, notsep) do t[#t+1] = y end 
-  return t end
+  return t 
+end
 
 -- ### sub(s: string, [lo : int], [hi : int]): string
 -- Extract substrings. Allow Python style negative indexes
@@ -166,7 +181,8 @@ function sub(s,lo,hi)
   if lo and lo < 0 then
     return sub(s, string.len(s) + lo +1)
   else
-    return string.sub(s,lo and lo or 1,hi) end end    
+    return string.sub(s,lo and lo or 1,hi) end 
+end    
 
 function subOkay()
   assert(sub("timm")     == "timm")
@@ -189,7 +205,8 @@ function oo(data)
       sep = ", " end 
     return str .. '}'
   end 
-  print(go(data,"{","")) end  
+  print(go(data,"{","")) 
+end  
 
 -------------------------------------------------------------
 -- ## Meta  Stuff
@@ -203,7 +220,8 @@ function roguesOkay()
            arg=true, debug=true, _VERSION=true, _G=true }
   for k,v in pairs( _G ) do
     if type(v) ~= "function" and not ignore[k] then
-       assert(match(k,"^[A-Z]"),"rogue local "..k) end end end
+       assert(match(k,"^[A-Z]"),"rogue local "..k) end end 
+end
 
 -------------------------------------------------------------
 -- ## Unit Test  Stuff
@@ -223,7 +241,8 @@ function tests()
           fail = fail + 1
           print("-- E> Failure: " .. err)  end end end end
    for _,v in pairs{"Okay","OkaY","OkAY","OKAY"} do go(v) end
-   print("-- Failures: ".. 1-((try-fail)/try) .. "%") end
+   print("-- Failures: ".. 1-((try-fail)/try) .. "%") 
+end
 
 -- ## main{m:string = f:function}
 -- Run function `f` if we are in module `m`.
@@ -260,7 +279,8 @@ function anyOkay()
   x.sub = y
   y.sub = x
   x.lname="tim"; x.fname="menzies"
-  assert(y.id == 1 + x.id) end
+  assert(y.id == 1 + x.id) 
+end
 
 -------------------------------------------------------------
 -- ## Sampling Stuff
@@ -276,14 +296,16 @@ function Sample:inc(x)
   if now < self.max then self.all[ self.n ] = x 
   else if rand() < now/self.n then
     self.all[ int( 1+ rand() * now ) ] = x end end
-  return x end
+  return x 
+end
 
 function sampleOkay()
   rseed(1)
   local s=Sample:new()
   for i=1,100000 do s:inc(i) end
   table.sort(s.all)
-  print(join(s.all)) end
+  print(join(s.all)) 
+end
 
 -- main{lib=tests}
 main{lib = sampleOkay}
