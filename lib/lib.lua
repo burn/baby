@@ -158,6 +158,13 @@ end
 -------------------------------------------------------------
 -- ## String  Stuff
 
+-- ### say(s)
+-- Print a string to the screen with no new line.
+function say(s)
+  io.write(s)
+  io.flush()
+end
+
 -- ### scan(s:string): string
 -- Convert `s` into a string or number, as appropriate.
 function scan(s) return tonumber(s) or s end
@@ -259,14 +266,14 @@ function main(com)
 
 -- ### Any:new(o)
 -- Create the `any` base object
-Any={id=0}
-function Any:new (o)
+Any={}
+function Any:new(o)
   o = o or {}   -- create object if user does not provide one
   setmetatable(o, self)
   if not self.oid then self.oid=0 end
-  self.oid = self.oid+1
+  self.oid = self.oid and self.oid+1 or 1
+  o.oid    = self.oid
   self.__index = self
-  o.id = self.oid
   o:ready()
   return o
 end

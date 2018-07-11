@@ -109,67 +109,68 @@ end
 -- (the top `The.data.best` rows as computed
 -- by the domination score).
 function Data:bests(x)
-	print(3)
   local regrow = 1.5 
-  local want  = min(512, #self.rows)
-  local nbest = want* The.data.best
-  local rest  = Sample:new{max=nbest}
+  local want   = min(1024, #self.rows)
+  local nbest  = want^The.data.best
+  local rest   = Sample:new{max=nbest}
   
   local function bestOrRest(rows)
     local tmp, best = {},{}
-    local order = function (x,y) return x[1] > y[1] end
     for _,row in pairs(rows) do 
       tmp[#tmp+1] = {row:dom(self, rows), row} end
-    for pos, pair in pairs( sorted(tmp, order) ) do
+    local gt = function (x,y) return x[1] > y[1] end
+    for pos, pair in pairs( sorted(tmp, gt) ) do
       local row = pair[2]
       if pos > want then break end
       if pos > nbest then rest:inc(row) 
 	             else best[#best+1] = row end end
     return best, best[#best] end
 
-  local seen,todo   = anys(self.rows, want)
-  local best, worst = bestOrRest(seen)
-  for _,row in pairs(todo) do
+  local b4,after    = anys(self.rows, want)
+  local best, worst = bestOrRest(b4)
+  for _,row in pairs(after) do
      if   row:dominates(worst.cells, self.y.nums) 
-     then best[ #best+1] = row  else rest:inc(row) 
+     then say("+")
+	  best[ #best+1] = row  
+     else rest:inc(row) 
      end
      if   #best >= regrow * nbest 
-     then best, worst= bestOrRest(merge(best,rest.all )) end end
-  best,_ = bestOrRest(merge(best,rest.all)) 
-  for _,row in pairs(best) do row.best = true end 
-  print(#best)
-  return best, rest.all 
+     then say("\n")
+       best,worst= bestOrRest(merge(best,rest.all)) end end
+  local out = {}
+  for _,row in pairs(bestOrRest(merge(best,rest.all))) do
+    out[ row.oid ] = row end
+  return out
 end
 
 -------------------------------------------------
 -- ## Test Stuff
-do
-  local function dataOkay(f)
-    roguesOkay()
-    return Data:new():csv("../data/".. f .. ".csv") end 
-
-  function autoOkay()      dataOkay("auto") end
-  function auto10KOkay()   dataOkay("auto10K") end
-  function auto1000KOkay() dataOkay("auto1000K") end
-  function weatherOkay()   
-    local d = dataOkay("weather") 
-    assert( close( d.all.syms[1]:ent(),  1.58, 1) ) 
-    assert( close( d.all.syms[2]:ent(),  0.98, 1) )  
-    assert( close( d.all.syms[3]:ent(),  0.94, 1) )  
-    assert( close( d.all.nums[1].mu,    73.57, 1) )
-    assert( close( d.all.nums[1]:sd(),   6.57, 1) )  end
+local function dataOkay(f)
+  roguesOkay()
+  return Data:new():csv("../data/".. f .. ".csv") end 
   
-  function domOkay()
-	 print(100000)
-    local d = dataOkay("auto")
-    local n = #d.rows
-    print(n)
-    local best,rest = d:bests()  
-    for _,one in pairs(best) do print(join(one.cells)) end end
-end
+function autoOkay()      dataOkay("auto") end
+function auto10KOkay()   dataOkay("auto10K") end
+function auto1000KOkay() dataOkay("auto1000K") end
+function weatherOkay()   
+  local d = dataOkay("weather") 
+  assert( close( d.all.syms[1]:ent(),  1.58, 1) ) 
+  assert( close( d.all.syms[2]:ent(),  0.98, 1) )  
+  assert( close( d.all.syms[3]:ent(),  0.94, 1) )  
+  assert( close( d.all.nums[1].mu,    73.57, 1) )
+  assert( close( d.all.nums[1]:sd(),   6.57, 1) )  end
 
+function domOkay()
+  	 print(100000)
+  local d = dataOkay("auto")
+  local n = #d.rows
+  print(n)
+  local best,rest = d:bests()  
+  for _,one in pairs(best) do print(join(one.cells)) end 
+end
+  
 
 -------------------------------------------------
 -- ## Main Stuff
-roguesOkay()
+
 main{data=domOkay}
