@@ -47,7 +47,7 @@ EOF
 mkdir -p $Tmp $Doc
 
 cat<<EOF>$Tmp/vimrc
-	colorscheme torte 
+	colorscheme slate 
         set backupdir-=.
 	set backupdir^=~/tmp,/tmp
 	set nocompatible              " required

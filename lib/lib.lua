@@ -249,9 +249,9 @@ end
 -- Used  like Python's if \_\_name\_\_ == '\_\_main\_\_'. 
 -- e.g. `main{lib=doThis}` will call `doThis()` if
 -- the environment variable MAIN equals `lib`.
-function main(t) 
+function main(com) 
   roguesOkay()
-  for s,f in pairs(t) do
+  for s,f in pairs(com) do
     if s == os.getenv("MAIN") then return f() end end end
 
 -------------------------------------------------------------
@@ -295,14 +295,14 @@ function Sample:inc(x)
   local now = #self.all
   if now < self.max then self.all[ self.n ] = x 
   else if rand() < now/self.n then
-    self.all[ int( 1+ rand() * now ) ] = x end end
+    self.all[ int( 0.5+ rand() * now ) ] = x end end
   return x 
 end
 
 function sampleOkay()
   rseed(1)
-  local s=Sample:new()
-  for i=1,100000 do s:inc(i) end
+  local s=Sample:new{max=10}
+  for i=1,10^3 do s:inc(i) end
   table.sort(s.all)
   print(join(s.all)) 
 end
@@ -310,7 +310,3 @@ end
 -- main{lib=tests}
 main{lib = sampleOkay}
 
-local out = {}
-for i=1,100 do out[ #out+1 ] = int(1+ rand() * 10) end
-table.sort(out)
-print( join(out,",") )

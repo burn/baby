@@ -13,7 +13,7 @@ require "csv"
 -- Note that the above categories are not mutually exclusive.
 -- and many columns have multiple categories (e.g. `x.nums`,
 -- `y.less`, etc).
-
+ 
 Data = Any:new{
   name, header, klass,
   rows={}, 
@@ -109,33 +109,36 @@ end
 -- (the top `The.data.best` rows as computed
 -- by the domination score).
 function Data:bests(x)
-  local want  = min(512, #self.rows * The.data.best)
-  local nbest = want*0.2
-  local regrow= 2*nbest
-
+	print(3)
+  local regrow = 1.5 
+  local want  = min(512, #self.rows)
+  local nbest = want* The.data.best
+  local rest  = Sample:new{max=nbest}
+  
   local function bestOrRest(rows)
-    local tmp, best, rest = {},{},{}
+    local tmp, best = {},{}
     local order = function (x,y) return x[1] > y[1] end
     for _,row in pairs(rows) do 
       tmp[#tmp+1] = {row:dom(self, rows), row} end
     for pos, pair in pairs( sorted(tmp, order) ) do
+      local row = pair[2]
       if pos > want then break end
-      if pos > nbest then push(pair[2],rest) 
-                     else push(pair[2], best) end end
-    return best,rest,rest[1] end
+      if pos > nbest then rest:inc(row) 
+	             else best[#best+1] = row end end
+    return best, best[#best] end
 
-  local seen,todo = anys(self.rows, want)
-  local best, rest, bad = bestOrRest(seen)
+  local seen,todo   = anys(self.rows, want)
+  local best, worst = bestOrRest(seen)
   for _,row in pairs(todo) do
-     if  row:dominates(bad.cells, self.y.nums) then -- keep all best
-       best[ #best+1] = row  
-     else -- keep a random sample of rest
-       rest [ int(0.5 + rand() *#rest) ] = row end 
-     if #best >= regrow then 
-       best,rest,bad = bestOrRest(merge(best,rest)) end end
-  best = bestOrRest(merge(best,rest)) 
+     if   row:dominates(worst.cells, self.y.nums) 
+     then best[ #best+1] = row  else rest:inc(row) 
+     end
+     if   #best >= regrow * nbest 
+     then best, worst= bestOrRest(merge(best,rest.all )) end end
+  best,_ = bestOrRest(merge(best,rest.all)) 
   for _,row in pairs(best) do row.best = true end 
-  return best,rest 
+  print(#best)
+  return best, rest.all 
 end
 
 -------------------------------------------------
@@ -157,12 +160,16 @@ do
     assert( close( d.all.nums[1]:sd(),   6.57, 1) )  end
   
   function domOkay()
+	 print(100000)
     local d = dataOkay("auto")
     local n = #d.rows
-    local best,rest = d:bests()  end
-    for _,one in pairs(best) do print(join(one.cells)) end
+    print(n)
+    local best,rest = d:bests()  
+    for _,one in pairs(best) do print(join(one.cells)) end end
 end
+
+
 -------------------------------------------------
 -- ## Main Stuff
-
+roguesOkay()
 main{data=domOkay}
