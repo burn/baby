@@ -86,7 +86,74 @@ cat<<EOF>$Tmp/vimrc
 	hi CursorLine cterm=NONE ctermbg=NONE ctermfg=white
 	hi VertSplit ctermfg=Black ctermbg=Black
 EOF
-banner() { cat <<-"EOF"
+
+if [ ! -f "../.gitignore" ]; then
+	cat <<-EOF> ../.gitignore
+	tags
+	
+	# Compiled Lua sources
+	luac.out
+	
+	# luarocks build files
+	*.src.rock
+	*.zip
+	*.tar.gz
+	
+	# LUA Object files
+	*.o
+	*.os
+	*.ko
+	*.obj
+	*.elf
+	
+	# LUA Precompiled Headers
+	*.gch
+	*.pch
+	
+	# LUA Libraries
+	*.lib
+	*.a
+	*.la
+	*.lo
+	*.def
+	*.exp
+	
+	# LUA Shared objects (inc. Windows DLLs)
+	*.dll
+	*.so
+	*.so.*
+	*.dylib
+	
+	# LUA Executables
+	*.exe
+	*.out
+	*.app
+	*.i*86
+	*.x86_64
+	*.hex
+	
+	# VIM Swap
+	[._]*.s[a-v][a-z]
+	[._]*.sw[a-p]
+	[._]s[a-rt-v][a-z]
+	[._]ss[a-gi-z]
+	[._]sw[a-p]
+	
+	# VIM Session
+	Session.vim
+	
+	# VIM Temporary
+	.netrwhist
+	*~
+	# VIM Auto-generated tag files
+	tags
+	# VIM Persistent undo
+	[._]*.un~
+	EOF
+	git add ../.gitignore
+fi
+
+banner() { cat <<-EOF
 
           (               | Learning is not the filling 
          ( ,)             | a pail, but the lighting
@@ -103,7 +170,9 @@ EOF
 ltyl=$(tput setaf 11)
 white=$(tput setaf 15)
 red=$(tput setaf 1)
-
+tags() {
+  ctags --languages=lua *.lua
+}
 help() {
   hello
   echo -n $ltyl; banner; echo -n $white
@@ -130,13 +199,13 @@ if [ -z "$1" ]; then
 else
   x=$1
   shift
-  if   [[ "$x" == "ed"       ]]; then vim -u $Tmp/vimrc -O $1 -O lib.lua 
-  elif [[ "$x" == "eds"      ]]; then vim -u $Tmp/vimrc -p *.lua 
+  if   [[ "$x" == "ed"       ]]; then tags; vim -u $Tmp/vimrc -O $1 -O lib.lua 
+  elif [[ "$x" == "eds"      ]]; then tags; vim -u $Tmp/vimrc -p *.lua 
   elif [[ "$x" == "zap"      ]]; then rm -f $Doc/*.md
   elif [[ "$x" == "pull"     ]]; then git pull
   elif [[ "$x" == "help"     ]]; then help
   elif [[ "$x" == "license"  ]]; then copyright
-  elif [[ "$x" == "okay"     ]]; then lua tests.lua
+  elif [[ "$x" == "okay"     ]]; then luajit tests.lua
   elif [[ "$x" == "annotate" ]]; then (cd ../../burn.github.io; make)
   elif [[ "$x" == "push"     ]]; then
      git status
@@ -144,6 +213,6 @@ else
      git push
   else
     g=$(basename $x ".lua")
-    MAIN="$g" lua "$g.lua"
+    MAIN="$g" luajit "$g.lua"
   fi
 fi
