@@ -4,8 +4,9 @@ What=burn
 Tmp="/tmp/$USER/$What/tmp"
 Doc="$HOME/opt/lua/$What/doc"
 
-# the -> lib          
-#          \-> thing -> csv --> data
+# the -> lib ------------------> btree--\          
+#         \                              \
+#          \-> thing -> csv --> data--> dtree
 #
 #
 
@@ -85,15 +86,6 @@ cat<<EOF>$Tmp/vimrc
 	hi CursorLine cterm=NONE ctermbg=NONE ctermfg=white
 	hi VertSplit ctermfg=Black ctermbg=DarkGray
 EOF
-doc() {
-  for f in *.lua; do
-    g=$(basename $f ".lua")
-    g="$Doc/$g.html"
-    if [ "$f" -nt "$g" ]; then
-       pycco -d $Doc $f
-    fi
-  done
-}
 banner() { cat <<-"EOF"
 
           (               | Learning is not the filling 
@@ -124,22 +116,17 @@ help() {
 	./$What pull		get from git
 	./$What push		send back to git
 	./$What license		show license
-	./$What annotate		generate web pages from code comments
 	./$What help		show help
  
-	As a side-effect of running ./$What, the directory 
-	"$Doc" is updated with current versions of the 
-	html generated from the *.lua files in this directory.
 
 	Note that this code cannot load any X.lua file for
-	X in ed, okay, zap, pull, push, license, annotate, help. 
+	X in ed, okay, zap, pull, push, license, help. 
 	EOF
 }
 if [ -z "$1" ]; then
   hello
   echo
   echo "Type './$What help' for a list of options"
-  doc
 else
   x=$1
   shift
@@ -147,18 +134,15 @@ else
   elif [[ "$x" == "eds"      ]]; then vim -u $Tmp/vimrc -p *.lua 
   elif [[ "$x" == "zap"      ]]; then rm -f $Doc/*.md
   elif [[ "$x" == "pull"     ]]; then git pull
-  elif [[ "$x" == "doc"      ]]; then doc
   elif [[ "$x" == "help"     ]]; then help
   elif [[ "$x" == "license"  ]]; then copyright
-  elif [[ "$x" == "okay"     ]]; then doc; lua tests.lua
-  elif [[ "$x" == "annotate" ]]; then doc; (cd ../../burn.github.io; make)
+  elif [[ "$x" == "okay"     ]]; then lua tests.lua
+  elif [[ "$x" == "annotate" ]]; then (cd ../../burn.github.io; make)
   elif [[ "$x" == "push"     ]]; then
-     doc
      git status
      git commit -am "$(date +"Committed %D")"
      git push
   else
-    doc
     g=$(basename $x ".lua")
     MAIN="$g" lua "$g.lua"
   fi
