@@ -84,7 +84,7 @@ cat<<EOF>$Tmp/vimrc
 	set formatoptions+=cro
 	set fillchars+=vert:\ 
 	hi CursorLine cterm=NONE ctermbg=NONE ctermfg=white
-	hi VertSplit ctermfg=Black ctermbg=DarkGray
+	hi VertSplit ctermfg=Black ctermbg=Black
 EOF
 banner() { cat <<-"EOF"
 
