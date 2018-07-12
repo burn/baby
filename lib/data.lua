@@ -160,22 +160,18 @@ function weatherOkay()
   assert( close( d.all.nums[1]:sd(),   6.57, 1) )  end
 
 function domOkay()
-  	 print(100000)
   local d = dataOkay("auto1000K")
   local n = #d.rows
-  print(n)
   local best,rest = d:bests()  
-  print("")
   print("\t");for _,n in pairs(d.y.nums) do say(n.w .. "\t") end; print("")
   for _,one in pairs(best) do 
-    for _,n in pairs(d.y.nums) do 
-     say(int(100*n:norm(one.cells[n.pos])) .. "\t") end 
-    say(one.oid)
-    print("") end
+     for _,n in pairs(d.y.nums) do 
+      say(int(100*n:norm(one.cells[n.pos])) .. "\t") end 
+     print(one.oid) end
 end
   
 
 -------------------------------------------------
 -- ## Main Stuff
 
-main{data=weatherOkay}
+main{data=domOkay}
