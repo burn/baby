@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>dtree.lua</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>dtree.lua</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+
+
+
+
+
+
+
+
+
+
+
+
+<p>The file is part of the <em>BURN</em> project (learing multi-objective rules). <br />
+<em>Because learning is not the filling  a pail, but the lighting of a fire.</em></p>
+<p><a href="http://tiny.cc/burning">home</a> |
+<a href="https://burn.github.io/index.html">doc</a> |
+<a href="https://github.com/burn/burn">code</a> |
+<a href="https://github.com/burn/burn/issues">discuss</a> |
+<a href="https://github.com/burn/burn/blob/master/LICENSE.md">license</a></p>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="nb">require</span> <span class="s2">&quot;data&quot;</span>
+<span class="nb">require</span> <span class="s2">&quot;btree&quot;</span>
+
+
+<span class="n">DTree</span> <span class="o">=</span> <span class="n">Any</span><span class="p">:</span><span class="n">new</span><span class="p">{</span> <span class="n">data</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">growths</span><span class="p">}</span>
+
+<span class="kr">function</span> <span class="nc">Dtree</span><span class="p">:</span><span class="nf">new</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+  <span class="n">x</span> <span class="o">=</span> <span class="n">Any</span><span class="p">.</span><span class="n">new</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">)</span>
+  <span class="n">x</span><span class="p">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">DNode</span><span class="p">:</span><span class="n">new</span><span class="p">()</span>
+  <span class="kr">return</span> <span class="n">x</span>
+<span class="kr">end</span>
+
+<span class="n">DNode</span> <span class="o">=</span> <span class="n">Btree</span><span class="p">:</span><span class="n">new</span><span class="p">{</span> <span class="n">key</span><span class="p">,</span><span class="n">value</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span><span class="n">r</span><span class="p">}</span>
+
+<span class="n">main</span><span class="p">{</span><span class="n">dtree</span><span class="o">=</span><span class="nb">print</span><span class="p">}</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

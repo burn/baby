@@ -160,9 +160,7 @@ end
 
 -- ### say(s)
 -- Print a string to the screen with no new line.
-function say(s)
-  io.write(s).flush()
-end
+function say(x) io.write(x); io.flush() end
 
 -- ### scan(s:string): string
 -- Convert `s` into a string or number, as appropriate.
@@ -273,7 +271,6 @@ function Any:new(o)
   self.oid = self.oid and self.oid+1 or 1
   o.oid    = self.oid
   self.__index = self
-  o:ready()
   return o
 end
 
@@ -292,7 +289,12 @@ end
 -- ## Sampling Stuff
 
 Sample = Any:new{max=The.sample.max, n=0, all}
-function Sample:ready() self.all = {} end
+
+function Sample:new(spec) 
+  x=Any.new(self,spec) 
+  x.all = {}
+  return x 
+end
 
 -- Sample:inc(x): x
 -- Keep at most `max` number of items (selected at random).
@@ -315,4 +317,5 @@ end
 
 -- main{lib=tests}
 main{lib = sampleOkay}
+
 

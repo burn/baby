@@ -11,7 +11,8 @@ end
 function Thing:inc(x)
   if x==The.ignore then return x end
   self.n = self.n + 1
-  return self:inc1(x) end
+  return self:inc1(x) 
+end
 
 function Thing:prep(x) return x end
 
@@ -19,18 +20,26 @@ function Thing:dec(x)
   if x==The.ignore then return x end
   if self.n < 3    then return x end
   self.n = self.n - 1
-  return self:dec1(x) end
+  return self:dec1(x) 
+end
 
 function Thing:simpler(i,j) 
   local  n = self.n
   return self.doubt() > The.ish*(i.doubt()*i.n/n + 
-                                 j.doubt()*j.n/n) end
+                                 j.doubt()*j.n/n) 
+end
+
+function Thing:norm(x) return x end
 
 ----------------------------------------
 -- class Sym
 Sym= Thing:new{counts,mode,most=0,_ent}
 
-function Sym:ready() self.counts = {} end
+function Sym:new(spec)
+  x = Thing.new(self, spec)
+  x.counts = {} 
+  return x
+end
 
 function Sym:doubt() return self:ent() end
 
@@ -40,7 +49,8 @@ function Sym:ent()
     for x,n in pairs(self.counts) do
       p      = n/self.n
       self._ent = self._ent - p * math.log(p,2) end end
-  return self._ent end
+  return self._ent 
+end
 
 function Sym:inc1(x)
   self._ent= nil
@@ -48,12 +58,14 @@ function Sym:inc1(x)
   local new = old and old + 1 or 1
   self.counts[x] = new
   if new > self.most then
-    self.most, self.mode = new, x end end
+    self.most, self.mode = new, x end 
+end
 
 function Sym:dec1(x)
   self._ent= nil
   i.counts[x] = i.counts - 1
-  return x end
+  return x 
+end
 
 ----------------------------------------
 -- class Num
@@ -62,7 +74,8 @@ Num= Thing:new{lo=The.inf, hi=The.ninf, mu=0, m2=0}
 function Num:doubt() return self:sd() end
 
 function Num:sd()
-  return (self.m2/(self.n - 1 + The.zip))^0.5  end
+  return (self.m2/(self.n - 1 + The.zip))^0.5  
+end
 
 function Num:inc1(x)
   local d = x - self.mu
@@ -77,6 +90,9 @@ function Num:dec1(x)
   self.mu = self.mu - d/self.n
   self.m2 = self.m2 - d*(x - self.mu)
 end
+
+function Num:norm(x) 
+  return (x - self.lo)/(self.hi - self.lo + The.zip) end
 
 function numOkay(    n) 
   n = Num:new()

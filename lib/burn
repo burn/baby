@@ -47,7 +47,7 @@ EOF
 mkdir -p $Tmp $Doc
 
 cat<<EOF>$Tmp/vimrc
-	colorscheme slate 
+	colorscheme pablo 
         set backupdir-=.
 	set backupdir^=~/tmp,/tmp
 	set nocompatible              " required
@@ -82,6 +82,7 @@ cat<<EOF>$Tmp/vimrc
 	set ruler
 	set formatoptions+=cro
 	set fillchars+=vert:\ 
+	hi CursorLine cterm=NONE ctermbg=NONE ctermfg=white
 	hi VertSplit ctermfg=Black ctermbg=DarkGray
 EOF
 doc() {
@@ -149,7 +150,7 @@ else
   elif [[ "$x" == "doc"      ]]; then doc
   elif [[ "$x" == "help"     ]]; then help
   elif [[ "$x" == "license"  ]]; then copyright
-  elif [[ "$x" == "okay"     ]]; then doc; luajit tests.lua
+  elif [[ "$x" == "okay"     ]]; then doc; lua tests.lua
   elif [[ "$x" == "annotate" ]]; then doc; (cd ../../burn.github.io; make)
   elif [[ "$x" == "push"     ]]; then
      doc
@@ -159,6 +160,6 @@ else
   else
     doc
     g=$(basename $x ".lua")
-    MAIN="$g" luajit "$g.lua"
+    MAIN="$g" lua "$g.lua"
   fi
 fi

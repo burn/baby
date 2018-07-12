@@ -83,11 +83,12 @@ end
 -- Computed using the row cells found in `nums`
 -- and the Zilter continuous domination indicator
 -- (so should work for many more goals than just 2).
-function Row:dominates(j, nums) 
+function Row:dominates(j, data) 
+  local nums = data.y.nums
   local s1, s2, n, z = 0, 0, #nums, The.zip
   for _,num in pairs(nums) do
     local a = self.cells[ num.pos ]
-    local b =          j[ num.pos ]
+    local b =    j.cells[ num.pos ]
     a       = (a - num.lo) / (num.hi - num.lo + z)
     b       = (b - num.lo) / (num.hi - num.lo + z)
     s1      = s1 - 10^(num.w * (a - b) / n)
@@ -95,12 +96,12 @@ function Row:dominates(j, nums)
   return s1 / n < s2 / n 
 end
 
--- ### Row:dom(d: data): integer
+-- ### Row:ndominates(d: data): integer
 -- Returns a count how how rows in `d` are domianted by self.
-function Row:dom(data, others)
+function Row:ndominates(data, others)
   local n = 0
   for _,row in pairs(others) do
-    if self:dominates(row.cells, data.y.nums) then n=n+1 end end 
+    if self:dominates(row, data) then n=n+1 end end 
   return n 
 end
 
@@ -111,13 +112,14 @@ end
 function Data:bests(x)
   local regrow = 1.5 
   local want   = min(1024, #self.rows)
-  local nbest  = want^The.data.best
+  local nbest  = max(want*0.1, want^The.data.best)
   local rest   = Sample:new{max=nbest}
   
-  local function bestOrRest(rows)
+  local function elite(rows)
+    if #rows <= nbest then return rows, rows[#rows] end
     local tmp, best = {},{}
     for _,row in pairs(rows) do 
-      tmp[#tmp+1] = {row:dom(self, rows), row} end
+      tmp[#tmp+1] = {row:ndominates(self, rows), row} end
     local gt = function (x,y) return x[1] > y[1] end
     for pos, pair in pairs( sorted(tmp, gt) ) do
       local row = pair[2]
@@ -127,19 +129,16 @@ function Data:bests(x)
     return best, best[#best] end
 
   local b4,after    = anys(self.rows, want)
-  local best, worst = bestOrRest(b4)
+  local best, worst = elite(b4)
   for _,row in pairs(after) do
-     if   row:dominates(worst.cells, self.y.nums) 
-     then say("+")
-	  best[ #best+1] = row  
+     if   row:dominates(worst, self) 
+     then best[ #best+1] = row  
      else rest:inc(row) 
      end
      if   #best >= regrow * nbest 
-     then say("\n")
-       best,worst= bestOrRest(merge(best,rest.all)) end end
+     then best,worst= elite(best) end end
   local out = {}
-  for _,row in pairs(bestOrRest(merge(best,rest.all))) do
-    out[ row.oid ] = row end
+  for _,row in pairs(elite(best)) do out[row.oid] = row end
   return out
 end
 
@@ -162,15 +161,21 @@ function weatherOkay()
 
 function domOkay()
   	 print(100000)
-  local d = dataOkay("auto10K")
+  local d = dataOkay("auto1000K")
   local n = #d.rows
   print(n)
   local best,rest = d:bests()  
-  for _,one in pairs(best) do print(join(one.cells)) end 
+  print("")
+  print("\t");for _,n in pairs(d.y.nums) do say(n.w .. "\t") end; print("")
+  for _,one in pairs(best) do 
+    for _,n in pairs(d.y.nums) do 
+     say(int(100*n:norm(one.cells[n.pos])) .. "\t") end 
+    say(one.oid)
+    print("") end
 end
   
 
 -------------------------------------------------
 -- ## Main Stuff
 
-main{data=domOkay}
+main{data=weatherOkay}
