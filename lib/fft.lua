@@ -1,9 +1,19 @@
-require "lib"
 
---------------------------------------
--- Binary tree stuff
+require "data"
+require "btree"
 
-BTree = Any:new{ key,value, up, l,r}
+-----------------------------------------
+-- FFT = Fast and Frugal Trees
+
+Fft = Any:new{ data, root, growths}
+
+function Fft:new(spec)
+  x = Any.new(self, spec)
+  x.root = Fft1:new()
+  return x
+end
+
+Fft1 = BTree:new{ key,value, l,r}
 
 -- ### control(num: number, bits: integer): table
 -- Returns an array of size `2^bits` whose `i-th` element is true if the `i`-th bit is set. 
@@ -19,9 +29,12 @@ function control(num,bits)
     return out
 end
 
-depth = 5
-for i=1,depth do 
-   max = 2^i
-   for j=0,max-1 do
-     print(j, join(control(j,i))) end end
+function controlOkay() 
+  local depth = 5
+  for i=1,depth do 
+     max = 2^i
+     for j=0,max-1 do
+       print(j, join(control(j,i))) end end
+end
+
 

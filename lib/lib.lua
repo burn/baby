@@ -84,7 +84,9 @@ end
 -- ### join(t:table [,sep:string]): string
 -- Converts a table to a string.
 function join(t, sep)
-  return table.concat(t, sep or ", ") 
+  local u ={}
+  for i,x in pairs(t) do u[i] = tostring(x) end
+  return table.concat(u, sep or ", ") 
 end
 
 --- ### any(t: table): table
@@ -160,7 +162,7 @@ end
 
 -- ### say(s)
 -- Print a string to the screen with no new line.
-function say(x) io.write(x); io.flush() end
+function say(x) io.write(tostring(x)); io.flush() end
 
 -- ### scan(s:string): string
 -- Convert `s` into a string or number, as appropriate.
