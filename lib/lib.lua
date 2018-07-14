@@ -62,8 +62,7 @@ end
 -- ### member(x,t:table)
 -- Returns true if x is in x
 function member(x,t)
-  for _,y in pairs(t) do
-    if x== y then return true end end
+  for _,y in pairs(t) do if x==y then return true end end
   return false 
 end
 

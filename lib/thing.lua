@@ -84,15 +84,16 @@ function Range:score(n)
   return self.stats.n / n * self.stats.mu 
 end
   
-function Sym:best(rows, f)
+function Sym:best(rows, f, val)
   local n, all = {}, #rows
   for _,row in pairs(rows) do
-    local val   = row.cells[self.pos]
+    val   = row.cells[self.pos]
     local one = all[val] or Range:new(self, val,f)
     one:inc(row)
     all[val] = one end
-  return sorted(all, function (x,y) return 
+  val = sorted(all, function (x,y) return 
 	               x:score(n) > y:score(n) end)[1]
+  return function(row) return row.cells[self.pos] == val end
 end
    
 ----------------------------------------
@@ -124,21 +125,24 @@ function Num:norm(x)
 
 -- what about oppsoite effects
 -- what about cut and cut - 1 
-function Num:best(rows, f, enough)
-  enough = enough or 10
-  rows = sorted(rows, function(x,y) 
-	          return x.cells[self.pos] < y.cells[self.pos] end)
-  local val, left, right = {}, Num:new(), Num:new()
-  for _,row in pairs(rows) do right:inc(row.cells[self.pos]) end
-  local best, cut = -1, nil
-  for i,row in pairs(rows) do
-    val = row.cells[ self.pos ]
-    left:inc(val)
-    right:dec(val)
-    if i > enough and i < #row - enough then
+function Num:best(rows, x, y, enough, minimize)
+  enough  = enough or 10
+  argmin  = argmin or false
+  x       = x or function(row) return row.cells[1] end
+  y       = y or function(row) return row.cells[ #row.cells ] end
+  local z = function(row) if argmin then return 1 - y(row) else return y(row) end end
+  local left, right = Num:new(), Num:new()
+  for _,row in pairs(rows) do right:inc( y(row) ) end
+  local best = nil
+  for i,row in pairs(sorted(rows, 
+	             function(x,y) return x(row) < x(y) end)) do
+    left:inc(  y(row) )
+    right:dec( y(row) )
+    if i > #row - enough then break end
+    if i > enough then
       local tmp = left.n/#rows * left.mu  / right.mu 
-      if tmp > best then best, cut = tmp, i+1 end end end
-   return best
+      if tmp > best then best = x(row) end end end 
+   return function(row) return x(row) >= best end
 end   
  
 function numOkay(    n) 
