@@ -25,3 +25,7 @@ get doc back into doc. still serve fromseperate repo butits make file should jsu
 need a paper. 24 easy DSL methods for python.
 
 Need a style guide.  your repo is your resume. standard files, dirs. Citations, changelog, a doc directory where pycco has pulled the doc strings. a test directory. requirements.txt. rules for code (short functions/mehtods, N-1 globals better than N
+
+test enginer
+
+html docs (auto generated)
