@@ -1,5 +1,6 @@
 Header=../etc/header.html#
 Index=../etc/index.html#
+Fork=../etc/fork.html#
 
 go: files adds index clean save 
 
@@ -24,6 +25,7 @@ body:
 
 adds:
 	@$(foreach f,$F, sed -i -e '19r $(Header)' $f;)
+	@$(foreach f,$F, sed -i -e '9r $(Fork)' $f;)
 
 save:
 	git add *
