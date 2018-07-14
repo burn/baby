@@ -217,6 +217,42 @@ end
 -------------------------------------------------------------
 -- ## Meta  Stuff
 
+-- ### map(t: table, f:function): nil
+-- For each item `v` call `f(v)`.
+function map(t,f)
+  if t then for i,v in pairs(t) do f(v) end end 
+end
+
+-- ### map2(t: table, x, f:function): x
+-- For each item `v` call `f(x,v)`.  Return `x`.
+function map2(t,i,f)
+  if t then for _,v in pairs(t) do f(i,v) end end
+  return i
+end
+
+-- ### collect(t: table, f:function): table
+-- Collect all results from each f(v) for each item `v` in `t`.
+function collect(t,f)
+  local out={}
+  if t then for i,v in pairs(t) do out[i] = f(v) end end
+  return out
+end
+
+-- ### select(t: table, f:function): table
+-- Select all items that satisfy f(v) for each item `v` in `t`.
+function select(t,f)
+  local out={}
+  if t then for i,v in pairs(t) do
+              if f(v) then out[#out + 1]=v end end end
+  return out
+end
+
+-- ### reject(t: table, f:function): table
+-- Reject all results that do not satisfy f(v) for each item `v` in `t`.
+function reject(t,f)
+  return select(t, function(v) return not f(v) end)
+end
+
 -- ## roguesOkay()
 -- Checked for escaped local. Report number of assertion failures.
 function roguesOkay()
@@ -269,9 +305,9 @@ Any={}
 function Any:new(o)
   o = o or {}   -- create object if user does not provide one
   setmetatable(o, self)
-  if not self.oid then self.oid=0 end
-  self.oid = self.oid and self.oid+1 or 1
-  o.oid    = self.oid
+  if not self.id then self.id=0 end
+  self.id = self.id and self.id+1 or 1
+  o.id    = self.id
   self.__index = self
   return o
 end

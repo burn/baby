@@ -3,7 +3,7 @@ require "lib"
 Thing=Any:new{pos,txt,w=1,n=0}
 
 function Thing:incs(t, f)
-  f = f and f or function (z) return z end
+  f = f or function (z) return z end
   for _,v in pairs(t) do self:inc( f(v) ) end 
   return self
 end
@@ -67,7 +67,34 @@ function Sym:dec1(x)
   return x 
 end
 
+Range=Any:new{score=0, val, f, all, stats}
+function Range:new(col, val, f)
+   x= Any.self:new(self)
+   x.col, x.val, x.score = col, val, 0
+   x.f,   x.all, x.stats = f, {}, Num:new()
+   return x
+end
 
+function Range:inc(row)
+  push( row, self.all )
+  x.stats:inc( self.f(row) )
+end
+
+function Range:done(n)
+  return self.stats.n / n * self.stats.mu 
+end
+  
+function Sym:best(rows, f)
+  local n, all = {}, #rows
+  for _,row in pairs(rows) do
+    local val   = row.cells[self.pos]
+    local one = all[val] or Range:new(self, val,f)
+    one:inc(row)
+    all[val] = one end
+  return sorted(all,
+           function (x,y) return x:done(n) > y:done(n) end)[1]
+end
+   
 ----------------------------------------
 -- class Num
 Num= Thing:new{lo=The.inf, hi=The.ninf, mu=0, m2=0} 
@@ -95,14 +122,37 @@ end
 function Num:norm(x) 
   return (x - self.lo)/(self.hi - self.lo + The.zip) end
 
+ function Num:best(rows, f)
+  rows = sorted(rows, function(x,y) 
+	          return x.cells[self.pos] < y.cells[self.pos] end)
+  left, right=Num:new(), Num:new()
+  for _,row in pairs(rows) do right:inc(row.cells[self.pos]) end
+end   
+ 
 function numOkay(    n) 
   n = Num:new()
-  n:incs{4,10,15,38,54,57,62,83,100,100,174,190,215,225,
-         233,250,260,270,299,300,306,333,350,375,443,475, 
-         525,583,780,1000}
+  local t={4,10,15,38,54,57,62,83,100,100,174,190,215,225,
+           233,250,260,270,299,300,306,333,350,375,443,475, 
+           525,583,780,1000}
+  n:incs(t)
   assert(close(n.mu,   270.3,   0.001))
   assert(close(n:sd(), 231.946, 0.001))
   oo(n)
 end
 
-main{thing=numOkay}
+function numIncOkay(    n) 
+  local mu, sd, n = {}, {}, Num:new()
+  local t={4,10,15,38,54,57,62,83,100,100,174,190,215,225,
+           233,250,260,270,299,300,306,333,350,375,443,475, 
+           525,583,780,1000}
+  for i=1,#t do
+    n:inc( t[i] )
+    mu[i], sd[i] = n.mu, n:sd() end
+  for i=#t,1,-1 do
+    if i>2 then
+      assert(close( mu[i] , n.mu,   0.01))    
+      assert(close( sd[i] , n:sd(), 0.01))    
+      n:dec( t[i] ) end end
+end
+
+main{thing=numIncOkay}

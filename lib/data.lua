@@ -105,43 +105,44 @@ function Row:ndominates(data, others)
   return n 
 end
 
--- ### Data:bests()
+-- ### Data:bests(): best:table, scores:table
 -- For the best rows, set as `row.best=true'.
 -- (the top `The.data.best` rows as computed
 -- by the domination score).
-function Data:bests(x)
+function Data:bests(x,    w)
   local regrow = 1.5 
   local want   = min(1024, #self.rows)
   local nbest  = max(want*0.1, want^The.data.best)
   local rest   = Sample:new{max=nbest}
-  
+
   local function elite(rows)
-    if #rows <= nbest then return rows, rows[#rows] end
-    local tmp, best = {},{}
+    local u, best = {},{}
     for _,row in pairs(rows) do 
-      tmp[#tmp+1] = {row:ndominates(self, rows), row} end
-    local gt = function (x,y) return x[1] > y[1] end
-    for pos, pair in pairs( sorted(tmp, gt) ) do
-      local row = pair[2]
+      u[row.id] = row:ndominates(self,rows) end
+    local gt= function(x,y) return u[x.id] > u[y.id] end
+    for pos, row in pairs(sorted(rows, gt)) do
       if pos > want then break end
       if pos > nbest then rest:inc(row) 
 	             else best[#best+1] = row end end
+    w={}
+    for _,row in pairs(best) do 
+      w[row.id] = (u[row.id] + #rest.all) / 
+                   (#best    + #rest.all) end
     return best, best[#best] end
 
   local b4,after    = anys(self.rows, want)
   local best, worst = elite(b4)
   for _,row in pairs(after) do
      if   row:dominates(worst, self) 
-     then best[ #best+1] = row  
+     then best[ #best+1 ] = row  
      else rest:inc(row) 
      end
      if   #best >= regrow * nbest 
      then best,worst= elite(best) end end
   local out = {}
-  for _,row in pairs(elite(best)) do out[row.oid] = row end
-  return out
+  for _,row in pairs(elite(best)) do out[row.id] = row end
+  return out, w
 end
-
 
 -------------------------------------------------
 -- ## Test Stuff
@@ -162,16 +163,18 @@ function weatherOkay()
   assert( close( d.all.nums[1]:sd(),   6.57, 1) )  end
 
 function domOkay()
-  local d = dataOkay("auto1000K")
-  local best,_ = d:bests()  
+  local d = dataOkay("auto")
+  local best,w = d:bests()  
   print("\t");for _,n in pairs(d.y.nums) do say(n.w .. "\t") end; print("")
   for _,one in pairs(best) do 
+     say( w[one.id] .. "\t")
      for _,n in pairs(d.y.nums) do 
       say(int(100*n:norm(one.cells[n.pos])) .. "\t") end 
-      print(one.oid) end 
+      print(one.id) end 
+    
 end
 
 -------------------------------------------------
 -- ## Main Stuff
 
-main{data=weatherOkay}
+main{data=domOkay}
