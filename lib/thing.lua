@@ -80,7 +80,7 @@ function Range:inc(row)
   x.stats:inc( self.f(row) )
 end
 
-function Range:done(n)
+function Range:score(n)
   return self.stats.n / n * self.stats.mu 
 end
   
@@ -91,8 +91,8 @@ function Sym:best(rows, f)
     local one = all[val] or Range:new(self, val,f)
     one:inc(row)
     all[val] = one end
-  return sorted(all,
-           function (x,y) return x:done(n) > y:done(n) end)[1]
+  return sorted(all, function (x,y) return 
+	               x:score(n) > y:score(n) end)[1]
 end
    
 ----------------------------------------
@@ -122,11 +122,23 @@ end
 function Num:norm(x) 
   return (x - self.lo)/(self.hi - self.lo + The.zip) end
 
- function Num:best(rows, f)
+-- what about oppsoite effects
+-- what about cut and cut - 1 
+function Num:best(rows, f, enough)
+  enough = enough or 10
   rows = sorted(rows, function(x,y) 
 	          return x.cells[self.pos] < y.cells[self.pos] end)
-  left, right=Num:new(), Num:new()
+  local val, left, right = {}, Num:new(), Num:new()
   for _,row in pairs(rows) do right:inc(row.cells[self.pos]) end
+  local best, cut = -1, nil
+  for i,row in pairs(rows) do
+    val = row.cells[ self.pos ]
+    left:inc(val)
+    right:dec(val)
+    if i > enough and i < #row - enough then
+      local tmp = left.n/#rows * left.mu  / right.mu 
+      if tmp > best then best, cut = tmp, i+1 end end end
+   return best
 end   
  
 function numOkay(    n) 
