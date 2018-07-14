@@ -67,6 +67,7 @@ function Sym:dec1(x)
   return x 
 end
 
+
 ----------------------------------------
 -- class Num
 Num= Thing:new{lo=The.inf, hi=The.ninf, mu=0, m2=0} 
