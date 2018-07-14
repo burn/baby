@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>fft.lua</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>fft.lua</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+
+
+
+
+
+
+
+
+
+
+
+
+<p>The file is part of the <em>BURN</em> project (learing multi-objective rules). <br />
+<em>Because learning is not the filling  a pail, but the lighting of a fire.</em></p>
+<p><a href="http://tiny.cc/burning">home</a> |
+<a href="https://burn.github.io/baby/index.html">doc</a> |
+<a href="https://github.com/burn/baby">code</a> |
+<a href="https://github.com/burn/baby/issues">discuss</a> |
+<a href="https://github.com/burn/baby/blob/master/LICENSE.md">license</a></p>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="nb">require</span> <span class="s2">&quot;data&quot;</span>
+<span class="nb">require</span> <span class="s2">&quot;btree&quot;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <hr />
+<p>FFT = Fast and Frugal Trees</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">Fft</span> <span class="o">=</span> <span class="n">Any</span><span class="p">:</span><span class="n">new</span><span class="p">{</span> <span class="n">data</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">growths</span><span class="p">}</span>
+
+<span class="kr">function</span> <span class="nc">Fft</span><span class="p">:</span><span class="nf">new</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+  <span class="n">x</span> <span class="o">=</span> <span class="n">Any</span><span class="p">.</span><span class="n">new</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">)</span>
+  <span class="n">x</span><span class="p">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">Fft1</span><span class="p">:</span><span class="n">new</span><span class="p">()</span>
+  <span class="kr">return</span> <span class="n">x</span>
+<span class="kr">end</span>
+
+<span class="n">Fft1</span> <span class="o">=</span> <span class="n">BTree</span><span class="p">:</span><span class="n">new</span><span class="p">{</span> <span class="n">key</span><span class="p">,</span><span class="n">value</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span><span class="n">r</span><span class="p">}</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <h3>control(num: number, bits: integer): table</h3>
+<p>Returns an array of size <code>2^bits</code> whose <code>i-th</code> element is true if the <code>i</code>-th bit is set. 
+- e.g. sets(3,2) ==&gt; {true,false}  <br />
+- e.g. sets(16,4) ==&gt; {true, true, true, true}</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nf">control</span><span class="p">(</span><span class="n">num</span><span class="p">,</span><span class="n">bits</span><span class="p">)</span>
+    <span class="n">bits</span> <span class="o">=</span> <span class="n">bits</span> <span class="ow">or</span> <span class="nb">math.max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">select</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nb">math.frexp</span><span class="p">(</span><span class="n">num</span><span class="p">)))</span>
+    <span class="kd">local</span> <span class="n">out</span> <span class="o">=</span> <span class="p">{}</span> 
+    <span class="kr">for</span> <span class="n">b</span> <span class="o">=</span> <span class="n">bits</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span> <span class="kr">do</span>
+        <span class="n">out</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="nb">math.fmod</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> 
+        <span class="n">num</span> <span class="o">=</span> <span class="nb">math.floor</span><span class="p">((</span><span class="n">num</span> <span class="o">-</span> <span class="n">out</span><span class="p">[</span><span class="n">b</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+	<span class="n">out</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="kr">end</span>
+    <span class="kr">return</span> <span class="n">out</span>
+<span class="kr">end</span>
+
+<span class="kr">function</span> <span class="nf">controlOkay</span><span class="p">()</span> 
+  <span class="kd">local</span> <span class="n">depth</span> <span class="o">=</span> <span class="mi">5</span>
+  <span class="kr">for</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">depth</span> <span class="kr">do</span> 
+     <span class="n">max</span> <span class="o">=</span> <span class="mi">2</span><span class="o">^</span><span class="n">i</span>
+     <span class="kr">for</span> <span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">max</span><span class="o">-</span><span class="mi">1</span> <span class="kr">do</span>
+       <span class="nb">print</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">join</span><span class="p">(</span><span class="n">control</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">)))</span> <span class="kr">end</span> <span class="kr">end</span>
+<span class="kr">end</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

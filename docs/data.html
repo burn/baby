@@ -32,10 +32,10 @@
 <p>The file is part of the <em>BURN</em> project (learing multi-objective rules). <br />
 <em>Because learning is not the filling  a pail, but the lighting of a fire.</em></p>
 <p><a href="http://tiny.cc/burning">home</a> |
-<a href="https://burn.github.io/index.html">doc</a> |
-<a href="https://github.com/burn/burn">code</a> |
-<a href="https://github.com/burn/burn/issues">discuss</a> |
-<a href="https://github.com/burn/burn/blob/master/LICENSE.md">license</a></p>
+<a href="https://burn.github.io/baby/index.html">doc</a> |
+<a href="https://github.com/burn/baby">code</a> |
+<a href="https://github.com/burn/baby/issues">discuss</a> |
+<a href="https://github.com/burn/baby/blob/master/LICENSE.md">license</a></p>
       
     </div>
     <div class='code'>
@@ -236,43 +236,45 @@ and the Zilter continuous domination indicator
       <div class='octowrap'>
         <a class='octothorpe' href='#section-10'>#</a>
       </div>
-      <h3>Data:bests()</h3>
+      <h3>Data:bests(): best:table, scores:table</h3>
 <p>For the best rows, set as <code>row.best=true'.
 (the top</code>The.data.best` rows as computed
 by the domination score).</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="kr">function</span> <span class="nc">Data</span><span class="p">:</span><span class="nf">bests</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nc">Data</span><span class="p">:</span><span class="nf">bests</span><span class="p">(</span><span class="n">x</span><span class="p">,</span>    <span class="n">w</span><span class="p">)</span>
   <span class="kd">local</span> <span class="n">regrow</span> <span class="o">=</span> <span class="mf">1.5</span> 
   <span class="kd">local</span> <span class="n">want</span>   <span class="o">=</span> <span class="n">min</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="o">#</span><span class="n">self</span><span class="p">.</span><span class="n">rows</span><span class="p">)</span>
   <span class="kd">local</span> <span class="n">nbest</span>  <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">want</span><span class="o">*</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">want</span><span class="o">^</span><span class="n">The</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">best</span><span class="p">)</span>
   <span class="kd">local</span> <span class="n">rest</span>   <span class="o">=</span> <span class="n">Sample</span><span class="p">:</span><span class="n">new</span><span class="p">{</span><span class="n">max</span><span class="o">=</span><span class="n">nbest</span><span class="p">}</span>
-  
+
   <span class="kd">local</span> <span class="kr">function</span> <span class="nf">elite</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
-    <span class="kr">if</span> <span class="o">#</span><span class="n">rows</span> <span class="o">&lt;=</span> <span class="n">nbest</span> <span class="kr">then</span> <span class="kr">return</span> <span class="n">rows</span><span class="p">,</span> <span class="n">rows</span><span class="p">[</span><span class="o">#</span><span class="n">rows</span><span class="p">]</span> <span class="kr">end</span>
-    <span class="kd">local</span> <span class="n">tmp</span><span class="p">,</span> <span class="n">best</span> <span class="o">=</span> <span class="p">{},{}</span>
+    <span class="kd">local</span> <span class="n">u</span><span class="p">,</span> <span class="n">best</span> <span class="o">=</span> <span class="p">{},{}</span>
     <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">row</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span> <span class="kr">do</span> 
-      <span class="n">tmp</span><span class="p">[</span><span class="o">#</span><span class="n">tmp</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">row</span><span class="p">:</span><span class="n">ndominates</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">rows</span><span class="p">),</span> <span class="n">row</span><span class="p">}</span> <span class="kr">end</span>
-    <span class="kd">local</span> <span class="n">gt</span> <span class="o">=</span> <span class="kr">function</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="kr">return</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="kr">end</span>
-    <span class="kr">for</span> <span class="n">pos</span><span class="p">,</span> <span class="n">pair</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span> <span class="n">sorted</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">gt</span><span class="p">)</span> <span class="p">)</span> <span class="kr">do</span>
-      <span class="kd">local</span> <span class="n">row</span> <span class="o">=</span> <span class="n">pair</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+      <span class="n">u</span><span class="p">[</span><span class="n">row</span><span class="p">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">:</span><span class="n">ndominates</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="n">rows</span><span class="p">)</span> <span class="kr">end</span>
+    <span class="kd">local</span> <span class="n">gt</span><span class="o">=</span> <span class="kr">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="kr">return</span> <span class="n">u</span><span class="p">[</span><span class="n">x</span><span class="p">.</span><span class="n">id</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">u</span><span class="p">[</span><span class="n">y</span><span class="p">.</span><span class="n">id</span><span class="p">]</span> <span class="kr">end</span>
+    <span class="kr">for</span> <span class="n">pos</span><span class="p">,</span> <span class="n">row</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">sorted</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">gt</span><span class="p">))</span> <span class="kr">do</span>
       <span class="kr">if</span> <span class="n">pos</span> <span class="o">&gt;</span> <span class="n">want</span> <span class="kr">then</span> <span class="kr">break</span> <span class="kr">end</span>
       <span class="kr">if</span> <span class="n">pos</span> <span class="o">&gt;</span> <span class="n">nbest</span> <span class="kr">then</span> <span class="n">rest</span><span class="p">:</span><span class="n">inc</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> 
 	             <span class="kr">else</span> <span class="n">best</span><span class="p">[</span><span class="o">#</span><span class="n">best</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span> <span class="kr">end</span> <span class="kr">end</span>
+    <span class="n">w</span><span class="o">=</span><span class="p">{}</span>
+    <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">row</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">best</span><span class="p">)</span> <span class="kr">do</span> 
+      <span class="n">w</span><span class="p">[</span><span class="n">row</span><span class="p">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">u</span><span class="p">[</span><span class="n">row</span><span class="p">.</span><span class="n">id</span><span class="p">]</span> <span class="o">+</span> <span class="o">#</span><span class="n">rest</span><span class="p">.</span><span class="n">all</span><span class="p">)</span> <span class="o">/</span> 
+                   <span class="p">(</span><span class="o">#</span><span class="n">best</span>    <span class="o">+</span> <span class="o">#</span><span class="n">rest</span><span class="p">.</span><span class="n">all</span><span class="p">)</span> <span class="kr">end</span>
     <span class="kr">return</span> <span class="n">best</span><span class="p">,</span> <span class="n">best</span><span class="p">[</span><span class="o">#</span><span class="n">best</span><span class="p">]</span> <span class="kr">end</span>
 
   <span class="kd">local</span> <span class="n">b4</span><span class="p">,</span><span class="n">after</span>    <span class="o">=</span> <span class="n">anys</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">rows</span><span class="p">,</span> <span class="n">want</span><span class="p">)</span>
   <span class="kd">local</span> <span class="n">best</span><span class="p">,</span> <span class="n">worst</span> <span class="o">=</span> <span class="n">elite</span><span class="p">(</span><span class="n">b4</span><span class="p">)</span>
   <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">row</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">after</span><span class="p">)</span> <span class="kr">do</span>
      <span class="kr">if</span>   <span class="n">row</span><span class="p">:</span><span class="n">dominates</span><span class="p">(</span><span class="n">worst</span><span class="p">,</span> <span class="n">self</span><span class="p">)</span> 
-     <span class="kr">then</span> <span class="n">best</span><span class="p">[</span> <span class="o">#</span><span class="n">best</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span>  
+     <span class="kr">then</span> <span class="n">best</span><span class="p">[</span> <span class="o">#</span><span class="n">best</span><span class="o">+</span><span class="mi">1</span> <span class="p">]</span> <span class="o">=</span> <span class="n">row</span>  
      <span class="kr">else</span> <span class="n">rest</span><span class="p">:</span><span class="n">inc</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> 
      <span class="kr">end</span>
      <span class="kr">if</span>   <span class="o">#</span><span class="n">best</span> <span class="o">&gt;=</span> <span class="n">regrow</span> <span class="o">*</span> <span class="n">nbest</span> 
      <span class="kr">then</span> <span class="n">best</span><span class="p">,</span><span class="n">worst</span><span class="o">=</span> <span class="n">elite</span><span class="p">(</span><span class="n">best</span><span class="p">)</span> <span class="kr">end</span> <span class="kr">end</span>
   <span class="kd">local</span> <span class="n">out</span> <span class="o">=</span> <span class="p">{}</span>
-  <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">row</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">elite</span><span class="p">(</span><span class="n">best</span><span class="p">))</span> <span class="kr">do</span> <span class="n">out</span><span class="p">[</span><span class="n">row</span><span class="p">.</span><span class="n">oid</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span> <span class="kr">end</span>
-  <span class="kr">return</span> <span class="n">out</span>
+  <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">row</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">elite</span><span class="p">(</span><span class="n">best</span><span class="p">))</span> <span class="kr">do</span> <span class="n">out</span><span class="p">[</span><span class="n">row</span><span class="p">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span> <span class="kr">end</span>
+  <span class="kr">return</span> <span class="n">out</span><span class="p">,</span> <span class="n">w</span>
 <span class="kr">end</span></pre></div>
     </div>
   </div>
@@ -295,6 +297,7 @@ by the domination score).</p>
 <span class="kr">function</span> <span class="nf">auto1000KOkay</span><span class="p">()</span> <span class="n">dataOkay</span><span class="p">(</span><span class="s2">&quot;auto1000K&quot;</span><span class="p">)</span> <span class="kr">end</span>
 <span class="kr">function</span> <span class="nf">weatherOkay</span><span class="p">()</span>   
   <span class="kd">local</span> <span class="n">d</span> <span class="o">=</span> <span class="n">dataOkay</span><span class="p">(</span><span class="s2">&quot;weather&quot;</span><span class="p">)</span> 
+  <span class="nb">print</span><span class="p">(</span><span class="o">#</span><span class="n">d</span><span class="p">.</span><span class="n">rows</span><span class="p">)</span>
   <span class="nb">assert</span><span class="p">(</span> <span class="n">close</span><span class="p">(</span> <span class="n">d</span><span class="p">.</span><span class="n">all</span><span class="p">.</span><span class="n">syms</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="n">ent</span><span class="p">(),</span>  <span class="mf">1.58</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="p">)</span> 
   <span class="nb">assert</span><span class="p">(</span> <span class="n">close</span><span class="p">(</span> <span class="n">d</span><span class="p">.</span><span class="n">all</span><span class="p">.</span><span class="n">syms</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span><span class="n">ent</span><span class="p">(),</span>  <span class="mf">0.98</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="p">)</span>  
   <span class="nb">assert</span><span class="p">(</span> <span class="n">close</span><span class="p">(</span> <span class="n">d</span><span class="p">.</span><span class="n">all</span><span class="p">.</span><span class="n">syms</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span><span class="n">ent</span><span class="p">(),</span>  <span class="mf">0.94</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="p">)</span>  
@@ -302,18 +305,15 @@ by the domination score).</p>
   <span class="nb">assert</span><span class="p">(</span> <span class="n">close</span><span class="p">(</span> <span class="n">d</span><span class="p">.</span><span class="n">all</span><span class="p">.</span><span class="n">nums</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="n">sd</span><span class="p">(),</span>   <span class="mf">6.57</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="p">)</span>  <span class="kr">end</span>
 
 <span class="kr">function</span> <span class="nf">domOkay</span><span class="p">()</span>
-  	 <span class="nb">print</span><span class="p">(</span><span class="mi">100000</span><span class="p">)</span>
-  <span class="kd">local</span> <span class="n">d</span> <span class="o">=</span> <span class="n">dataOkay</span><span class="p">(</span><span class="s2">&quot;auto1000K&quot;</span><span class="p">)</span>
-  <span class="kd">local</span> <span class="n">n</span> <span class="o">=</span> <span class="o">#</span><span class="n">d</span><span class="p">.</span><span class="n">rows</span>
-  <span class="nb">print</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-  <span class="kd">local</span> <span class="n">best</span><span class="p">,</span><span class="n">rest</span> <span class="o">=</span> <span class="n">d</span><span class="p">:</span><span class="n">bests</span><span class="p">()</span>  
-  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+  <span class="kd">local</span> <span class="n">d</span> <span class="o">=</span> <span class="n">dataOkay</span><span class="p">(</span><span class="s2">&quot;auto&quot;</span><span class="p">)</span>
+  <span class="kd">local</span> <span class="n">best</span><span class="p">,</span><span class="n">w</span> <span class="o">=</span> <span class="n">d</span><span class="p">:</span><span class="n">bests</span><span class="p">()</span>  
   <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">);</span><span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">n</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">y</span><span class="p">.</span><span class="n">nums</span><span class="p">)</span> <span class="kr">do</span> <span class="n">say</span><span class="p">(</span><span class="n">n</span><span class="p">.</span><span class="n">w</span> <span class="o">..</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kr">end</span><span class="p">;</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
   <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">one</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">best</span><span class="p">)</span> <span class="kr">do</span> 
-    <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">n</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">y</span><span class="p">.</span><span class="n">nums</span><span class="p">)</span> <span class="kr">do</span> 
-     <span class="n">say</span><span class="p">(</span><span class="n">int</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">n</span><span class="p">:</span><span class="n">norm</span><span class="p">(</span><span class="n">one</span><span class="p">.</span><span class="n">cells</span><span class="p">[</span><span class="n">n</span><span class="p">.</span><span class="n">pos</span><span class="p">]))</span> <span class="o">..</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kr">end</span> 
-    <span class="n">say</span><span class="p">(</span><span class="n">one</span><span class="p">.</span><span class="n">oid</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="kr">end</span>
+     <span class="n">say</span><span class="p">(</span> <span class="n">w</span><span class="p">[</span><span class="n">one</span><span class="p">.</span><span class="n">id</span><span class="p">]</span> <span class="o">..</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+     <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">n</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">y</span><span class="p">.</span><span class="n">nums</span><span class="p">)</span> <span class="kr">do</span> 
+      <span class="n">say</span><span class="p">(</span><span class="n">int</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">n</span><span class="p">:</span><span class="n">norm</span><span class="p">(</span><span class="n">one</span><span class="p">.</span><span class="n">cells</span><span class="p">[</span><span class="n">n</span><span class="p">.</span><span class="n">pos</span><span class="p">]))</span> <span class="o">..</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kr">end</span> 
+      <span class="nb">print</span><span class="p">(</span><span class="n">one</span><span class="p">.</span><span class="n">id</span><span class="p">)</span> <span class="kr">end</span> 
+    
 <span class="kr">end</span></pre></div>
     </div>
   </div>
@@ -327,7 +327,7 @@ by the domination score).</p>
 <h2>Main Stuff</h2>
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="n">main</span><span class="p">{</span><span class="n">data</span><span class="o">=</span><span class="n">weatherOkay</span><span class="p">}</span>
+      <div class="highlight"><pre><span class="n">main</span><span class="p">{</span><span class="n">data</span><span class="o">=</span><span class="n">domOkay</span><span class="p">}</span>
 
 </pre></div>
     </div>
