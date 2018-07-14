@@ -1,6 +1,8 @@
 Header=../etc/header.html#
 Index=../etc/index.html#
 Fork=../etc/fork.html#
+Pat=*.lua#
+Lib=../lib#
 
 go: files adds index clean save 
 
@@ -8,7 +10,7 @@ clean:
 	rm *-e
     
 files:
-	cd  ../lib; pycco -d ../docs *.lua
+	cd  $(Lib); pycco -d ../docs $(Pat)
 
 index:
 	@cat $(Index) $(Header)  > index.html
