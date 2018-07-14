@@ -1,5 +1,5 @@
 Header=../etc/header.html#
-Index=../etc/INDEX.html#
+Index=../etc/index.html#
 
 go: files adds index clean save 
 
@@ -8,17 +8,16 @@ clean:
     
 files:
 	cd  ../lib; pycco -d ../docs *.lua
-	cp $(Index) .
 
 index:
-	@sed -i -e '10,$$d' INDEX.html
-	@cat $(Header)  >> INDEX.html
-	@$(MAKE) body >> INDEX.html
+	@cat $(Index) $(Header)  > index.html
+	@$(MAKE) body >> index.html
+	@git add index.html
 
 F=$(shell ls [a-z]*.html)
 G= $(F:.html=)
 body:
-	@echo "<h2>Annotated source code:</h2>" >> INDEX.html
+	@echo "<h2>Annotated source code:</h2>" >> index.html
 	@echo "<ul>" 
 	@$(foreach f,$G, echo "<li><a href=$f.html>$f</a>";)
 	@echo  "</ul>"

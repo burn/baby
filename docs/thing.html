@@ -18,17 +18,6 @@
         <a class='octothorpe' href='#section-0'>#</a>
       </div>
 
-
-
-
-
-
-
-
-
-
-
-
 <p>The file is part of the <em>BURN</em> project (learing multi-objective rules). <br />
 <em>Because learning is not the filling  a pail, but the lighting of a fire.</em></p>
 <p><a href="http://tiny.cc/burning">home</a> |
@@ -130,19 +119,20 @@
   <span class="n">x</span><span class="p">.</span><span class="n">stats</span><span class="p">:</span><span class="n">inc</span><span class="p">(</span> <span class="n">self</span><span class="p">.</span><span class="n">f</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="p">)</span>
 <span class="kr">end</span>
 
-<span class="kr">function</span> <span class="nc">Range</span><span class="p">:</span><span class="nf">done</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="kr">function</span> <span class="nc">Range</span><span class="p">:</span><span class="nf">score</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
   <span class="kr">return</span> <span class="n">self</span><span class="p">.</span><span class="n">stats</span><span class="p">.</span><span class="n">n</span> <span class="o">/</span> <span class="n">n</span> <span class="o">*</span> <span class="n">self</span><span class="p">.</span><span class="n">stats</span><span class="p">.</span><span class="n">mu</span> 
 <span class="kr">end</span>
   
-<span class="kr">function</span> <span class="nc">Sym</span><span class="p">:</span><span class="nf">best</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+<span class="kr">function</span> <span class="nc">Sym</span><span class="p">:</span><span class="nf">best</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
   <span class="kd">local</span> <span class="n">n</span><span class="p">,</span> <span class="n">all</span> <span class="o">=</span> <span class="p">{},</span> <span class="o">#</span><span class="n">rows</span>
   <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">row</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span> <span class="kr">do</span>
-    <span class="kd">local</span> <span class="n">val</span>   <span class="o">=</span> <span class="n">row</span><span class="p">.</span><span class="n">cells</span><span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">pos</span><span class="p">]</span>
+    <span class="n">val</span>   <span class="o">=</span> <span class="n">row</span><span class="p">.</span><span class="n">cells</span><span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">pos</span><span class="p">]</span>
     <span class="kd">local</span> <span class="n">one</span> <span class="o">=</span> <span class="n">all</span><span class="p">[</span><span class="n">val</span><span class="p">]</span> <span class="ow">or</span> <span class="n">Range</span><span class="p">:</span><span class="n">new</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span><span class="n">f</span><span class="p">)</span>
     <span class="n">one</span><span class="p">:</span><span class="n">inc</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
     <span class="n">all</span><span class="p">[</span><span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">one</span> <span class="kr">end</span>
-  <span class="kr">return</span> <span class="n">sorted</span><span class="p">(</span><span class="n">all</span><span class="p">,</span>
-           <span class="kr">function</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="kr">return</span> <span class="n">x</span><span class="p">:</span><span class="n">done</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">y</span><span class="p">:</span><span class="n">done</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="kr">end</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+  <span class="n">val</span> <span class="o">=</span> <span class="n">sorted</span><span class="p">(</span><span class="n">all</span><span class="p">,</span> <span class="kr">function</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="kr">return</span> 
+	               <span class="n">x</span><span class="p">:</span><span class="n">score</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">y</span><span class="p">:</span><span class="n">score</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="kr">end</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+  <span class="kr">return</span> <span class="kr">function</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="kr">return</span> <span class="n">row</span><span class="p">.</span><span class="n">cells</span><span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">pos</span><span class="p">]</span> <span class="o">==</span> <span class="n">val</span> <span class="kr">end</span>
 <span class="kr">end</span></pre></div>
     </div>
   </div>
@@ -179,13 +169,37 @@
 <span class="kr">end</span>
 
 <span class="kr">function</span> <span class="nc">Num</span><span class="p">:</span><span class="nf">norm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> 
-  <span class="kr">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">self</span><span class="p">.</span><span class="n">lo</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">hi</span> <span class="o">-</span> <span class="n">self</span><span class="p">.</span><span class="n">lo</span> <span class="o">+</span> <span class="n">The</span><span class="p">.</span><span class="n">zip</span><span class="p">)</span> <span class="kr">end</span>
-
- <span class="kr">function</span> <span class="nc">Num</span><span class="p">:</span><span class="nf">best</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
-  <span class="n">rows</span> <span class="o">=</span> <span class="n">sorted</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="kr">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> 
-	          <span class="kr">return</span> <span class="n">x</span><span class="p">.</span><span class="n">cells</span><span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">pos</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">y</span><span class="p">.</span><span class="n">cells</span><span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">pos</span><span class="p">]</span> <span class="kr">end</span><span class="p">)</span>
-  <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="n">Num</span><span class="p">:</span><span class="n">new</span><span class="p">(),</span> <span class="n">Num</span><span class="p">:</span><span class="n">new</span><span class="p">()</span>
-  <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">row</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span> <span class="kr">do</span> <span class="n">right</span><span class="p">:</span><span class="n">inc</span><span class="p">(</span><span class="n">row</span><span class="p">.</span><span class="n">cells</span><span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">pos</span><span class="p">])</span> <span class="kr">end</span>
+  <span class="kr">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">self</span><span class="p">.</span><span class="n">lo</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">hi</span> <span class="o">-</span> <span class="n">self</span><span class="p">.</span><span class="n">lo</span> <span class="o">+</span> <span class="n">The</span><span class="p">.</span><span class="n">zip</span><span class="p">)</span> <span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>what about oppsoite effects
+what about cut and cut - 1 </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nc">Num</span><span class="p">:</span><span class="nf">best</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">enough</span><span class="p">,</span> <span class="n">minimize</span><span class="p">)</span>
+  <span class="n">enough</span>  <span class="o">=</span> <span class="n">enough</span> <span class="ow">or</span> <span class="mi">10</span>
+  <span class="n">argmin</span>  <span class="o">=</span> <span class="n">argmin</span> <span class="ow">or</span> <span class="kc">false</span>
+  <span class="n">x</span>       <span class="o">=</span> <span class="n">x</span> <span class="ow">or</span> <span class="kr">function</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="kr">return</span> <span class="n">row</span><span class="p">.</span><span class="n">cells</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="kr">end</span>
+  <span class="n">y</span>       <span class="o">=</span> <span class="n">y</span> <span class="ow">or</span> <span class="kr">function</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="kr">return</span> <span class="n">row</span><span class="p">.</span><span class="n">cells</span><span class="p">[</span> <span class="o">#</span><span class="n">row</span><span class="p">.</span><span class="n">cells</span> <span class="p">]</span> <span class="kr">end</span>
+  <span class="kd">local</span> <span class="n">z</span> <span class="o">=</span> <span class="kr">function</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="kr">if</span> <span class="n">argmin</span> <span class="kr">then</span> <span class="kr">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">y</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="kr">else</span> <span class="kr">return</span> <span class="n">y</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="kr">end</span> <span class="kr">end</span>
+  <span class="kd">local</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">Num</span><span class="p">:</span><span class="n">new</span><span class="p">(),</span> <span class="n">Num</span><span class="p">:</span><span class="n">new</span><span class="p">()</span>
+  <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">row</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span> <span class="kr">do</span> <span class="n">right</span><span class="p">:</span><span class="n">inc</span><span class="p">(</span> <span class="n">y</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="p">)</span> <span class="kr">end</span>
+  <span class="kd">local</span> <span class="n">best</span> <span class="o">=</span> <span class="kc">nil</span>
+  <span class="kr">for</span> <span class="n">i</span><span class="p">,</span><span class="n">row</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">sorted</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> 
+	             <span class="kr">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="kr">return</span> <span class="n">x</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">x</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="kr">end</span><span class="p">))</span> <span class="kr">do</span>
+    <span class="n">left</span><span class="p">:</span><span class="n">inc</span><span class="p">(</span>  <span class="n">y</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">right</span><span class="p">:</span><span class="n">dec</span><span class="p">(</span> <span class="n">y</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="p">)</span>
+    <span class="kr">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="o">#</span><span class="n">row</span> <span class="o">-</span> <span class="n">enough</span> <span class="kr">then</span> <span class="kr">break</span> <span class="kr">end</span>
+    <span class="kr">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="n">enough</span> <span class="kr">then</span>
+      <span class="kd">local</span> <span class="n">tmp</span> <span class="o">=</span> <span class="n">left</span><span class="p">.</span><span class="n">n</span><span class="o">/#</span><span class="n">rows</span> <span class="o">*</span> <span class="n">left</span><span class="p">.</span><span class="n">mu</span>  <span class="o">/</span> <span class="n">right</span><span class="p">.</span><span class="n">mu</span> 
+      <span class="kr">if</span> <span class="n">tmp</span> <span class="o">&gt;</span> <span class="n">best</span> <span class="kr">then</span> <span class="n">best</span> <span class="o">=</span> <span class="n">x</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="kr">end</span> <span class="kr">end</span> <span class="kr">end</span> 
+   <span class="kr">return</span> <span class="kr">function</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="kr">return</span> <span class="n">x</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">best</span> <span class="kr">end</span>
 <span class="kr">end</span>   
  
 <span class="kr">function</span> <span class="nf">numOkay</span><span class="p">(</span>    <span class="n">n</span><span class="p">)</span> 
