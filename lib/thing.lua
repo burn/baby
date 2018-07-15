@@ -31,16 +31,45 @@ end
 
 function Thing:norm(x) return x end
 
+Split=Any:new{txt,rule, op, val}
+
+function Split:show() return self.txt..self.op..self.val end
+
+-----------------------------------------------------------
 -- ### Thing:best(rows [, o]): function
 -- Returns a function that returns true if a row selects for best ranges.
 -- o = {x,y,enough=10,min=false}
-function Thing:best(rows, o)
-  o = o or {}
-  o.min = o.min or false
-  o.x = function(r) return r.cells[self:pos] end
-  o.y = o.y or function(r) return r.cells[#r.cells] end
-  o.z = function(r) return min and -1*o.y(r) or o.y(r) end 
-  return self:best1(rows, o)
+function Thing:best(rows, enough, y, min)
+  y   = y or function (r) return r.cells[#r.cells] end
+  min = min or false
+  return self:best1( 
+      rows,  
+      self:eq(x, x(rows[1]), 0), 
+      enough or 10
+      function(r) return r.cells[self.pos] end,
+      function(r) return min and 1-y(r) or y(r) end)
+end
+
+function Thing:eq(x, val,score)
+  return Split:new{txt=self.txt, 
+     score= score, 
+     val  = val, op="=", 
+     rule = function(r) return x(r)==val end} 
+end
+
+function Thing:gt(x, val,score)
+  return Split:new{txt=self.txt, 
+     score= score, 
+     val  = val, op=">", 
+     rule = function(r) return x(r) > val end} 
+end
+
+function Thing:le(x, val,score)
+  return Split:new{txt=self.txt, 
+     score= score, 
+     val  = val, op="<=", 
+     rule = function(r) return x(r) <= val end} 
+end
 
 ----------------------------------------
 -- class Sym
@@ -79,23 +108,19 @@ function Sym:dec1(x)
   return x 
 end
 
-Range=Any:new{txt,rule, op, val}
-
-function Range:show() return self.txt..self.op..self.val end
-
-function Sym:best1(rows, o)
-  local cut, best, nums = nil, -1, {}
+-----------------------------------------------------------
+function Sym:best1(rows, cut, enough, x, y)
+  local best, nums =  -1, {}
   for _,row in pairs(rows) do
-    local val = o.x(row)
-    local num = nums[val] or Num:new{txt=val}
-    num:inc( o.z(row) )
-    nums[val] = num end
-  for _,num in pairs(nums) do 
-    local tmp = num.n/#rows * num.mu 
-    if tmp > best then best, cut = tmp, num.val end end
-  local x = o.x
-  return Range:new{txt=self.txt, val=cut, op="=",
-                   rule=function(row) return x(rows)==cut end}
+    local num = nums[ x(row) ] or Num:new()
+    num:inc( y(row) )
+    nums[ x(row) ] = num end
+  for val,num in pairs(nums) do 
+    if num.n > enough then
+      local tmp = num.n/#rows * num.mu 
+      if tmp > best then 
+        best, cut = tmp, self:eq(x, val, num.mu) end end end
+  return cut
 end
    
 ----------------------------------------
@@ -126,23 +151,25 @@ end
 function Num:norm(x) 
   return (x - self.lo)/(self.hi - self.lo + The.zip) end
 
--- gt or lt
-function Num:best1(rows, o)
-  local cut,best = nil,-1
-  local left  = Num:new()
-  local right = Num:new():incs(rows, o.z)
-  rows = sorted(rows, function(a,b) return o.x(a) < o.x(b) end)
+-------------------------------------------------------------
+function Num:best1(rows, cut, enough, x y)
+  local best = -1
+  local left = Num:new()
+  local right= Num:new():incs(rows, y)
+  rows = sorted(rows, function(a,b) return x(a) < x(b) end)
   for i,row in pairs(rows) do
-    left:inc(  o.z(row) )
-    right:dec( o.z(row) )
-    if i > #row - o.enough then break end
-    if i > o.enough then
-      local tmp = left.n / #rows * left.mu / right.mu 
-      if tmp > best then 
-	best,cut = tmp, o.x( rows[i] ) end end end 
-  local x = o.x
-  return Ranges:new{txt=self.txt, val=cut, op=">", 
-                  rule=function(row) return x(row) > cut end}
+    left:inc(  y(row) )
+    right:dec( y(row) )
+    if i > #row - enough then break end
+    if i > enough then
+      local below  = (left.n  / #rows) * left.mu  / right.mu 
+      local above  = (right.n / #rows) * right.mu / left.mu 
+      if above > best then 
+	best,cut = tmp, self:gt(x, x(row), right.mu) end 
+      if below > best then 
+	best,cut = tmp, self:le(x, x(row), left.mu) end end 
+  end 
+  return cut
 end
  
 function numOkay(    n) 
