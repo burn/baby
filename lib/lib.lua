@@ -3,6 +3,7 @@ require "the"
 -------------------------------------------------------------
 -- ## Misc  Stuff 
 
+abs  = math.abs
 int   = math.floor
 printf= function (s, ...) return io.write(s:format(...)) end
 match = function (s,p)    return string.match(s,p) ~= nil end
@@ -15,7 +16,7 @@ match = function (s,p)    return string.match(s,p) ~= nil end
 -- (default value for e = 1).
 function close(m,n,e) 
   e = e and e or 1
-  return math.abs(m-n)/n <= e/100 
+  return abs(m-n)/n <= e/100 
 end
 
 -- ### min(x:number, y:number): number
