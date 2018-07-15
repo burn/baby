@@ -31,6 +31,17 @@ end
 
 function Thing:norm(x) return x end
 
+-- ### Thing:best(rows [, o]): function
+-- Returns a function that returns true if a row selects for best ranges.
+-- o = {x,y,enough=10,min=false}
+function Thing:best(rows, o)
+  o = o or {}
+  o.min = o.min or false
+  o.x = function(r) return r.cells[self:pos] end
+  o.y = o.y or function(r) return r.cells[#r.cells] end
+  o.z = function(r) return min and -1*o.y(r) or o.y(r) end 
+  return self:best1(rows, o)
+
 ----------------------------------------
 -- class Sym
 Sym= Thing:new{counts,mode,most=0,_ent}
@@ -59,6 +70,7 @@ function Sym:inc1(x)
   self.counts[x] = new
   if new > self.most then
     self.most, self.mode = new, x end 
+  return x
 end
 
 function Sym:dec1(x)
@@ -67,33 +79,23 @@ function Sym:dec1(x)
   return x 
 end
 
-Range=Any:new{score=0, val, f, all, stats}
-function Range:new(col, val, f)
-   x= Any.self:new(self)
-   x.col, x.val, x.score = col, val, 0
-   x.f,   x.all, x.stats = f, {}, Num:new()
-   return x
-end
+Range=Any:new{txt,rule, op, val}
 
-function Range:inc(row)
-  push( row, self.all )
-  x.stats:inc( self.f(row) )
-end
+function Range:show() return self.txt..self.op..self.val end
 
-function Range:score(n)
-  return self.stats.n / n * self.stats.mu 
-end
-  
-function Sym:best(rows, f, val)
-  local n, all = {}, #rows
+function Sym:best1(rows, o)
+  local cut, best, nums = nil, -1, {}
   for _,row in pairs(rows) do
-    val   = row.cells[self.pos]
-    local one = all[val] or Range:new(self, val,f)
-    one:inc(row)
-    all[val] = one end
-  val = sorted(all, function (x,y) return 
-	               x:score(n) > y:score(n) end)[1]
-  return function(row) return row.cells[self.pos] == val end
+    local val = o.x(row)
+    local num = nums[val] or Num:new{txt=val}
+    num:inc( o.z(row) )
+    nums[val] = num end
+  for _,num in pairs(nums) do 
+    local tmp = num.n/#rows * num.mu 
+    if tmp > best then best, cut = tmp, num.val end end
+  local x = o.x
+  return Range:new{txt=self.txt, val=cut, op="=",
+                   rule=function(row) return x(rows)==cut end}
 end
    
 ----------------------------------------
@@ -112,6 +114,7 @@ function Num:inc1(x)
   self.m2 = self.m2 + d*(x - self.mu)
   if    x > self.hi then self.hi = x end
   if    x < self.lo then self.lo = x end
+  return x
 end
 
 function Num:dec1(x)
@@ -123,27 +126,24 @@ end
 function Num:norm(x) 
   return (x - self.lo)/(self.hi - self.lo + The.zip) end
 
--- what about oppsoite effects
--- what about cut and cut - 1 
-function Num:best(rows, x, y, enough, minimize)
-  enough  = enough or 10
-  argmin  = argmin or false
-  x       = x or function(row) return row.cells[1] end
-  y       = y or function(row) return row.cells[ #row.cells ] end
-  local z = function(row) if argmin then return 1 - y(row) else return y(row) end end
-  local left, right = Num:new(), Num:new()
-  for _,row in pairs(rows) do right:inc( y(row) ) end
-  local best = nil
-  for i,row in pairs(sorted(rows, 
-	             function(x,y) return x(row) < x(y) end)) do
-    left:inc(  y(row) )
-    right:dec( y(row) )
-    if i > #row - enough then break end
-    if i > enough then
-      local tmp = left.n/#rows * left.mu  / right.mu 
-      if tmp > best then best = x(row) end end end 
-   return function(row) return x(row) >= best end
-end   
+-- gt or lt
+function Num:best1(rows, o)
+  local cut,best = nil,-1
+  local left  = Num:new()
+  local right = Num:new():incs(rows, o.z)
+  rows = sorted(rows, function(a,b) return o.x(a) < o.x(b) end)
+  for i,row in pairs(rows) do
+    left:inc(  o.z(row) )
+    right:dec( o.z(row) )
+    if i > #row - o.enough then break end
+    if i > o.enough then
+      local tmp = left.n / #rows * left.mu / right.mu 
+      if tmp > best then 
+	best,cut = tmp, o.x( rows[i] ) end end end 
+  local x = o.x
+  return Ranges:new{txt=self.txt, val=cut, op=">", 
+                  rule=function(row) return x(row) > cut end}
+end
  
 function numOkay(    n) 
   n = Num:new()

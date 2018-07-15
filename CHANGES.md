@@ -21,6 +21,7 @@ one file can be tested in isolation (the __main__ trick)
 all files can be tested together
 
 get doc back into doc. still serve fromseperate repo butits make file should jsut do cp * 
+https://realpython.com/generating-code-documentation-with-pycco/#generated-docs
 
 need a paper. 24 easy DSL methods for python.
 
