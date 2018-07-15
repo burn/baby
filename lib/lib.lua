@@ -38,6 +38,19 @@ do
     return seed / modulus end 
 end
 
+function interpolate(x,xs,ys):
+  x0, y0 = xs[1], ys[1]
+  if x <= x0   then return y0  end
+  if x >= xs[#xs] then return ys[#xs] end
+  for i,x1 in pairs(xs) do
+    y1=ys[i]
+    if x < x0 or x > xs[#xs] or x0 <= x < x1 then
+      break end
+    x0, y0 = x1, y1
+  gap = (x - x0)/(x1 - x0)
+  return y0 + gap*(y1 - y0)
+
+
 -------------------------------------------------------------
 -- ## Table Stuff
 

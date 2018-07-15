@@ -31,10 +31,6 @@ end
 
 function Thing:norm(x) return x end
 
-Split=Any:new{txt,rule, op, val}
-
-function Split:show() return self.txt..self.op..self.val end
-
 -----------------------------------------------------------
 -- ### Thing:best(rows [, o]): function
 -- Returns a function that returns true if a row selects for best ranges.
@@ -49,6 +45,10 @@ function Thing:best(rows, enough, y, min)
       function(r) return r.cells[self.pos] end,
       function(r) return min and 1-y(r) or y(r) end)
 end
+
+Split=Any:new{txt,rule, op, val}
+
+function Split:show() return self.txt..self.op..self.val end
 
 function Thing:eq(x, val,score)
   return Split:new{txt=self.txt, 
@@ -156,7 +156,8 @@ function Num:norm(x)
 --Many distributions are not normal so I use this tTestSame as a heuristic for speed criticl calcs. E.g. in the inner inner loop of some search where i need a quick opinion, is "this" the same as "that".
 -- But when assessing experimental results after all the algorithms have terminated, I use a much safer, but somewhat slower, procedure (bootstrap)
 function Num:same(j,  conf. small)
-    return self:ttest(i,conf or 0.95) or self:hedges(j, small or 0.38)
+    return self:hedges(j, small or 0.38) or
+           self:ttest( j, conf  or 0.95)  
 
 function Num:ttest(j,  conf)
     local i = self
@@ -166,8 +167,8 @@ function Num:ttest(j,  conf)
     local ys= {0.9=  { 3.078, 1.886, 1.476, 1.372, 1.341, 1.325, 1.316, 1.31,  1.296, 1.29},
                0.95= { 6.314, 2.92,  2.015, 1.812, 1.753, 1.725, 1.708, 1.697, 1.671, 1.66},
                0.99= {31.821, 6.965, 3.365, 2.764, 2.602, 2.528, 2.485, 2.457, 2.39,  2.364}}
-    return interpolate(df, xs, ys[conf]) >= 
-           abs(i.mu - j.mu) / ((i:sd()/i.n + j:sd()/j.n)**0.5) 
+    return (abs(i.mu - j.mu) / 
+	    ((i:sd()/i.n + j:sd()/j.n)**0.5) ) < interpolate(df, xs, ys[conf]) 
 end
     
 -- Hedge's rule (using g):
@@ -176,7 +177,6 @@ end
 --    Returns true if the "i" and "j" difference is only a small effect.
 --    "i" and "j" are   objects reporing mean (i.mu), standard deviation (i.s)
 --    and size (i.n) of two  population of numbers.
---    """
 -- - Still parametric
 -- - Modifies &Delta; w.r.t. the standard deviation of both samples.
 -- - Adds a correction factor c for small sample sizes.
@@ -207,11 +207,11 @@ function Num:best1(rows, cut, enough, x y)
     right:dec( y(row) )
     if i > #row - enough then break end
     if i > enough then
-      local below  = (left.n  / #rows) * left.mu  / right.mu 
-      local above  = (right.n / #rows) * right.mu / left.mu 
-      if above > best then 
-	best,cut = tmp, self:gt(x, x(row), right.mu) end 
-      if below > best then 
+      local below = (left.n  / #rows) * left.mu  / right.mu 
+      local above = (right.n / #rows) * right.mu / left.mu 
+      if above > best and not same(left, right) then
+	best,cut = tmp, self:gt(x, x(row), right.mu) end
+      if below > best and not same(left, right) then 
 	best,cut = tmp, self:le(x, x(row), left.mu) end end 
   end 
   return cut
