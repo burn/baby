@@ -230,8 +230,11 @@ function subOkay()
 end
 
 -- ### oo(x : anything)
--- Print anything, including nested things
-function oo(data) 
+-- Print anything, including nested things 
+-- If you want the string, without printing it,
+-- use `ooo(x)`.
+function oo(data) print(ooo(data)) end
+function ooo(data) 
   local seen={}
   local function go(x,       str,sep)  
     if type(x) ~= "table" then return tostring(x) end
@@ -242,7 +245,7 @@ function oo(data)
       sep = ", " end 
     return str .. '}'
   end 
-  print(go(data,"{","")) 
+  return go(data,"{","") 
 end  
 
 -------------------------------------------------------------

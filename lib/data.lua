@@ -105,6 +105,14 @@ function Row:ndominates(data, others)
   return n 
 end
 
+function Row:has(data, y,z)
+  local t={}
+  for _,head in pairs(data[y][z]) do
+    t[ head.txt ] = self.cells[head.pos] end
+  return t
+end
+	  
+     
 -- ### Data:bests(): best:table, scores:table
 -- For the best rows, set as `row.best=true'.
 -- (the top `The.data.best` rows as computed
@@ -132,15 +140,19 @@ function Data:bests(x,    w)
 
   local b4,after    = anys(self.rows, want)
   local best, worst = elite(b4)
+  local changed = false
   for _,row in pairs(after) do
      if   row:dominates(worst, self) 
      then best[ #best+1 ] = row  
+	  changed = true
      else rest:inc(row) 
      end
      if   #best >= regrow * nbest 
-     then best,worst= elite(best) end end
+     then best,worst= elite(best) 
+          changed = true end end
+  if changed then best = elite(best) end
   local out = {}
-  for _,row in pairs(elite(best)) do out[row.id] = row end
+  for _,row in pairs(best) do out[row.id] = row end
   return out, w
 end
 
@@ -171,10 +183,18 @@ function domOkay()
      for _,n in pairs(d.y.nums) do 
       say(int(100*n:norm(one.cells[n.pos])) .. "\t") end 
       print(one.id) end 
-    
 end
 
+function attrOkay()
+  local d= dataOkay("auto")
+  local best,w = d:bests()
+  local y = function(row) return w[row.id] or 0 end
+  for _, row in pairs(best) do
+     if y(row) > 0 then
+        print(ooo(row:has(d,"y","nums")), y(row)) end end
+end
 -------------------------------------------------
 -- ## Main Stuff
+--main{data=weatherOkay}
+main{data=attrOkay}
 
-main{data=domOkay}
