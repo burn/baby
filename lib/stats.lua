@@ -43,24 +43,36 @@ function cliffsDelta(t1, t2, small)
   table.sort(t2)
   for _,x in pairs(t1) do
     pos  = bchop(t2, x)
-    gt = gt + #t2 - j
-    lt = lt + j - 1 end
-  return abs(gt - lt) / (#t1 * #t2) < (small or 0.38)
+    gt = gt + #t2 - j - 11 
+    lt = lt + j end
+  return (abs(gt - lt) / (#t1 * #t2)) < (small or 0.38)
 end
 
-function testStatistic(y, z) 
+
+-- def cliffsDelta(lst1,lst2,
+--                 dull = [0.147, # small
+--                         0.33,  # medium
+--                         0.474 # large
+--                         ][0] ):
+--   n= gt = lt = 0.0
+--   for x in lst1:
+--     for y in lst2:
+--       n += 1
+--       if x > y:  gt += 1
+--       if x < y:  lt += 1
+--   return abs(lt - gt)/n > dull
+
+function bootstrap(y0, z0, conf, b)
+  local function testStatistic(y, z) 
     local d = z.mu - y.mu
     local s = y:sd() + z:sd()
     return s==0 and delta or  
            d / ((y:sd()/y.n + z:sd()/z.n)^0.5)
-end
-
-function sample(t)
-  u = {}; for i=1,#t do u[ #u+1 ] = any(t) end
-  return u
-end
-
-function bootstrap(y0, z0, conf, b)
+  end
+  local function sample(t)
+    u = {}; for i=1,#t do u[ #u+1 ] = any(t) end
+    return u
+  end
   conf = conf or 0.95
   b    = b or 512
   local x = Num:new():incs(y0):incs(z0)
@@ -70,7 +82,7 @@ function bootstrap(y0, z0, conf, b)
   local yhat, zhat = {}, {}
   for _,y1 in pairs(y0) do yhat[#yhat+1]= y1 - y.mu+x.mu end
   for _,z1 in pairs(z0) do zhat[#zhat+1]= z1 - z.mu+x.mu end
-  local bigger = 0.0
+  local bigger = 0
   for i in 1,b do
     if testStatistic( Num:new():incs(sample(yhat)),
                       Num:new():incs(sample(zhat))) > tobs then

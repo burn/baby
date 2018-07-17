@@ -38,17 +38,35 @@ do
     return seed / modulus end 
 end
 
-function interpolate(x,xs,ys):
-  x0, y0 = xs[1], ys[1]
-  if x <= x0   then return y0  end
-  if x >= xs[#xs] then return ys[#xs] end
-  for i,x1 in pairs(xs) do
-    y1=ys[i]
-    if x < x0 or x > xs[#xs] or x0 <= x < x1 then
-      break end
-    x0, y0 = x1, y1
-  gap = (x - x0)/(x1 - x0)
-  return y0 + gap*(y1 - y0)
+-------------------------------------------------------------
+-- *** interpolate(x, xs:table, ys:table): number
+-- Return a `y` value for `x` by interpolating across the points in `xs,ys`.
+-- E.g. 
+--
+-- ```
+-- interpolate(3, {1,2,4}, {10,20,40}) -- returns  30
+-- ```                     
+--
+-- This function assumes that `y` changes linearly between the
+-- points records in `xs,ys`. Also, anything less or more than
+-- the first and last values in `xs` are capped to the `ys[1]` or `ys[#ys]
+-- values, respectively.
+function interpolate(x,xs,ys,          x1,y1)
+  local x0, y0 = xs[1], ys[1]
+  if x <= x0      then return y0  end
+  --if x >= xs[#xs] then return ys[#xs] end
+  for i = 1, #xs do
+    x1,y1 = xs[i],ys[i]
+    if x0 <= x and x < x1 then break end
+    x0, y0 = x1, y1 end
+  return y0 +  (x - x0)/(x1 - x0) * (y1 - y0)
+end
+ 
+function interpolateOkay()
+ assert(interpolate(0, {1,2,4}, {10,20,40}) == 10) 
+ assert(interpolate(4, {1,2,4}, {10,20,40}) == 50) 
+ assert(interpolate(3, {1,2,4}, {10,20,40}) == 30) 
+end
 
 
 -------------------------------------------------------------
