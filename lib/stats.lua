@@ -34,16 +34,14 @@ function cliffsDelta(t1, t2, small,max)
   local max = max or 1000
   local small = small or 0.147
   local n,lt,gt = 0,0,0
-  if #t1 > max then
-     t1 = slice(shuffle(t1), 1, max) end
-  if #t2 > max then
-     t2 = slice(shuffle(t2), 1, max) end
+  if #t1 > max then t1 = slice(shuffle(t1), 1, max) end
+  if #t2 > max then t2 = slice(shuffle(t2), 1, max) end
   for _,x in pairs(t1) do
     for _,y in pairs(t2) do
       n = n + 1
       if x > y then gt = gt + 1 end
       if x < y then lt = lt + 1 end end end
-  return abs(gt - lt) / n < (small or 0.147) 
+  return abs(gt - lt) / n < small 
 end
 
 function cliffsDeltaOkay()
@@ -55,7 +53,6 @@ function cliffsDeltaOkay()
   end
 end
 
-cliffsDeltaOkay()
 
 -- def cliffsDelta(lst1,lst2,
 --                 dull = [0.147, # small
@@ -71,6 +68,8 @@ cliffsDeltaOkay()
 --   return abs(lt - gt)/n > dull
 
 function bootstrap(y0, z0, conf, b)
+  b = b or 512
+  conf = conf or 0.95
   local function testStatistic(y, z) 
     local d = z.mu - y.mu
     local s = y:sd() + z:sd()
@@ -81,8 +80,6 @@ function bootstrap(y0, z0, conf, b)
     u = {}; for i=1,#t do u[ #u+1 ] = any(t) end
     return u
   end
-  conf = conf or 0.95
-  b    = b or 512
   local x = Num:new():incs(y0):incs(z0)
   local y = Num:new():incs(y0)
   local z = Num:new():incs(z0)
@@ -98,8 +95,8 @@ function bootstrap(y0, z0, conf, b)
   return bigger / b < conf
 end
 
-function different(t1,t2)
-  return cliffsDelta(t1,t2) and bootstrap(t1,t2)
+function same(t1,t2)
+  return cliffsDelta(t1,t2) or bootstrap(t1,t2)
 end
 
 Pairs = Any:new{all, stats}
