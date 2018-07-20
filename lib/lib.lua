@@ -3,7 +3,9 @@ require "the"
 -------------------------------------------------------------
 -- ## Misc  Stuff 
 
-abs  = math.abs
+E     = 2.71828182845904523536028747135266
+PI    = 3.14159265358979323846264338327950
+abs   = math.abs
 int   = math.floor
 printf= function (s, ...) return io.write(s:format(...)) end
 match = function (s,p)    return string.match(s,p) ~= nil end
@@ -38,7 +40,6 @@ do
     return seed / modulus end 
 end
 
--------------------------------------------------------------
 -- *** interpolate(x, xs:table, ys:table): number
 -- Return a `y` value for `x` by interpolating across the points in `xs,ys`.
 -- E.g. 
@@ -68,7 +69,14 @@ function interpolateOkay()
  assert(interpolate(3, {1,2,4}, {10,20,40}) == 30) 
 end
 
+-- weibull(x,l,k): number
+function weibull(x,l,k)
+  return x < 0 and 0 or k/l*(x/l)^(k-1)*E^(-1*(x/l)^k)
+end
 
+function normal(x, mu,s)
+  return (1 / (2*PI*s*s)^0.5)*E^(-1 * (x-mu )^2/(2*s*s)  )
+end
 -------------------------------------------------------------
 -- ## Table Stuff
 
