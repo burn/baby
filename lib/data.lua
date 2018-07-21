@@ -156,6 +156,75 @@ function Data:bests(x,    w)
   return out, w
 end
 
+function fastdom(data)
+  function dist(i, j)
+    local d,n = 0,The.zip
+    for _,num  in pairs(data.y.nums) do
+      local a = i.cells[ num.pos ]
+      local b = j.cells[ num.pos ]
+      a = (a - num.lo) / (num.hi - num.lo + z)
+      b = (b - num.lo) / (numlhi - num.lo + z)
+      d = d + (a-b)^2
+      n = n + 1 end
+    return d^0.5 / n^0.5 
+  end
+  function furthest(i, lst)
+    local most,out = -1,i
+    for _,j in pairs(lst) do
+      local d = dist(i,j)
+      if d > most then most,out = d,j end end
+    return out
+  end
+  function div(t, rank, neg, pos)
+    rank = rank or 1
+    if #t < few then
+      for _,one in pairs(t) do
+        rank = rank + 1
+        one.dom = rank end
+    else
+      neg = neg or furthest(any(t), t)
+      pos = pos or furthest(neg,    t)
+      if neg.dominates(pos,data) then neg,pos=pos,neg end
+      local c  = dist(neg,pos)
+      local c1 = c + The.dom.tiny
+      local tmp = {}
+      for _,row in pairs(t) do
+        local a = dist(neg, row)
+        local b = dist(pos, row)
+        if a > c1 then return div(t,rank,row,neg) end
+        if b > c1 then return div(t,rank,row,pos) end
+        local x = (a*a + c*c - b*b) / (2*c + The.zip)
+        tmp[ #tmp+1 ] = {x,row} 
+      end
+      tmp = sorted(tmp,function(x,y) return x[1] < y[1] end)
+      for i,one in pairs(tmp) do tmp[i] = one[2] end
+      local mid = int(#t/2)
+      rank = div( slice(tmp,    1, mid),  rank)
+      rank = div( slice(tmp,mid+1, #tmp), rank) 
+    end
+    return rank 
+  end
+  few = max(The.dom.few, #data.rows^The.dom.power)
+  return div(data.rows)
+end
+
+--Find the corners of the smallest hyperrectangle which bounds your points. This can be done in O(n⋅d) time (by computing the maximum and minimum values in each dimension). Note that there are 2d corners in a d−
+
+--dimensional hyperrrectangle.
+
+--Next, find a point in your data set which closest (using the Manhattan metric) to each of your 2d
+--corners and lies on a face of your hyperrectangle (done in O(n⋅2d⋅d)
+
+--time).
+
+--Find the farthest points (using the Manhattan metric) amongst these 2d
+--points (done in O(22d⋅d)
+
+--time.
+
+--The time complexity for this algorithm is O(n⋅d+n⋅2d⋅d+22d⋅d)=O(n⋅2d⋅d)
+-- if n≥2d.
+
 -------------------------------------------------
 -- ## Test Stuff
 local function dataOkay(f)
