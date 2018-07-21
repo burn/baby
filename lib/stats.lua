@@ -134,22 +134,33 @@ function bootstrap1Okay()
              int(100*cd/repeats), int(100*cnt/repeats)) end
 end
 
---bootstrap1Okay()
+bootstrap1Okay()
 
 function bootstrap2Okay()
   local samples = function(m1,s1, m2,s2)
-	  local a,b={},{}
-
-	  for _=1,10 do 
-            x    = -2*4*rand()
-	    a[#a+1] = normal(x,  m1,s1) 
-	    b[#b+1] = normal(x,  m1,s1) end 
-	  print(join(sorted(a)))
-          local same1 = bootstrap(a,b)
-          local same2= cliffsDelta(a,b)  
-	  print(m1,s1,m2,s2 ,same1, same2, same1 or same2) end
+    local a,b,xs={},{},{}
+    for x=-2,2,0.1 do 
+      xs[#xs+1] = x
+      a[#a+1] = normCdf(x, m1, s1) 
+      b[#b+1] =  normCdf(x, m2, s2) 
+      print(x,a[#a],b[#b])
+    end 
+    -- print(join(sorted(collect(a,
+    --      function(z) return round(z,0.001) end))))
+    --print(join(sorted(collect(b,
+    --      function(x) return round(x,3) end))))
+    --rint(join(b))
+    local n1=Num:new():incs(a)
+    local n2=Num:new():incs(b)
+    print(n1.mu, n1:sd(), n2.mu, n2:sd())
+    local same1 = bootstrap(a,b)
+    local same2 = cliffsDelta(a,b)  
+    print(m1,m2, s1,s2, same1, same2, same1 or same2) 
+  end
   print(" ")
-  samples(0,0.0001,1,0.0001)
+  samples(-0.5,1,  0.5, 1)
+  --samples(1, 0.1, 0.5, 0.1)
+  --samples(-0.1, 0.1, 0.1, 0.1)
 end
 
 bootstrap2Okay()

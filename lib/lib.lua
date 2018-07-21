@@ -3,8 +3,8 @@ require "the"
 -------------------------------------------------------------
 -- ## Misc  Stuff 
 
-E     = 2.71828182845904523536028747135266
-PI    = 3.14159265358979323846264338327950
+E     = 2.7182818285
+PI    = 3.1415926536
 abs   = math.abs
 int   = math.floor
 printf= function (s, ...) return io.write(s:format(...)) end
@@ -12,6 +12,11 @@ match = function (s,p)    return string.match(s,p) ~= nil end
 
 -------------------------------------------------------------
 -- ## Maths Stuff
+
+function round(exact, quantum)
+    local quant,frac = math.modf(exact/quantum)
+    return quantum * (quant + (frac > 0.5 and 1 or 0))
+end
 
 -- ### close(m:number, n:number [, e:float])
 -- Return true are `m` and `n` are within `e`% of each other
@@ -74,9 +79,19 @@ function weibull(x,l,k)
   return x < 0 and 0 or k/l*(x/l)^(k-1)*E^(-1*(x/l)^k)
 end
 
-function normal(x, mu,s)
-  return (1 / (2*PI*s*s)^0.5)*E^(-1 * (x-mu )^2/(2*s*s)  )
+function normal(x, mu, sigma)
+    return E^(-.5 * (x-mu)*(x-mu)/(sigma*sigma)) / math.sqrt(2.0*math.pi*sigma*sigma)
 end
+
+function normCdf(x, mu, sigma)
+    return 0.5 * (1.0 + E^((x-mu)/math.sqrt(2*sigma*sigma)))
+end
+
+--function normal(x, mu,s)
+--  local a = 1 / ((2*PI*s*s)^0.5)
+--  local b = 2.713^( -1 * (x-mu )^2 / (2*s*s))
+--  return a*b
+--end
 -------------------------------------------------------------
 -- ## Table Stuff
 
