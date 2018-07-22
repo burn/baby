@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>stats.lua</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+
+<a href="https://github.com/burn/src"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
+    <div class='docs'><h1>stats.lua</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+
+<img src=https://raw.githubusercontent.com/burn/src/master/etc/img/burn-wide.png width=500>
+<p>The file is part of the <a href="https://github.com/burn/src/blob/master/README.md">BURN</a> project (learing multi-objective rules). <br />
+<em>Because learning is not the filling  a pail, but the lighting of a fire.</em></p>
+
+<p><a href="index.html">index</a> |
+<a href="https://github.com/burn/src/issues">discuss</a> |
+<a href="https://github.com/burn/src/blob/master/LICENSE.md">license</a></p>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="nb">require</span> <span class="s2">&quot;thing&quot;</span>
+
+<span class="kd">local</span> <span class="n">tests</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="p">{</span><span class="mi">2</span><span class="p">,</span>	<span class="p">{</span><span class="s2">&quot;x1&quot;</span><span class="p">,</span>	<span class="mf">0.34</span><span class="p">,</span>	 <span class="mf">0.49</span><span class="p">,</span>	 <span class="mf">0.51</span><span class="p">,</span>	  <span class="mf">0.6</span><span class="p">},</span>	
+        <span class="p">{</span><span class="s2">&quot;x2&quot;</span><span class="p">,</span>	<span class="mi">6</span><span class="p">,</span>	 <span class="mi">7</span><span class="p">,</span>	 <span class="mi">8</span><span class="p">,</span>	  <span class="mi">9</span><span class="p">}},</span>	  <span class="c1">-- two grups </span>
+  <span class="p">{</span><span class="mi">2</span><span class="p">,</span>   <span class="p">{</span><span class="s2">&quot;x1&quot;</span><span class="p">,</span>	<span class="mf">0.1</span><span class="p">,</span>	 <span class="mf">0.2</span><span class="p">,</span>	 <span class="mf">0.3</span><span class="p">,</span>	  <span class="mf">0.4</span><span class="p">},</span>	
+        <span class="p">{</span><span class="s2">&quot;x2&quot;</span><span class="p">,</span>	<span class="mf">0.1</span><span class="p">,</span>	 <span class="mf">0.2</span><span class="p">,</span>	 <span class="mf">0.3</span><span class="p">,</span>	  <span class="mf">0.4</span><span class="p">},</span>	
+	<span class="p">{</span><span class="s2">&quot;x3&quot;</span><span class="p">,</span>	<span class="mi">6</span><span class="p">,</span>	 <span class="mi">7</span><span class="p">,</span>	 <span class="mi">8</span><span class="p">,</span>	  <span class="mi">9</span><span class="p">}},</span>	 <span class="c1">-- 2 groups</span>
+  <span class="p">{</span><span class="mi">3</span><span class="p">,</span>	<span class="p">{</span><span class="s2">&quot;x1&quot;</span><span class="p">,</span>	<span class="mf">0.34</span><span class="p">,</span>	 <span class="mf">0.49</span><span class="p">,</span>	 <span class="mf">0.51</span><span class="p">,</span>	  <span class="mf">0.6</span><span class="p">},</span>	
+        <span class="p">{</span><span class="s2">&quot;x2&quot;</span><span class="p">,</span>	<span class="mf">0.6</span><span class="p">,</span>	 <span class="mf">0.7</span><span class="p">,</span>	 <span class="mf">0.8</span><span class="p">,</span>	  <span class="mf">0.9</span><span class="p">},</span>	
+        <span class="p">{</span><span class="s2">&quot;x3&quot;</span><span class="p">,</span>	<span class="mf">0.15</span><span class="p">,</span>	 <span class="mf">0.25</span><span class="p">,</span>	 <span class="mf">0.4</span><span class="p">,</span>	  <span class="mf">0.35</span><span class="p">},</span>	
+        <span class="p">{</span><span class="s2">&quot;x4&quot;</span><span class="p">,</span>	<span class="mf">0.6</span><span class="p">,</span>	 <span class="mf">0.7</span><span class="p">,</span>	 <span class="mf">0.8</span><span class="p">,</span>	  <span class="mf">0.9</span><span class="p">},</span>	
+        <span class="p">{</span><span class="s2">&quot;x5&quot;</span><span class="p">,</span>	<span class="mf">0.1</span><span class="p">,</span>	 <span class="mf">0.2</span><span class="p">,</span>	 <span class="mf">0.3</span><span class="p">,</span>	  <span class="mf">0.4</span><span class="p">}},</span>	
+  <span class="p">{</span><span class="mi">1</span><span class="p">,</span>	<span class="p">{</span><span class="s2">&quot;x1&quot;</span><span class="p">,</span>	<span class="mi">101</span><span class="p">,</span>	 <span class="mi">100</span><span class="p">,</span>	 <span class="mi">99</span><span class="p">,</span>	  <span class="mi">101</span><span class="p">,</span>	 <span class="mf">99.5</span><span class="p">},</span>	
+        <span class="p">{</span><span class="s2">&quot;x2&quot;</span><span class="p">,</span>	<span class="mi">101</span><span class="p">,</span>	 <span class="mi">100</span><span class="p">,</span>	 <span class="mi">99</span><span class="p">,</span>	  <span class="mi">101</span><span class="p">,</span>	 <span class="mi">100</span><span class="p">},</span>	
+        <span class="p">{</span><span class="s2">&quot;x3&quot;</span><span class="p">,</span>	<span class="mi">101</span><span class="p">,</span>	 <span class="mi">100</span><span class="p">,</span>	 <span class="mf">99.5</span><span class="p">,</span>	  <span class="mi">101</span><span class="p">,</span>	 <span class="mi">99</span><span class="p">},</span>	
+        <span class="p">{</span><span class="s2">&quot;x4&quot;</span><span class="p">,</span>	<span class="mi">101</span><span class="p">,</span>	 <span class="mi">100</span><span class="p">,</span>	 <span class="mi">99</span><span class="p">,</span>	  <span class="mi">101</span><span class="p">,</span>	 <span class="mi">100</span><span class="p">}},</span>	
+  <span class="p">{</span><span class="mi">1</span><span class="p">,</span>	<span class="p">{</span><span class="s2">&quot;x1&quot;</span><span class="p">,</span>	<span class="mi">11</span><span class="p">,</span>	 <span class="mi">11</span><span class="p">,</span>	 <span class="mi">11</span><span class="p">},</span>	
+        <span class="p">{</span><span class="s2">&quot;x2&quot;</span><span class="p">,</span>	<span class="mi">11</span><span class="p">,</span>	 <span class="mi">11</span><span class="p">,</span>	 <span class="mi">11</span><span class="p">},</span>	
+        <span class="p">{</span><span class="s2">&quot;x3&quot;</span><span class="p">,</span>	<span class="mi">11</span><span class="p">,</span>	 <span class="mi">11</span><span class="p">,</span>	 <span class="mi">11</span><span class="p">}},</span>	
+  <span class="p">{</span><span class="mi">2</span><span class="p">,</span>	<span class="p">{</span><span class="s2">&quot;x1&quot;</span><span class="p">,</span>	<span class="mi">11</span><span class="p">,</span>	 <span class="mi">11</span><span class="p">,</span>	 <span class="mi">11</span><span class="p">},</span>	
+        <span class="p">{</span><span class="s2">&quot;x2&quot;</span><span class="p">,</span>	<span class="mi">11</span><span class="p">,</span>	 <span class="mi">11</span><span class="p">,</span>	 <span class="mi">11</span><span class="p">},</span>	
+        <span class="p">{</span><span class="s2">&quot;x4&quot;</span><span class="p">,</span>	<span class="mi">32</span><span class="p">,</span>	 <span class="mi">33</span><span class="p">,</span>	 <span class="mi">34</span><span class="p">,</span>	<span class="mi">35</span><span class="p">}}}</span>
+
+<span class="kd">local</span> <span class="kr">function</span> <span class="nf">bigTest</span><span class="p">()</span>
+  <span class="kd">local</span> <span class="n">t1</span><span class="p">,</span><span class="n">t2</span><span class="p">,</span><span class="n">t3</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;x1&quot;</span><span class="p">},{</span><span class="s2">&quot;x2&quot;</span><span class="p">},{</span><span class="s2">&quot;x3&quot;</span><span class="p">}</span>
+  <span class="kr">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="mi">256</span> <span class="kr">do</span> <span class="n">t1</span><span class="p">[</span> <span class="o">#</span><span class="n">t1</span><span class="o">+</span><span class="mi">1</span> <span class="p">]</span> <span class="o">=</span> <span class="n">rand</span><span class="p">()</span><span class="o">^</span><span class="mf">0.5</span> <span class="kr">end</span>
+  <span class="kr">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="mi">256</span> <span class="kr">do</span> <span class="n">t2</span><span class="p">[</span> <span class="o">#</span><span class="n">t2</span><span class="o">+</span><span class="mi">1</span> <span class="p">]</span> <span class="o">=</span> <span class="n">rand</span><span class="p">()</span><span class="o">^</span><span class="mi">2</span>   <span class="kr">end</span>
+  <span class="kr">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="mi">256</span> <span class="kr">do</span> <span class="n">t3</span><span class="p">[</span> <span class="o">#</span><span class="n">t3</span><span class="o">+</span><span class="mi">1</span> <span class="p">]</span> <span class="o">=</span> <span class="n">rand</span><span class="p">()</span>     <span class="kr">end</span>
+  <span class="kr">return</span> <span class="p">{</span><span class="mi">3</span><span class="p">,</span>  <span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">t3</span><span class="p">}</span>
+<span class="kr">end</span>
+
+<span class="kr">function</span> <span class="nf">cliffsDelta</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">small</span><span class="p">,</span><span class="n">max</span><span class="p">)</span>
+  <span class="kd">local</span> <span class="n">max</span> <span class="o">=</span> <span class="n">max</span> <span class="ow">or</span> <span class="mi">1000</span>
+  <span class="kd">local</span> <span class="n">small</span> <span class="o">=</span> <span class="n">small</span> <span class="ow">or</span> <span class="mf">0.147</span>
+  <span class="kd">local</span> <span class="n">n</span><span class="p">,</span><span class="n">lt</span><span class="p">,</span><span class="n">gt</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span>
+  <span class="kr">if</span> <span class="o">#</span><span class="n">t1</span> <span class="o">&gt;</span> <span class="n">max</span> <span class="kr">then</span> <span class="n">t1</span> <span class="o">=</span> <span class="n">slice</span><span class="p">(</span><span class="n">shuffle</span><span class="p">(</span><span class="n">t1</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">max</span><span class="p">)</span> <span class="kr">end</span>
+  <span class="kr">if</span> <span class="o">#</span><span class="n">t2</span> <span class="o">&gt;</span> <span class="n">max</span> <span class="kr">then</span> <span class="n">t2</span> <span class="o">=</span> <span class="n">slice</span><span class="p">(</span><span class="n">shuffle</span><span class="p">(</span><span class="n">t2</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">max</span><span class="p">)</span> <span class="kr">end</span>
+  <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">x</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">t1</span><span class="p">)</span> <span class="kr">do</span>
+    <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">y</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">t2</span><span class="p">)</span> <span class="kr">do</span>
+      <span class="n">n</span> <span class="o">=</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span>
+      <span class="kr">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">y</span> <span class="kr">then</span> <span class="n">gt</span> <span class="o">=</span> <span class="n">gt</span> <span class="o">+</span> <span class="mi">1</span> <span class="kr">end</span>
+      <span class="kr">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">y</span> <span class="kr">then</span> <span class="n">lt</span> <span class="o">=</span> <span class="n">lt</span> <span class="o">+</span> <span class="mi">1</span> <span class="kr">end</span> <span class="kr">end</span> <span class="kr">end</span>
+  <span class="kr">return</span> <span class="n">abs</span><span class="p">(</span><span class="n">gt</span> <span class="o">-</span> <span class="n">lt</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="n">small</span> 
+<span class="kr">end</span>
+
+<span class="kr">function</span> <span class="nf">cliffsDeltaOkay</span><span class="p">()</span>
+  <span class="kr">for</span> <span class="n">i</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span> <span class="kr">do</span>
+    <span class="kd">local</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="o">=</span><span class="p">{},{}</span>
+    <span class="kr">for</span> <span class="n">_</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="mi">10000</span> <span class="kr">do</span> <span class="n">a</span><span class="p">[</span><span class="o">#</span><span class="n">a</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">rand</span><span class="p">()</span> <span class="kr">end</span>
+    <span class="kr">for</span> <span class="n">j</span><span class="p">,</span><span class="n">x</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="kr">do</span> <span class="n">b</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="o">*</span><span class="n">i</span><span class="o">/</span><span class="mi">10</span> <span class="kr">end</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">cliffsDelta</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">))</span>
+  <span class="kr">end</span>
+<span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>def cliffsDelta(lst1,lst2,
+                dull = [0.147, # small
+                        0.33,  # medium
+                        0.474 # large
+                        ][0] ):
+  n= gt = lt = 0.0
+  for x in lst1:
+    for y in lst2:
+      n += 1
+      if x &gt; y:  gt += 1
+      if x &lt; y:  lt += 1
+  return abs(lt - gt)/n &gt; dull</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nf">bootstrap</span><span class="p">(</span><span class="n">y0</span><span class="p">,</span> <span class="n">z0</span><span class="p">,</span> <span class="n">conf</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+  <span class="n">b</span> <span class="o">=</span> <span class="n">b</span> <span class="ow">or</span> <span class="mi">512</span>
+  <span class="n">conf</span> <span class="o">=</span> <span class="n">conf</span> <span class="ow">or</span> <span class="mf">0.95</span>
+  <span class="kd">local</span> <span class="kr">function</span> <span class="nf">testStatistic</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span> 
+    <span class="kd">local</span> <span class="n">d</span> <span class="o">=</span> <span class="n">z</span><span class="p">.</span><span class="n">mu</span> <span class="o">-</span> <span class="n">y</span><span class="p">.</span><span class="n">mu</span>
+    <span class="kd">local</span> <span class="n">s</span> <span class="o">=</span> <span class="n">y</span><span class="p">:</span><span class="n">sd</span><span class="p">()</span> <span class="o">+</span> <span class="n">z</span><span class="p">:</span><span class="n">sd</span><span class="p">()</span>
+    <span class="kr">return</span> <span class="n">s</span><span class="o">==</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">delta</span> <span class="ow">or</span>  
+           <span class="n">d</span> <span class="o">/</span> <span class="p">((</span><span class="n">y</span><span class="p">:</span><span class="n">sd</span><span class="p">()</span><span class="o">/</span><span class="n">y</span><span class="p">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">z</span><span class="p">:</span><span class="n">sd</span><span class="p">()</span><span class="o">/</span><span class="n">z</span><span class="p">.</span><span class="n">n</span><span class="p">)</span><span class="o">^</span><span class="mf">0.5</span><span class="p">)</span>
+  <span class="kr">end</span>
+  <span class="kd">local</span> <span class="kr">function</span> <span class="nf">sample</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="kr">for</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="o">#</span><span class="n">t</span> <span class="kr">do</span> <span class="n">u</span><span class="p">[</span> <span class="o">#</span><span class="n">u</span><span class="o">+</span><span class="mi">1</span> <span class="p">]</span> <span class="o">=</span> <span class="n">any</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="kr">end</span>
+    <span class="kr">return</span> <span class="n">u</span>
+  <span class="kr">end</span>
+  <span class="kd">local</span> <span class="n">x</span> <span class="o">=</span> <span class="n">Num</span><span class="p">:</span><span class="n">new</span><span class="p">():</span><span class="n">incs</span><span class="p">(</span><span class="n">y0</span><span class="p">):</span><span class="n">incs</span><span class="p">(</span><span class="n">z0</span><span class="p">)</span>
+  <span class="kd">local</span> <span class="n">y</span> <span class="o">=</span> <span class="n">Num</span><span class="p">:</span><span class="n">new</span><span class="p">():</span><span class="n">incs</span><span class="p">(</span><span class="n">y0</span><span class="p">)</span>
+  <span class="kd">local</span> <span class="n">z</span> <span class="o">=</span> <span class="n">Num</span><span class="p">:</span><span class="n">new</span><span class="p">():</span><span class="n">incs</span><span class="p">(</span><span class="n">z0</span><span class="p">)</span>
+  <span class="kd">local</span> <span class="n">tobs</span> <span class="o">=</span> <span class="n">testStatistic</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+  <span class="kd">local</span> <span class="n">yhat</span><span class="p">,</span> <span class="n">zhat</span> <span class="o">=</span> <span class="p">{},</span> <span class="p">{}</span>
+  <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">y1</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">y0</span><span class="p">)</span> <span class="kr">do</span> <span class="n">yhat</span><span class="p">[</span><span class="o">#</span><span class="n">yhat</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span> <span class="n">y1</span> <span class="o">-</span> <span class="n">y</span><span class="p">.</span><span class="n">mu</span> <span class="o">+</span> <span class="n">x</span><span class="p">.</span><span class="n">mu</span> <span class="kr">end</span>
+  <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">z1</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">z0</span><span class="p">)</span> <span class="kr">do</span> <span class="n">zhat</span><span class="p">[</span><span class="o">#</span><span class="n">zhat</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span> <span class="n">z1</span> <span class="o">-</span> <span class="n">z</span><span class="p">.</span><span class="n">mu</span> <span class="o">+</span> <span class="n">x</span><span class="p">.</span><span class="n">mu</span> <span class="kr">end</span>
+  <span class="kd">local</span> <span class="n">bigger</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="kr">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">b</span> <span class="kr">do</span>
+    <span class="kr">if</span> <span class="n">testStatistic</span><span class="p">(</span> <span class="n">Num</span><span class="p">:</span><span class="n">new</span><span class="p">():</span><span class="n">incs</span><span class="p">(</span><span class="n">sample</span><span class="p">(</span><span class="n">yhat</span><span class="p">)),</span>
+                      <span class="n">Num</span><span class="p">:</span><span class="n">new</span><span class="p">():</span><span class="n">incs</span><span class="p">(</span><span class="n">sample</span><span class="p">(</span><span class="n">zhat</span><span class="p">)))</span> <span class="o">&gt;</span> <span class="n">tobs</span> <span class="kr">then</span>
+      <span class="n">bigger</span> <span class="o">=</span> <span class="n">bigger</span> <span class="o">+</span> <span class="mi">1</span> <span class="kr">end</span> <span class="kr">end</span>
+  <span class="kr">return</span> <span class="n">bigger</span> <span class="o">/</span> <span class="n">b</span> <span class="o">&lt;</span> <span class="n">conf</span>
+<span class="kr">end</span>
+
+<span class="kr">function</span> <span class="nf">bootstrapOkay</span><span class="p">()</span>
+  <span class="kd">local</span> <span class="n">repeats</span><span class="o">=</span><span class="mi">10</span>
+  <span class="kr">for</span> <span class="n">i</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="o">-</span><span class="mi">10</span> <span class="kr">do</span>
+    <span class="kd">local</span> <span class="n">bs</span><span class="p">,</span><span class="n">cd</span><span class="p">,</span><span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span>
+    <span class="kr">for</span> <span class="n">r</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">repeats</span> <span class="kr">do</span>
+      <span class="kd">local</span> <span class="n">l</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">max</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="n">rand</span><span class="p">()</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span>
+      <span class="kd">local</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="o">=</span><span class="p">{},{}</span>
+      <span class="kr">for</span> <span class="n">x</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="mi">3000</span><span class="p">,</span><span class="mi">30</span> <span class="kr">do</span> <span class="n">a</span><span class="p">[</span><span class="o">#</span><span class="n">a</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">weibull</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">1500</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span>       <span class="n">k</span><span class="p">)</span>       <span class="kr">end</span>
+      <span class="kr">for</span> <span class="n">x</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="mi">3000</span><span class="p">,</span><span class="mi">30</span> <span class="kr">do</span> <span class="n">b</span><span class="p">[</span><span class="o">#</span><span class="n">b</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">weibull</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">1500</span><span class="p">,</span> <span class="n">l</span><span class="o">*</span><span class="n">i</span><span class="o">/</span><span class="mi">100</span><span class="p">,</span> <span class="n">k</span><span class="o">*</span><span class="n">i</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span> <span class="kr">end</span>
+      <span class="kd">local</span> <span class="n">same1</span> <span class="o">=</span> <span class="n">bootstrap</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span>
+      <span class="kd">local</span> <span class="n">same2</span><span class="o">=</span> <span class="n">cliffsDelta</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span>  
+      <span class="kr">if</span> <span class="n">same1</span> <span class="kr">then</span> <span class="n">bs</span><span class="o">=</span><span class="n">bs</span><span class="o">+</span><span class="mi">1</span> <span class="kr">end</span>
+      <span class="kr">if</span> <span class="n">same2</span> <span class="kr">then</span> <span class="n">cd</span><span class="o">=</span><span class="n">cd</span><span class="o">+</span><span class="mi">1</span> <span class="kr">end</span>
+      <span class="kr">if</span> <span class="n">same1</span> <span class="ow">or</span> <span class="n">same2</span> <span class="kr">then</span> <span class="n">cnt</span><span class="o">=</span><span class="n">cnt</span><span class="o">+</span><span class="mi">1</span> <span class="kr">end</span> <span class="kr">end</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">int</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">bs</span><span class="o">/</span><span class="n">repeats</span><span class="p">),</span> 
+             <span class="n">int</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">cd</span><span class="o">/</span><span class="n">repeats</span><span class="p">),</span> <span class="n">int</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">cnt</span><span class="o">/</span><span class="n">repeats</span><span class="p">))</span> <span class="kr">end</span>
+<span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>bootstrapOkay()</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nf">bootstrap1Okay</span><span class="p">()</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+  <span class="kd">local</span> <span class="n">repeats</span><span class="o">=</span><span class="mi">30</span>
+  <span class="kr">for</span> <span class="n">i</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="o">-</span><span class="mi">10</span> <span class="kr">do</span>
+    <span class="kd">local</span> <span class="n">bs</span><span class="p">,</span><span class="n">cd</span><span class="p">,</span><span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span>
+    <span class="kr">for</span> <span class="n">r</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">repeats</span> <span class="kr">do</span>
+      <span class="kd">local</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="o">=</span><span class="p">{},{}</span>
+      <span class="kd">local</span> <span class="n">l</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">max</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="n">rand</span><span class="p">()</span><span class="o">*</span><span class="mi">5</span><span class="p">)</span>
+      <span class="kr">for</span> <span class="n">x</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">10</span>  <span class="kr">do</span> <span class="n">a</span><span class="p">[</span><span class="o">#</span><span class="n">a</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">rand</span><span class="p">()</span>      <span class="kr">end</span>
+      <span class="kr">for</span> <span class="n">x</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">10</span>  <span class="kr">do</span> <span class="n">b</span><span class="p">[</span><span class="o">#</span><span class="n">b</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">rand</span><span class="p">()</span><span class="o">*</span><span class="n">i</span><span class="o">/</span><span class="mi">100</span> <span class="kr">end</span>
+      <span class="kd">local</span> <span class="n">same1</span> <span class="o">=</span> <span class="n">bootstrap</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span>
+      <span class="kd">local</span> <span class="n">same2</span><span class="o">=</span> <span class="n">cliffsDelta</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span>  
+      <span class="kr">if</span> <span class="n">same1</span> <span class="kr">then</span> <span class="n">bs</span><span class="o">=</span> <span class="n">bs</span><span class="o">+</span><span class="mi">1</span> <span class="kr">end</span>
+      <span class="kr">if</span> <span class="n">same2</span> <span class="kr">then</span> <span class="n">cd</span><span class="o">=</span> <span class="n">cd</span><span class="o">+</span><span class="mi">1</span> <span class="kr">end</span>
+      <span class="kr">if</span> <span class="n">same1</span> <span class="ow">or</span> <span class="n">same2</span> <span class="kr">then</span> <span class="n">cnt</span><span class="o">=</span><span class="n">cnt</span><span class="o">+</span><span class="mi">1</span> <span class="kr">end</span> <span class="kr">end</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">int</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">bs</span><span class="o">/</span><span class="n">repeats</span><span class="p">),</span> 
+             <span class="n">int</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">cd</span><span class="o">/</span><span class="n">repeats</span><span class="p">),</span> <span class="n">int</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">cnt</span><span class="o">/</span><span class="n">repeats</span><span class="p">))</span> <span class="kr">end</span>
+<span class="kr">end</span>
+
+<span class="n">bootstrap1Okay</span><span class="p">()</span>
+
+<span class="kr">function</span> <span class="nf">bootstrap2Okay</span><span class="p">()</span>
+  <span class="kd">local</span> <span class="n">samples</span> <span class="o">=</span> <span class="kr">function</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span><span class="n">s1</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span><span class="n">s2</span><span class="p">)</span>
+    <span class="kd">local</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">xs</span><span class="o">=</span><span class="p">{},{},{}</span>
+    <span class="kr">for</span> <span class="n">x</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mf">0.1</span> <span class="kr">do</span> 
+      <span class="n">xs</span><span class="p">[</span><span class="o">#</span><span class="n">xs</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
+      <span class="n">a</span><span class="p">[</span><span class="o">#</span><span class="n">a</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">normCdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">s1</span><span class="p">)</span> 
+      <span class="n">b</span><span class="p">[</span><span class="o">#</span><span class="n">b</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span>  <span class="n">normCdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="n">s2</span><span class="p">)</span> 
+      <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">a</span><span class="p">[</span><span class="o">#</span><span class="n">a</span><span class="p">],</span><span class="n">b</span><span class="p">[</span><span class="o">#</span><span class="n">b</span><span class="p">])</span>
+    <span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>print(join(sorted(collect(a,
+     function(z) return round(z,0.001) end))))
+print(join(sorted(collect(b,
+     function(x) return round(x,3) end))))
+rint(join(b))</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="kd">local</span> <span class="n">n1</span><span class="o">=</span><span class="n">Num</span><span class="p">:</span><span class="n">new</span><span class="p">():</span><span class="n">incs</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="kd">local</span> <span class="n">n2</span><span class="o">=</span><span class="n">Num</span><span class="p">:</span><span class="n">new</span><span class="p">():</span><span class="n">incs</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">n1</span><span class="p">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">n1</span><span class="p">:</span><span class="n">sd</span><span class="p">(),</span> <span class="n">n2</span><span class="p">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">n2</span><span class="p">:</span><span class="n">sd</span><span class="p">())</span>
+    <span class="kd">local</span> <span class="n">same1</span> <span class="o">=</span> <span class="n">bootstrap</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span>
+    <span class="kd">local</span> <span class="n">same2</span> <span class="o">=</span> <span class="n">cliffsDelta</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span>  
+    <span class="nb">print</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span><span class="n">m2</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span><span class="n">s2</span><span class="p">,</span> <span class="n">same1</span><span class="p">,</span> <span class="n">same2</span><span class="p">,</span> <span class="n">same1</span> <span class="ow">or</span> <span class="n">same2</span><span class="p">)</span> 
+  <span class="kr">end</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+  <span class="n">samples</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span>  <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>samples(1, 0.1, 0.5, 0.1)
+samples(-0.1, 0.1, 0.1, 0.1)</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">end</span>
+
+<span class="n">bootstrap2Okay</span><span class="p">()</span>
+
+<span class="kr">function</span> <span class="nf">same</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span><span class="n">t2</span><span class="p">)</span>
+  <span class="kr">return</span> <span class="n">cliffsDelta</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span><span class="n">t2</span><span class="p">)</span> <span class="ow">or</span> <span class="n">bootstrap</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span><span class="n">t2</span><span class="p">)</span>
+<span class="kr">end</span>
+
+<span class="n">Pairs</span> <span class="o">=</span> <span class="n">Any</span><span class="p">:</span><span class="n">new</span><span class="p">{</span><span class="n">all</span><span class="p">,</span> <span class="n">stats</span><span class="p">}</span>
+<span class="kr">function</span> <span class="nc">Pairs</span><span class="p">:</span><span class="nf">new</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+  <span class="n">m</span> <span class="o">=</span> <span class="nb">getmetatable</span><span class="p">(</span><span class="n">self</span><span class="p">)</span>
+  <span class="n">x</span> <span class="o">=</span> <span class="n">Pairs</span><span class="p">:</span><span class="n">new</span><span class="p">(</span><span class="n">self</span><span class="p">)</span>
+  <span class="n">x</span><span class="p">.</span><span class="n">all</span>   <span class="o">=</span> <span class="n">t</span>
+  <span class="n">x</span><span class="p">.</span><span class="n">stats</span> <span class="o">=</span> <span class="n">Num</span><span class="p">:</span><span class="n">new</span><span class="p">():</span><span class="n">incs</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+  <span class="kr">return</span> <span class="n">x</span>
+<span class="kr">end</span>
+
+<span class="kr">function</span> <span class="nc">Pairs</span><span class="p">.</span><span class="nf">_lt</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span> <span class="kr">return</span> <span class="n">a</span><span class="p">.</span><span class="n">stats</span><span class="p">.</span><span class="n">mu</span> <span class="o">&lt;</span> <span class="n">b</span><span class="p">.</span><span class="n">stats</span><span class="p">.</span><span class="n">mu</span> <span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>function scottknott(data,cohen, small, epsilon)
+  cohen = cohen or 0.3
+  local all = {}
+  for _,one in pairs(data) do all:incs(one.all) end
+  small = small or all.stats:sd()*cohen
+  local function div(1, #data, all)
+    local left,right = Num:new(), Num:new():incs(all)    </p>
+<p>local function split(data, lo, ho)
+  all  = reduce(lambda x,y:x+y,data)
+  same = lambda l,r: abs(l.median() - r.median()) &lt;= all.s()*cohen
+  if useA12:
+    same = lambda l, r:   not different(l.all,r.all) 
+  big  = lambda    n: n &gt; small
+  return rdiv(data,all,minMu,big,same,epsilon)</p>
+<p>def rdiv(data,  # a list of class Nums
+         all,   # all the data combined into one num
+         div,   # function: find the best split
+         big,   # function: rejects small splits
+         same, # function: rejects similar splits
+         epsilon): # small enough to split two parts
+  """Looks for ways to split sorted data, 
+  Recurses into each split. Assigns a 'rank' number
+  to all the leaf splits found in this way. 
+  """
+  def recurse(parts,all,rank=0):
+    "Split, then recurse on each part."
+    cut,left,right = maybeIgnore(div(parts,all,big,epsilon),
+                                 same,parts)
+    if cut: 
+      # if cut, rank "right" higher than "left"
+      rank = recurse(parts[:cut],left,rank) + 1
+      rank = recurse(parts[cut:],right,rank)
+    else: 
+      # if no cut, then all get same rank
+      for part in parts: 
+        part.rank = rank
+    return rank
+  recurse(sorted(data),all)
+  return data</p>
+<p>def maybeIgnore((cut,left,right), same,parts):
+  if cut:
+    if same(sum(parts[:cut],Num('upto')),
+            sum(parts[cut:],Num('above'))):  <br />
+      cut = left = right = None
+  return cut,left,right</p>
+<p>def minMu(parts,all,big,epsilon):
+  """Find a cut in the parts that maximizes
+  the expected value of the difference in
+  the mean before and after the cut.
+  Reject splits that are insignificantly
+  different or that generate very small subsets.
+  """
+  cut,left,right = None,None,None
+  before, mu     =  0, all.mu
+  for i,l,r in leftRight(parts,epsilon):
+    if big(l.n) and big(r.n):
+      n   = all.n * 1.0
+      now = l.n/n*(mu- l.mu)<strong>2 + r.n/n*(mu- r.mu)</strong>2<br />
+      if now &gt; before:
+        before,cut,left,right = now,i,l,r
+  return cut,left,right</p>
+<p>def leftRight(parts,epsilon=The.epsilon):
+  """Iterator. For all items in 'parts',
+  return everything to the left and everything
+  from here to the end. For reasons of
+  efficiency, take a first pass over the data
+  to pre-compute and cache right-hand-sides
+  """
+  rights = {}
+  n = j = len(parts) - 1
+  while j &gt; 0:
+    rights[j] = parts[j]
+    if j &lt; n: rights[j] += rights[j+1]
+    j -=1
+  left = parts[0]
+  for i,one in enumerate(parts):
+    if i&gt; 0:
+      if parts[i]._median - parts[i-1]._median &gt; epsilon:
+        yield i,left,rights[i]
+      left += one
+"""</p>
+<h2>Putting it All Together</h2>
+<p>Driver for the demos:</p>
+<p>"""
+def rdivDemo(data):
+  def zzz(x):
+    return int(100 * (x - lo) / (hi - lo + 0.00001))
+  data = map(lambda lst:Num(lst[0],lst[1:]),
+             data)
+  print("")
+  ranks=[]
+  for x in scottknott(data,useA12=True):
+    ranks += [(x.rank,x.median(),x)]
+  all=[]
+  for _,<strong>,x in sorted(ranks): all += x.all
+  all = sorted(all)
+  lo, hi = all[0], all[-1]
+  line = "----------------------------------------------------"
+  last = None
+  print(('%4s , %12s ,    %s   , %4s ' % \
+               ('rank', 'name', 'med', 'iqr'))+ "\n"+ line)
+  for _,</strong>,x in sorted(ranks):
+    q1,q2,q3 = x.quartiles()
+    print(('%4s , %12s ,    %4s  ,  %4s ' % \
+                 (x.rank+1, x.name, q2, q3 - q1))  + \
+              xtile(x.all,lo=lo,hi=hi,width=30,show="%5.2f"))
+    last = x.rank </p>
+<p>def _rdivs():
+  seed(1)
+  rdiv0();  rdiv1(); rdiv2(); rdiv3(); 
+  rdiv5(); rdiv6(); print("###"); rdiv7()</p>
+<h6></h6>
+<p>def thing(x):
+    "Numbers become numbers; every other x is a symbol."
+    try: return int(x)
+    except ValueError:
+        try: return float(x)
+        except ValueError:
+            return x</p>
+<p>def main():
+  log=None
+  all={}
+  now=[]
+  for line in sys.stdin:
+    for word in line.split():
+      word = thing(word)
+      if isinstance(word,str):
+        now = all[word] = all.get(word,[])
+      else:
+        now += [word]
+  rdivDemo( [ [k] + v for k,v in all.items() ] ) </p>
+<p>if args.demo:
+  _rdivs()
+else:
+  main()</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>
