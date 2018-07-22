@@ -70,6 +70,8 @@ local function div(data,rows,few,        rank, bad, best)
   return rank 
 end
 
+
+-- Main function
 local function fastdom(data,rows)
   few = max(The.dom.few, (#rows)^The.dom.power)
   div(data, rows, few) 

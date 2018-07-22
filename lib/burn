@@ -177,7 +177,8 @@ help() {
   hello
   echo -n $ltyl; banner; echo -n $white
   cat<<-EOF
-	./$What FILE       	run FILE.awk
+	./$What FILE       	run FILE.lua
+	./$What FILE.lua       	run FILE.lua
 	./$What ed FILE		edit FILE 
 	./$What eds 		edit all *.lua in VIM tab mode 
 	./$What okay 		run all tests
