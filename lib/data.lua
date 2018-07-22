@@ -1,4 +1,6 @@
 require "csv"
+require "row"
+fastdom = require "fastdom"
 
 ------------------------------
 -- ## Data class
@@ -21,11 +23,6 @@ Data = Any:new{
   x  ={nums={}, syms={}, cols={}}, -- all independents
   y  ={nums={}, syms={}, cols={},  -- all dependent columns
        less={}, more={}}}  
-
-Row = Any:new{cells, _dom, best=false}
-
--------------------------------------------------
--- ## Data Methods
 
 -- ### Data:csv(file: string)
 -- Read data in  from `file`. Return `self`.
@@ -75,114 +72,20 @@ function Data:head(columns)
     push(it, self.all.cols); push(it, self[xy][ako]) end 
 end
 
--------------------------------------------------
--- ## Row Methods
+function Data:doms(how,rows)
+  how  = how or false
+  rows = rows or self.rows
+  if   how
+  then fastdom(self,rows)
+  else for _,row in pairs(rows) do
+         row.dom = row:ndom(data,rows) end end
+ end
 
--- ### Row:dom(row2:row, nums: list of Num): boolean
--- Returns true if self dominates row2.
--- Computed using the row cells found in `nums`
--- and the Zilter continuous domination indicator
--- (so should work for many more goals than just 2).
-function Row:dom(j, data) 
-  local nums = data.y.nums
-  local s1, s2, n, z = 0, 0, #nums, The.zip
-  for _,num in pairs(nums) do
-    local a = self.cells[ num.pos ]
-    local b =    j.cells[ num.pos ]
-    a       = (a - num.lo) / (num.hi - num.lo + z)
-    b       = (b - num.lo) / (num.hi - num.lo + z)
-    s1      = s1 - 10^(num.w * (a - b) / n)
-    s2      = s2 - 10^(num.w * (b - a) / n) end
-  return s1 / n < s2 / n 
-end
-
--- ### Row:ndominates(d: data): integer
--- Returns a count how how rows in `d` are domianted by self.
-function Row:ndom(data, others)
-  local n = 0
-  for _,row in pairs(others) do
-    if self:dom(row, data) then n=n+1 end end 
-  return n 
-end
-
-function Row:has(data, y,z)
-  local t={}
-  for _,head in pairs(data[y][z]) do
-    t[ head.txt ] = self.cells[head.pos] end
-  return t
-end
-
-do
- local function dist(i, j,data)
-    --print(data)
-    local d,n,z = 0,The.zip,The.zip
-    for _,num  in pairs(data.y.nums) do
-        local a = i.cells[ num.pos ]
-        local b = j.cells[ num.pos ]
-        a = (a - num.lo) / (num.hi - num.lo + z)
-        b = (b - num.lo) / (num.hi - num.lo + z)
-        d = d + (a-b)^2
-        n = n + 1 end
-    return d^0.5 / n^0.5 
-  end
-  local function furthest(i, lst, data)
-    local most,out = -1,i
-    for _,j in pairs(lst) do
-      local d = dist(i,j, data)
-      if d > most then most,out = d,j end end
-    return out
-  end
-  local function div(data, t, few, rank, down, up)
-    rank = rank or 1
-    if #t < few then
-      for _,one in pairs(t) do
-        rank = rank + 1
-        one.dom = rank end
-    else
-      down = down or furthest(any(t), t, data)
-      up   = up   or furthest(down,   t, data)
-      if down:dom(up,data) then down,up=up,down end
-      local c  = dist(down,up, data)
-      local c1 = c + The.dom.tiny
-      local tmp = {}
-      for pos,row in pairs(t) do
-        local a = dist(down, row, data)
-        local b = dist(up, row, data)
-        if a > c1 then print(1); return div(data, t, few,rank, row, down) end
-        if b > c1 then print(2); return div(data, t, few,rank, row, up) end
-        local x = (a*a + c*c - b*b) / (2*c + The.zip)
-        tmp[ #tmp+1 ] = {x,row} 
-      end
-      tmp = sorted(tmp,function(x,y) return x[1] < y[1] end)
-      for i,one in pairs(tmp) do tmp[i] = one[2] end
-      local mid = int(#t/2)
-      rank = div(data, slice(tmp,    1, mid),  few, rank)
-      rank = div(data, slice(tmp,mid+1, #tmp), few, rank) 
-    end
-    return rank 
-  end
-  local function dom(data, rows)
-    for _,row in pairs(rows) do
-      row.dom = row:ndom(data,rows) end
-  end
-  local function fastdom(data,rows)
-    few = max(The.dom.few, (#rows)^The.dom.power)
-    --few = #rows *0.1
-    local tmp
-    print("when",few, when(function() tmp=div(data, rows, few) end))
-    return tmp
-  end
-  function Data:bests(how,   row)
-    rows = rows or self.rows
-    if   how
-    then fastdom(self,rows)
-    else  dom(self,rows) 
-    end
+function Data:bests(how,rows)
+    self:doms(how,rows)
     rows = sorted(rows,function(a, b) return a.dom > b.dom end)
     best = rows[ int(#rows*0.2) ].dom
-    print(rows[1].dom, rows[ int(#rows*0.2) ].dom)
     return function(r) return r.dom >= best end
-  end
 end
 
 --Find the corners of the smallest hyperrectangle which bounds your points. This can be done in O(n⋅d) time (by computing the maximum and minimum values in each dimension). Note that there are 2d corners in a d−
@@ -224,7 +127,7 @@ function domOkay()
   --dataOkay("auto"):bests(true)
   --dataOkay("auto10K"):bests(true)
   -- dataOkay("auto100K"):bests(true)
-  dataOkay("auto1000K"):bests(true)
+  dataOkay("auto"):bests(true)
   --for _,row in pairs(d.rows) do print(row.id, row.dom) end
   --for _,row in pairs(d.rows) do print(row.dom) end
 end
