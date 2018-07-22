@@ -73,8 +73,6 @@ function Data:head(columns)
 end
 
 function Data:doms(how,rows)
-  how  = how or false
-  rows = rows or self.rows
   if   how
   then fastdom(self,rows)
   else for _,row in pairs(rows) do
@@ -82,10 +80,12 @@ function Data:doms(how,rows)
  end
 
 function Data:bests(how,rows)
-    self:doms(how,rows)
-    rows = sorted(rows,function(a, b) return a.dom > b.dom end)
-    best = rows[ int(#rows*0.2) ].dom
-    return function(r) return r.dom >= best end
+  how  = how or false
+  rows = rows or self.rows
+  self:doms(how,rows)
+  rows = sorted(rows,function(a, b) return a.dom > b.dom end)
+  best = rows[ int(#rows*0.2) ].dom
+  return function(r) return r.dom >= best end
 end
 
 --Find the corners of the smallest hyperrectangle which bounds your points. This can be done in O(n⋅d) time (by computing the maximum and minimum values in each dimension). Note that there are 2d corners in a d−
