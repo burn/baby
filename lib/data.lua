@@ -78,12 +78,12 @@ end
 -------------------------------------------------
 -- ## Row Methods
 
--- ### Row:dominates(row2:row, nums: list of Num): boolean
+-- ### Row:dom(row2:row, nums: list of Num): boolean
 -- Returns true if self dominates row2.
 -- Computed using the row cells found in `nums`
 -- and the Zilter continuous domination indicator
 -- (so should work for many more goals than just 2).
-function Row:dominates(j, data) 
+function Row:dom(j, data) 
   local nums = data.y.nums
   local s1, s2, n, z = 0, 0, #nums, The.zip
   for _,num in pairs(nums) do
@@ -98,10 +98,10 @@ end
 
 -- ### Row:ndominates(d: data): integer
 -- Returns a count how how rows in `d` are domianted by self.
-function Row:ndominates(data, others)
+function Row:ndom(data, others)
   local n = 0
   for _,row in pairs(others) do
-    if self:dominates(row, data) then n=n+1 end end 
+    if self:dom(row, data) then n=n+1 end end 
   return n 
 end
 
@@ -111,101 +111,78 @@ function Row:has(data, y,z)
     t[ head.txt ] = self.cells[head.pos] end
   return t
 end
-	  
-     
--- ### Data:bests(): best:table, scores:table
--- For the best rows, set as `row.best=true'.
--- (the top `The.data.best` rows as computed
--- by the domination score).
-function Data:bests(x,    w)
-  local regrow = 1.5 
-  local want   = min(1024, #self.rows)
-  local nbest  = max(want*0.1, want^The.data.best)
-  local rest   = Sample:new{max=nbest}
 
-  local function elite(rows)
-    local u, best = {},{}
-    for _,row in pairs(rows) do 
-      u[row.id] = row:ndominates(self,rows) end
-    local gt= function(x,y) return u[x.id] > u[y.id] end
-    for pos, row in pairs(sorted(rows, gt)) do
-      if pos > want then break end
-      if pos > nbest then rest:inc(row) 
-	             else best[#best+1] = row end end
-    w={}
-    for _,row in pairs(best) do 
-      w[row.id] = (u[row.id] + #rest.all) / 
-                   (#best    + #rest.all) end
-    return best, best[#best] end
-
-  local b4,after    = anys(self.rows, want)
-  local best, worst = elite(b4)
-  local changed = false
-  for _,row in pairs(after) do
-     if   row:dominates(worst, self) 
-     then best[ #best+1 ] = row  
-	  changed = true
-     else rest:inc(row) 
-     end
-     if   #best >= regrow * nbest 
-     then best,worst= elite(best) 
-          changed = true end end
-  if changed then best = elite(best) end
-  local out = {}
-  for _,row in pairs(best) do out[row.id] = row end
-  return out, w
-end
-
-function fastdom(data)
-  function dist(i, j)
-    local d,n = 0,The.zip
+do
+ local function dist(i, j,data)
+    --print(data)
+    local d,n,z = 0,The.zip,The.zip
     for _,num  in pairs(data.y.nums) do
-      local a = i.cells[ num.pos ]
-      local b = j.cells[ num.pos ]
-      a = (a - num.lo) / (num.hi - num.lo + z)
-      b = (b - num.lo) / (numlhi - num.lo + z)
-      d = d + (a-b)^2
-      n = n + 1 end
+        local a = i.cells[ num.pos ]
+        local b = j.cells[ num.pos ]
+        a = (a - num.lo) / (num.hi - num.lo + z)
+        b = (b - num.lo) / (num.hi - num.lo + z)
+        d = d + (a-b)^2
+        n = n + 1 end
     return d^0.5 / n^0.5 
   end
-  function furthest(i, lst)
+  local function furthest(i, lst, data)
     local most,out = -1,i
     for _,j in pairs(lst) do
-      local d = dist(i,j)
+      local d = dist(i,j, data)
       if d > most then most,out = d,j end end
     return out
   end
-  function div(t, rank, neg, pos)
+  local function div(data, t, few, rank, down, up)
     rank = rank or 1
     if #t < few then
       for _,one in pairs(t) do
         rank = rank + 1
         one.dom = rank end
     else
-      neg = neg or furthest(any(t), t)
-      pos = pos or furthest(neg,    t)
-      if neg.dominates(pos,data) then neg,pos=pos,neg end
-      local c  = dist(neg,pos)
+      down = down or furthest(any(t), t, data)
+      up   = up   or furthest(down,   t, data)
+      if down:dom(up,data) then down,up=up,down end
+      local c  = dist(down,up, data)
       local c1 = c + The.dom.tiny
       local tmp = {}
-      for _,row in pairs(t) do
-        local a = dist(neg, row)
-        local b = dist(pos, row)
-        if a > c1 then return div(t,rank,row,neg) end
-        if b > c1 then return div(t,rank,row,pos) end
+      for pos,row in pairs(t) do
+        local a = dist(down, row, data)
+        local b = dist(up, row, data)
+        if a > c1 then print(1); return div(data, t, few,rank, row, down) end
+        if b > c1 then print(2); return div(data, t, few,rank, row, up) end
         local x = (a*a + c*c - b*b) / (2*c + The.zip)
         tmp[ #tmp+1 ] = {x,row} 
       end
       tmp = sorted(tmp,function(x,y) return x[1] < y[1] end)
       for i,one in pairs(tmp) do tmp[i] = one[2] end
       local mid = int(#t/2)
-      rank = div( slice(tmp,    1, mid),  rank)
-      rank = div( slice(tmp,mid+1, #tmp), rank) 
+      rank = div(data, slice(tmp,    1, mid),  few, rank)
+      rank = div(data, slice(tmp,mid+1, #tmp), few, rank) 
     end
     return rank 
   end
-  few = max(The.dom.few, #data.rows^The.dom.power)
-  return div(data.rows)
+  local function dom(data, rows)
+    for _,row in pairs(rows) do
+      row.dom = row:ndom(data,rows) end
+  end
+  local function fastdom(data,rows)
+    few = max(The.dom.few, (#rows)^The.dom.power)
+    --few = #rows *0.1
+    local tmp
+    print("when",few, when(function() tmp=div(data, rows, few) end))
+    return tmp
+  end
+  function Data:bests(how,   row)
+    rows = rows or self.rows
+    if   how
+    then fastdom(self,rows)
+    else  dom(self,rows) 
+    end
+    rows = sorted(rows,function(a, b) return a.dom > b.dom end)
+    best = rows[ int(#rows*0.2) ].dom
+    print(rows[1].dom, rows[ int(#rows*0.2) ].dom)
+    return function(r) return r.dom >= best end
+  end
 end
 
 --Find the corners of the smallest hyperrectangle which bounds your points. This can be done in O(n⋅d) time (by computing the maximum and minimum values in each dimension). Note that there are 2d corners in a d−
@@ -228,7 +205,7 @@ end
 -------------------------------------------------
 -- ## Test Stuff
 local function dataOkay(f)
-  roguesOkay()
+  --oguesOkay()
   return Data:new():csv("../data/".. f .. ".csv") end 
   
 function autoOkay()      dataOkay("auto") end
@@ -244,19 +221,18 @@ function weatherOkay()
   assert( close( d.all.nums[1]:sd(),   6.57, 1) )  end
 
 function domOkay()
-  local d = dataOkay("auto")
-  local best,w = d:bests()  
-  print("\t");for _,n in pairs(d.y.nums) do say(n.w .. "\t") end; print("")
-  for _,one in pairs(best) do 
-     say( w[one.id] .. "\t")
-     for _,n in pairs(d.y.nums) do 
-      say(int(100*n:norm(one.cells[n.pos])) .. "\t") end 
-      print(one.id) end 
+  --dataOkay("auto"):bests(true)
+  --dataOkay("auto10K"):bests(true)
+  -- dataOkay("auto100K"):bests(true)
+  dataOkay("auto1000K"):bests(true)
+  --for _,row in pairs(d.rows) do print(row.id, row.dom) end
+  --for _,row in pairs(d.rows) do print(row.dom) end
 end
 
 function attrOkay()
   local d= dataOkay("auto")
-  local best,w = d:bests()
+  d:bests(true)
+
   local y = function(row) return w[row.id] or 0 end
   for _, row in pairs(best) do
      if y(row) > 0 then
@@ -265,5 +241,5 @@ end
 -------------------------------------------------
 -- ## Main Stuff
 --main{data=weatherOkay}
-main{data=attrOkay}
-
+-- main{data=domOkay}
+domOkay()

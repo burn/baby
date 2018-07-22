@@ -349,7 +349,7 @@ end
 -- e.g. `main{lib=doThis}` will call `doThis()` if
 -- the environment variable MAIN equals `lib`.
 function main(com) 
-  roguesOkay()
+  --roguesOkay()
   for s,f in pairs(com) do
     if s == os.getenv("MAIN") then return f() end end end
 
@@ -409,6 +409,14 @@ function sampleOkay()
   table.sort(s.all)
   print(join(s.all)) 
 end
+
+function when(f, r)
+   r= r or 1
+   local t1=os.clock()
+   for _=1,r do f() end
+   return (os.clock() - t1)/ r
+end
+
 
 -- main{lib=tests}
 main{lib = sampleOkay}
