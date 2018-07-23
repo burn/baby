@@ -1,11 +1,11 @@
 -------------------------------------------------------------
 -- ## Object Stuff
 
--- ### Any:new(o)
+-- ### Object:new(o)
 -- Create the `any` base object
-local Any={}
+local Object={}
 
-function Any:new(o)
+function Object:new(o)
   o = o or {}   -- create object if user does not provide one
   setmetatable(o, self)
   if not self.id then self.id=0 end
@@ -15,4 +15,4 @@ function Any:new(o)
   return o
 end
 
-return Any
+return Object
