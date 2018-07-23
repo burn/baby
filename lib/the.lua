@@ -1,4 +1,6 @@
-function defaults() return {
+local The={}
+
+function The.defaults() return {
   ignore= "?",
   sep=    ",",
   inf=    10^32,
@@ -32,4 +34,4 @@ function defaults() return {
           } 
 end
 
-The=defaults()
+return The.defaults()
