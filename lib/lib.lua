@@ -349,7 +349,7 @@ end
 -- e.g. `main{lib=doThis}` will call `doThis()` if
 -- the environment variable MAIN equals `lib`.
 function main(com) 
-  --roguesOkay()
+  roguesOkay()
   for s,f in pairs(com) do
     if s == os.getenv("MAIN") then return f() end end end
 
@@ -402,6 +402,13 @@ function Sample:inc(x)
   return x 
 end
 
+function Sample:tiles(ps)
+  t= sorted(self.all)
+  local u = {}
+  for _,p in pairs(ps) do u[#u+1] = t[ int(#t*p/100) ] end
+  return u
+end
+
 function sampleOkay()
   rseed(1)
   local s=Sample:new{max=10}
@@ -420,5 +427,4 @@ end
 
 -- main{lib=tests}
 main{lib = sampleOkay}
-
 

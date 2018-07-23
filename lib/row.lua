@@ -4,7 +4,6 @@ Row = Any:new{cells, _dom, best=false}
 
 -------------------------------------------------
 -- ## Row Methods
-
 function Row:has(data, y,z)
   local t={}
   for _,head in pairs(data[y][z]) do
@@ -12,13 +11,12 @@ function Row:has(data, y,z)
   return t
 end
 
-
 -- ### Row:dom(row2:row, nums: list of Num): boolean
 -- Returns true if self dominates row2.
 -- Computed using the row cells found in `nums`
 -- and the Zilter continuous domination indicator
 -- (so should work for many more goals than just 2).
-function Row:dom(j, data) 
+function Row:dominates(j, data) 
   local nums = data.y.nums
   local s1, s2, n, z = 0, 0, #nums, The.zip
   for _,num in pairs(nums) do
@@ -31,13 +29,12 @@ function Row:dom(j, data)
   return s1 / n < s2 / n 
 end
 
--- ### Row:ndominates(d: data): integer
+-- #### Row:ndominates(d: data): integer
 -- Returns a count how how rows in `d` are domianted by self.
-function Row:ndom(data, others)
+function Row:ndominates(data, others)
   local n = 0
   for _,row in pairs(others) do
-    if self:dom(row, data) then n=n+1 end end 
+    if self:dominates(row, data) then n=n+1 end end 
   return n 
 end
-
 

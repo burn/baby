@@ -46,18 +46,18 @@ local function div(data,rows,few,        rank, bad, best)
       one.dom = rank end
   else
     bad,best = distantPoints(data,rows,bad,best)
-    if bad:dom(best,data) then 
+    if bad:dominates(best,data) then 
       bad,best = best,bad end
     local c  = dist(bad,best, data)
     local c1 = c + The.dom.tiny
     local tmp = {}
     for pos,row in pairs(rows) do
-      local a = dist(bad, row, data)
+      local a = dist(bad,  row, data)
       local b = dist(best, row, data)
       if a > c1 then 
-	 return div(data, rows, few,rank, row, bad) end
+	return div(data, rows, few, rank, row,  bad) end
       if b > c1 then 
-	 return div(data, rows, few,rank, row, best) end
+	return div(data, rows, few, rank, row, best) end
       local x = (a*a + c*c - b*b) / (2*c + The.zip)
       tmp[ #tmp+1 ] = {x,row} 
     end

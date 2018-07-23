@@ -76,7 +76,7 @@ function Data:doms(how,rows)
   if   how
   then fastdom(self,rows)
   else for _,row in pairs(rows) do
-         row.dom = row:ndom(data,rows) end end
+         row.dom = row:ndominates(self,rows) end end
  end
 
 function Data:bests(how,rows)
@@ -87,23 +87,6 @@ function Data:bests(how,rows)
   best = rows[ int(#rows*0.2) ].dom
   return function(r) return r.dom >= best end
 end
-
---Find the corners of the smallest hyperrectangle which bounds your points. This can be done in O(n⋅d) time (by computing the maximum and minimum values in each dimension). Note that there are 2d corners in a d−
-
---dimensional hyperrrectangle.
-
---Next, find a point in your data set which closest (using the Manhattan metric) to each of your 2d
---corners and lies on a face of your hyperrectangle (done in O(n⋅2d⋅d)
-
---time).
-
---Find the farthest points (using the Manhattan metric) amongst these 2d
---points (done in O(22d⋅d)
-
---time.
-
---The time complexity for this algorithm is O(n⋅d+n⋅2d⋅d+22d⋅d)=O(n⋅2d⋅d)
--- if n≥2d.
 
 -------------------------------------------------
 -- ## Test Stuff
@@ -124,18 +107,26 @@ function weatherOkay()
   assert( close( d.all.nums[1]:sd(),   6.57, 1) )  end
 
 function domOkay()
-  --dataOkay("auto"):bests(true)
-  --dataOkay("auto10K"):bests(true)
-  -- dataOkay("auto100K"):bests(true)
-  dataOkay("auto"):bests(true)
-  --for _,row in pairs(d.rows) do print(row.id, row.dom) end
-  --for _,row in pairs(d.rows) do print(row.dom) end
+  for _,f in pairs{"auto", "auto1K", 
+	           "auto2K", "auto3K" } do
+	  --"auto10K", --"auto100K", --"auto1000K"} do
+     say(f)
+     local d = dataOkay(f)
+     local fast = {}
+     say(" " .. when(function() d:bests(true) end)) 
+     for _,row in pairs(d.rows) do
+       fast[row.id] = row.dom end
+     say(" " .. when(function() d:bests() end)) 
+     local some = Sample:new()
+     for _,row in pairs(d.rows) do
+       some:inc(row.dom - fast[row.id]) end 
+     print(" ", join(some:tiles{10,30,50,70,90}))
+  end
 end
 
 function attrOkay()
   local d= dataOkay("auto")
   d:bests(true)
-
   local y = function(row) return w[row.id] or 0 end
   for _, row in pairs(best) do
      if y(row) > 0 then
@@ -144,5 +135,4 @@ end
 -------------------------------------------------
 -- ## Main Stuff
 --main{data=weatherOkay}
--- main{data=domOkay}
-domOkay()
+ main{data=domOkay}
