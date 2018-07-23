@@ -4,6 +4,7 @@
 -- ### Any:new(o)
 -- Create the `any` base object
 local Any={}
+
 function Any:new(o)
   o = o or {}   -- create object if user does not provide one
   setmetatable(o, self)
@@ -13,15 +14,5 @@ function Any:new(o)
   self.__index = self
   return o
 end
-
-function anyOkay()
-  local x,y = Any:new(), Any:new()
-  x.sub = y
-  y.sub = x
-  x.lname="tim"; x.fname="menzies"
-  assert(y.id == 1 + x.id) 
-end
-
-main{any=anyOkay}
 
 return Any

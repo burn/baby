@@ -3,26 +3,21 @@
 
 local Test={}
 
-Test.all={}
+TRY, FAIL=0,0
 
 -- ### tests()
 -- Run any function ending in "Ok". Report number of failures.
-function Test.ok()
-  local try,fail=0,0
-  local function go(goal)
-    for k,f in ordered( _G ) do
-      if type(f) == "function" and match(k,goal .. "$") then
-        print("-- Testing if " .. k .. "?")
-        The = defaults()
-        try = try + 1
-        local passed,err = pcall(f)
-        if not passed then 
-          fail = fail + 1
-          print("-- E> Failure: " .. err)  end end end end
-   for _,v in pairs{"Okay","OkaY","OkAY","OKAY"} do go(v) end
-   print("-- Failures: ".. 1-((try-fail)/try) .. "%") 
-end
+function Test.ok(f)
+    TRY = TRY + 1
+    local passed,err = pcall(f)
+    if not passed then 
+       FAIL = FAIL + 1
+       print("-- E> Failure 11: " .. err)  end  
+end 
 
+function Test.report()
+  print("-- Failures: ".. 1-((TRY-FAIL)/try) .. "%") 
+end
 -- ### Test:rogues()
 -- Checked for escaped local. Report number of assertion failures.
 function Test.rogues()
