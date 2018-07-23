@@ -1,4 +1,7 @@
 local Object=require "object"
+local Lib=require "lib"
+
+local rand,int,min,max = Lib.rand, Lib.int, Lib.min, Lib.max
 
 -------------------------------------------------------------
 -- ## Sampling Stuff
@@ -6,7 +9,7 @@ local Object=require "object"
 local Sample = Object:new{max=The.sample.max, n=0, all}
 
 function Sample:new(spec) 
-  x=Any.new(self,spec) 
+  x=Object.new(self,spec) 
   x.all = {}
   x.sorted = false
   return x 
@@ -36,7 +39,7 @@ end
 
 function Sample:yth(y)
   local t= self:ordered()
-  y = math.floor(0.5 + y*#all)
+  y = int(0.5 + y*#all)
   y = min( #all, max( 1, want))
   return t[y] end
 

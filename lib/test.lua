@@ -1,26 +1,30 @@
 -------------------------------------------------------------
 -- ## Unit Test  Stuff
 
-local Test={}
+require "burn"
+Burn.sys.tests={try=0, fail=0}
 
-TRY, FAIL=0,0
+local my=Burn.sys.tests
 
 -- ### tests()
 -- Run any function ending in "Ok". Report number of failures.
-function Test.ok(f)
-    TRY = TRY + 1
+local function ok(t)
+  for x,f in pairs(t) do
+    print("-- Checking ".. x .."... ")
+    my.try = my.try + 1
     local passed,err = pcall(f)
     if not passed then 
-       FAIL = FAIL + 1
-       print("-- E> Failure 11: " .. err)  end  
+      my.fail = my.fail+1
+      print("-- E> Failure: " .. err) end end  
 end 
 
-function Test.report()
-  print("-- Failures: ".. 1-((TRY-FAIL)/try) .. "%") 
+local function report()
+  print("-- Failures: ".. 1-((my.try-my.fail)/my.try) .. "%") 
 end
--- ### Test:rogues()
+
+-- ### rogues()
 -- Checked for escaped local. Report number of assertion failures.
-function Test.rogues()
+local function rogues()
   local ignore = {
            jit=true, math=true, package=true, table=true, coroutine=true, 
            bit=true, os=true, io=true, bit32=true, string=true,
@@ -30,14 +34,4 @@ function Test.rogues()
        assert(match(k,"^[A-Z]"),"rogue local "..k) end end 
 end
 
--- ## main{m:string = f:function}
--- Run function `f` if we are in module `m`.
--- Used  like Python's if \_\_name\_\_ == '\_\_main\_\_'. 
--- e.g. `main{lib=doThis}` will call `doThis()` if
--- the environment variable MAIN equals `lib`.
-function Test.main(com) 
-  roguesOkay()
-  for s,f in pairs(Test.all) do
-    if s == os.getenv("MAIN") then return f() end end end
-
-return Test
+return {ok=ok,report=report,rogues=rogues}

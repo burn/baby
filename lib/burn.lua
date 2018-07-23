@@ -3,11 +3,10 @@
 -- usage:
 -- 
 -- ```
--- local The = require("the")
--- local The = defaults()
+-- require "burn"
 -- ```
 
-return  function () return {
+Burn= {
   ignore= "?",
   sep=    ",",
   inf=    10^32,
@@ -32,5 +31,8 @@ return  function () return {
             small=0.38, -- small,medium = 0.38,1
             first=3, 
             last=96 }
-          } 
-end
+}
+
+Burn.sys = Burn.sys or {}
+
+return Burn

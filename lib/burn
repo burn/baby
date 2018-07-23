@@ -177,8 +177,8 @@ help() {
   hello
   echo -n $ltyl; banner; echo -n $white
   cat<<-EOF
-	./$What FILE       	run FILE.lua
 	./$What FILE.lua       	run FILE.lua
+	./$What ok FILE.lua     run FILE.lua
 	./$What ed FILE		edit FILE 
 	./$What eds 		edit all *.lua in VIM tab mode 
 	./$What okay 		run all tests
@@ -193,6 +193,11 @@ help() {
 	X in ed, okay, zap, pull, push, license, help. 
 	EOF
 }
+
+
+LUA_PATH="$LUA_PATH;$PWD/?.lua;$Up/tests/?.lua" 
+
+
 if [ -z "$1" ]; then
   hello
   echo
@@ -202,6 +207,7 @@ else
   shift
   if   [[ "$x" == "ed"       ]]; then tags; vim -u $Tmp/vimrc -O $1 -O lib.lua 
   elif [[ "$x" == "eds"      ]]; then tags; vim -u $Tmp/vimrc -p *.lua 
+  elif [[ "$x" == "ok"     ]]; then luajit ../tests/${1}ok.lua
   elif [[ "$x" == "zap"      ]]; then rm -f $Doc/*.md
   elif [[ "$x" == "pull"     ]]; then git pull
   elif [[ "$x" == "help"     ]]; then help
@@ -213,7 +219,6 @@ else
      git commit -am "$(date +"Committed %D")"
      git push
   else
-    g=$(basename $x ".lua")
-    MAIN="$g" luajit "$g.lua"
+    luajit $x
   fi
 fi
