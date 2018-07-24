@@ -1,15 +1,16 @@
-local Object=require "object"
-local Lib=require "lib"
+local object=require "object"
+local lib=require "lib"
 
-local rand,int,min,max = Lib.rand, Lib.int, Lib.min, Lib.max
+local rand,int,min,max = lib.rand, lib.int, lib.min, lib.max
+local join = lib.join
 
 -------------------------------------------------------------
 -- ## Sampling Stuff
 
-local Sample = Object:new{max=The.sample.max, n=0, all}
+local Sample = object:new{max=Burn.sample.max, n=0, all}
 
 function Sample:new(spec) 
-  x=Object.new(self,spec) 
+  x=object.new(self,spec) 
   x.all = {}
   x.sorted = false
   return x 
@@ -39,8 +40,8 @@ end
 
 function Sample:yth(y)
   local t= self:ordered()
-  y = int(0.5 + y*#all)
-  y = min( #all, max( 1, want))
+  y = int(0.5 + #t*y)
+  y = min( #t, max( 1, y))
   return t[y] end
 
 function Sample:tiles(want)
@@ -51,33 +52,35 @@ end
 
 function Sample:median() return self:yth(0.5) end
 
-function Sample:shows(all, ps, width)
-  all = all[ #all+1 ] = self
+function Sample:shows(all, ps, width, marks)
+  all[ #all+1 ] = self
   lo,hi = 10^32, -10^32
   for _,one in pairs(all) do
     lo1,hi1 = one:range{0,1}
     if lo1 < lo then lo = lo1 end
     if hi1 > hi then hi = hi1 end end
-  table.sort(all, function(a,b) a:median() < b:median() end)
-  for _,one in pairs(all) do one:show(ps, width, lo, hi) end
+  table.sort(all, function(a,b) return a:median() < b:median() end)
+  for _,one in pairs(all) do one:show(ps, width, lo,hi, marks) end
 end
 
-function Sample:show(ps, width, lo, hi)
-  ps    = ps    or {0.1,0.3,0.5,0.7,0.9}, 
+function Sample:show(ps, width, lo, hi, marks)
+  ps    = ps    or       {0,  0.1,   0.3,   0.5,  0.7,  0.9} 
+  local marks = marks or {" ","-",   " ",   " ",  "-",  " "}
   width = width or 50
   lo    = lo or self:yth(0)
   hi    = hi or self:yth(0)
   local	pos = function(y) 
-     math.floor(0.5+ width*(self:yth(y) - lo / (hi - lo))) end
-  local toggle,b4,tmp = true,0,{}
+     y = (self:yth(y) -lo)/(hi - lo + 10^-32)
+     return int(width*y)  end
+  local b4,tmp = 0,{}
   for i=1,width do tmp[i]=" " end
   for i,j in pairs(ps) do
-    for k = pos(b4),pos(j) do tmp[i]= toggle and "-" or " " end
-    b4 = j
-    toggle = not toggle  end
-  tmp[1], tmp[ #tmp ] = "|","|",
+    for k = pos(b4),pos(j) do tmp[k]= marks[i]
+    b4 = j end
+  end
+  tmp[1], tmp[ #tmp ] = "|","|"
   tmp[ pos(0.5) ] = "*"
-  local out = table.contact(tmp)
+  local out = join(tmp,"")
   for i,here in pairs(ps) do
     out = out .. ", " .. self:yth(here) end
   print(out)

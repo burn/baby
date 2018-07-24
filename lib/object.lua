@@ -15,6 +15,4 @@ function Object:new(o)
   return o
 end
 
-print(1)
-
 return Object

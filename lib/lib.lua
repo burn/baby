@@ -61,6 +61,7 @@ end
 function lib.interpolate(x,xs,ys,          x1,y1)
   local x0, y0 = xs[1], ys[1]
   if x <= x0 then return y0  end
+  if x > xs[ #xs ] then return ys[ #ys ] end
   --if x >= xs[#xs] then return ys[#xs] end
   for i = 1, #xs do
     x1,y1 = xs[i],ys[i]

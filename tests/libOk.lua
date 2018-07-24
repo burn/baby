@@ -4,7 +4,7 @@ local lib=require "lib"
 
 ok { interpolate = function ()
   assert(lib.interpolate(0, {1,2,4}, {10,20,40}) == 10) 
-  assert(lib.interpolate(4, {1,2,4}, {10,20,40}) == 50) 
+  assert(lib.interpolate(8, {1,2,4}, {10,20,40}) == 40) 
   assert(lib.interpolate(3, {1,2,4}, {10,20,40}) == 30) 
 end}
 
@@ -21,6 +21,11 @@ ok {sub= function()
   assert(lib.sub("timm",2,3) == "im")
   assert(lib.sub("timm",-1)  == "m")
   assert(lib.sub("aa",3,10)  == "")
+end}
+
+ok {minmax= function()
+  assert(lib.min(2,3) == 2)
+  assert(lib.max(2,3) == 3)
 end}
 
 

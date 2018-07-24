@@ -205,8 +205,8 @@ if [ -z "$1" ]; then
 else
   x=$1
   shift
-  if   [[ "$x" == "ed"       ]]; then tags; vim -u $Tmp/vimrc -O $1 -O lib.lua 
-  elif [[ "$x" == "eds"      ]]; then tags; vim -u $Tmp/vimrc -p *.lua 
+  if   [[ "$x" == "ed"       ]]; then tags; vim -p -u $Tmp/vimrc -O $1 -O lib.lua 
+  elif [[ "$x" == "eds"      ]]; then tags; vim -p -u $Tmp/vimrc -p *.lua 
   elif [[ "$x" == "ok"     ]]; then luajit ../tests/${1}ok.lua
   elif [[ "$x" == "zap"      ]]; then rm -f $Doc/*.md
   elif [[ "$x" == "pull"     ]]; then git pull
