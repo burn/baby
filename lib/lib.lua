@@ -4,12 +4,13 @@ Burn=require "burn"
 -- ## Misc  Stuff 
 
 local lib= {
-  E     = 2.7182818285,
-  PI    = 3.1415926536,
-  abs   = math.abs,
-  int   = math.floor,
-  printf= function (s, ...) return io.write(s:format(...)) end,
-  match = function (s,p) return string.match(s,p) ~= nil end}
+  E      = 2.7182818285,
+  PI     = 3.1415926536,
+  abs    = math.abs,
+  int    = math.floor,
+  printf = function(s, ...) return io.write(s:format(...)) end,
+  sprintf= function(s, ...) return s:format(...) end,
+  match  = function(s,p)    return string.match(s,p) ~= nil end}
 
 -------------------------------------------------------------
 -- ## Maths Stuff
@@ -24,7 +25,7 @@ end
 -- (default value for e = 1).
 function lib.close(m,n,e) 
   e = e and e or 1
-  return abs(m-n)/n <= e/100 
+  return lib.abs(m-n)/n <= e/100 
 end
 
 -- ### min(x:number, y:number): number

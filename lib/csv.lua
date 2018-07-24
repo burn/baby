@@ -1,4 +1,7 @@
-require "thing"
+lib= require("lib")
+
+local split,     sub,     scan = 
+      lib.split, lib.sub, lib.scan
 
 -------------------------------------------------------
 -- ### csv(file: string)
@@ -11,7 +14,7 @@ require "thing"
 -- (by have a column name containing `?`) then 
 -- all such columns are ignored. The result
 -- non-ignored rows of cells are returns, one at a time. 
-function csv(file)
+return function (file)
   io.input(file)
   local use, cache, todo = {}, {}, io.read()
   return function ()
@@ -32,10 +35,3 @@ function csv(file)
             row[ #row+1 ] = scan( cells[use[i]] ) end
           return row end end end end 
 end 
-          
-function csvOkay()
-  for row in csv("../data/weather.csv") do
-     print(table.concat(row,", ")) end 
-end
-
-main{csv=csvOkay}

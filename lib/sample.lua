@@ -2,7 +2,8 @@ local object=require "object"
 local lib=require "lib"
 
 local rand,int,min,max = lib.rand, lib.int, lib.min, lib.max
-local join = lib.join
+local ordered, join    = lib.ordered, lib.join
+local sprintf          = lib.sprintf
 
 -------------------------------------------------------------
 -- ## Sampling Stuff
@@ -46,38 +47,43 @@ function Sample:yth(y)
 
 function Sample:median() return self:yth(0.5) end
 
-function Sample:shows(all, widths, ps,  marks)
+function Sample:shows(all, widths, ps, fmt, sfmt)
   all[ #all+1 ] = self
   lo,hi = 10^32, -10^32
   for _,one in pairs(all) do
     lo1,hi1 = one:yth(0), one:yth(1)
     if lo1 < lo then lo = lo1 end
     if hi1 > hi then hi = hi1 end end
-  table.sort(all, function(a,b) return a:median() < b:median() end)
-  for _,one in pairs(all) do one:show(ps, width, lo,hi, marks) end
+  table.sort(all, function(a,b) return 
+	            a:median() < b:median() end)
+  for _,one in pairs(all) do 
+    one:show(ps, width, fmt, sfmt, lo,hi) end
 end
 
-function Sample:show(ps, width, lo, hi, marks)
-  ps    = ps    or       {0,  0.1,   0.3,   0.5,  0.7,  0.9} 
-  local marks = marks or {" ","-",   " ",   " ",  "-",  " "}
-  width = width or 50
+function Sample:show(ps, width, fmt, sfmt, lo, hi, marks)
+  local t,f="-"," "
+  ps    = ps or {{0.1,t},{0.3,f},{0.5,f},{0.7,t},{0.9,f}} 
+  width = width or 50 
+  fmt   = fmt or "%5.0f"
+  sfmt  = sfmt or "%20s"
   lo    = lo or self:yth(0)
   hi    = hi or self:yth(0)
   local	pos = function(y) 
      y = (self:yth(y) -lo)/(hi - lo + 10^-32)
      return int(width*y)  end
-  local b4,tmp = 0,{}
+  local b4,mark,tmp = nil,nil,{}
   for i=1,width do tmp[i]=" " end
-  for i,j in pairs(ps) do
-    for k = pos(b4),pos(j) do tmp[k]= marks[i]
-    b4 = j end
+  for _,pair in pairs(ps) do
+    local now,mark1 = pair[1],pair[2]
+    if b4 then
+      for k = pos(b4),pos(now) do tmp[k]= mark end end 
+    b4,mark = now,mark1
   end
-  tmp[1], tmp[ #tmp ] = "|","|"
-  tmp[ pos(0.5) ] = "*"
-  local out = join(tmp,"")
-  for i,here in pairs(ps) do
-    if i > 1 then 
-    out = out .. ", " .. self:yth(here) end end
+  tmp[1], tmp[ #tmp ], tmp[ pos(0.5) ] = "|", "|", "*"
+  local out= sprintf(sfmt, self.txt or "") 
+             .. ", " .. join(tmp,"")
+  for _,pair in ordered(ps) do
+    out = out..", "..sprintf(fmt, self:yth(pair[1])) end 
   print(out)
 end
 

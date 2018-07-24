@@ -27,10 +27,8 @@ Burn= {
   nb =    { k=1,m=2},
   chop=   { m=0.5,
             cohen=0.2},
-  num=    { conf=95,
-            small=0.38, -- small,medium = 0.38,1
-            first=3, 
-            last=96 }
+  num=    { conf=0.95,
+            small=0.38} -- small,medium = 0.38,1
 }
 
 Burn.sys = Burn.sys or {}
