@@ -10,7 +10,7 @@ local join = lib.join
 local Sample = object:new{max=Burn.sample.max, n=0, all}
 
 function Sample:new(spec) 
-  x=object.new(self,spec) 
+  local x=object.new(self,spec) 
   x.all = {}
   x.sorted = false
   return x 
@@ -44,19 +44,13 @@ function Sample:yth(y)
   y = min( #t, max( 1, y))
   return t[y] end
 
-function Sample:tiles(want)
-  local got = {}
-  for i,y in pairs(want or {0,1}) do got[i]= self:yth(y) end
-  return got
-end
-
 function Sample:median() return self:yth(0.5) end
 
-function Sample:shows(all, ps, width, marks)
+function Sample:shows(all, widths, ps,  marks)
   all[ #all+1 ] = self
   lo,hi = 10^32, -10^32
   for _,one in pairs(all) do
-    lo1,hi1 = one:range{0,1}
+    lo1,hi1 = one:yth(0), one:yth(1)
     if lo1 < lo then lo = lo1 end
     if hi1 > hi then hi = hi1 end end
   table.sort(all, function(a,b) return a:median() < b:median() end)
@@ -82,7 +76,8 @@ function Sample:show(ps, width, lo, hi, marks)
   tmp[ pos(0.5) ] = "*"
   local out = join(tmp,"")
   for i,here in pairs(ps) do
-    out = out .. ", " .. self:yth(here) end
+    if i > 1 then 
+    out = out .. ", " .. self:yth(here) end end
   print(out)
 end
 
