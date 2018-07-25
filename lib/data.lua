@@ -7,7 +7,8 @@ local lib=require("lib")
 local csv=require("csv")
 local fastdom = require("fastdom")
 
-local push = lib.push
+local int,     push,     sorted = 
+      lib.int, lib.push, lib.sorted
 
 ------------------------------
 -- ## Data class
@@ -23,13 +24,18 @@ local push = lib.push
 -- and many columns have multiple categories (e.g. `x.nums`,
 -- `y.less`, etc).
  
-local Data = Object:new{
-  name, header, klass,
-  rows={}, 
-  all={nums={}, syms={}, cols={}}, -- all columns
-  x  ={nums={}, syms={}, cols={}}, -- all independents
-  y  ={nums={}, syms={}, cols={},  -- all dependent columns
-       less={}, more={}}}  
+local Data = {}
+
+function Data:new(spec)
+  local d=Object.new(self,spec)
+  d.name, d.header, d.klass = nil, nil, nil
+  d.rows={} 
+  d.all={nums={}, syms={}, cols={}} -- all columns
+  d.x  ={nums={}, syms={}, cols={}} -- all independents
+  d.y  ={nums={}, syms={}, cols={},  -- all dependent columns
+         less={}, more={}}  
+  return d
+end
 
 -- ### Data:csv(file: string)
 -- Read data in  from `file`. Return `self`.
@@ -79,17 +85,17 @@ function Data:head(columns)
     push(it, self.all.cols); push(it, self[xy][ako]) end 
 end
 
-function Data:doms(how,rows)
-  if   how
+function Data:doms(fast,rows)
+  if   fast
   then fastdom(self,rows)
   else for _,row in pairs(rows) do
          row.dom = row:ndominates(self,rows) end end
  end
 
-function Data:bests(how,rows)
-  how  = how or false
+function Data:bests(fast,rows)
+  fast  = fast or false
   rows = rows or self.rows
-  self:doms(how,rows)
+  self:doms(fast,rows)
   rows = sorted(rows,function(a, b) return a.dom > b.dom end)
   best = rows[ int(#rows*0.2) ].dom
   return function(r) return r.dom >= best end

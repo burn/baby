@@ -139,8 +139,8 @@ end
 --- ### any(t: table): table
 -- Extract any one item from a table
 function lib.any(t)
-  local pos =  math.floor(0.5 + rand() * #t)
-  return t[ min(#t,max(1,pos)) ] 
+  local pos =  math.floor(0.5 + lib.rand() * #t)
+  return t[ lib.min(#t,lib.max(1,pos)) ] 
 end
 
 --- ### anys(t: table, n:integer): table

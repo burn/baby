@@ -82,10 +82,33 @@ cat<<EOF>$Tmp/vimrc
 	nnoremap <F3> :set hlsearch!<CR>
 	set ruler
 	set formatoptions+=cro
+	set rtp+=~/.vim/bundle/Vundle.vim
+	call vundle#begin()
+	Plugin 'gmarik/Vundle.vim'
+	" Add all your plugins here (note older versions of Vundle used Bundle instead of Plugin)
+	Plugin 'scrooloose/nerdtree'
+       	Plugin 'vim-airline/vim-airline-themes'
+	Plugin 'croaker/mustang-vim'
+	Plugin 'dracula/vim'
+	Plugin 'phd'
+	Plugin 'arcticicestudio/nord-vim'
+	" All of your Plugins must be added before the following line
+	call vundle#end()            " required
+	filetype plugin indent on    " required
+	autocmd VimEnter * NERDTree
+	autocmd VimEnter * wincmd w
+	autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+	colorscheme nord
 	set fillchars+=vert:\ 
 	hi CursorLine cterm=NONE ctermbg=NONE ctermfg=white
 	hi VertSplit ctermfg=Black ctermbg=Black
 EOF
+vim0() {
+  if  [ ! -d "$HOME/.vim/bundle/Vundle.vim" ]; then
+    git clone https://github.com/VundleVim/Vundle.vim.git $HOME/.vim/bundle/Vundle.vim
+  fi
+  vim -u $Tmp/vimrc -c 'PluginInstall' -c 'qa!'
+}
 
 if [ ! -f "../.gitignore" ]; then
 	cat <<-EOF> ../.gitignore
@@ -174,17 +197,17 @@ help() {
   hello
   echo -n $ltyl; banner; echo -n $white
   cat<<-EOF
-	./$What FILE.lua       	run FILE.lua
-	./$What ok FILE.lua     run FILE.lua
-	./$What ed FILE		edit FILE 
-	./$What eds 		edit all *.lua in VIM tab mode 
-	./$What okay 		run all tests
-	./$What zap 		delete generated files (forces recompile)
-	./$What pull		get from git
-	./$What push		send back to git
-	./$What license		show license
-	./$What help		show help
- 
+	./$What FILE.lua    run FILE.lua
+	./$What ok FILE.lua run FILE.lua
+	./$What ed0 	    install/update any VIM plugs (call once before using "ed")
+	./$What ed FILE	    edit FILE 
+	./$What eds 	    edit all *.lua in VIM tab mode 
+	./$What okay 	    run all tests
+	./$What zap 	    delete generated files (forces recompile)
+	./$What pull	    get from git
+	./$What push	    send back to git
+	./$What license	    show license
+	./$What help	    show help
 
 	Note that this code cannot load any X.lua file for
 	X in ed, okay, zap, pull, push, license, help. 
@@ -203,7 +226,8 @@ else
   x=$1
   shift
   if   [[ "$x" == "ed"       ]]; then vim -u $Tmp/vimrc -p  $1 lib.lua 
-  elif [[ "$x" == "eds"      ]]; then vim -p -u $Tmp/vimrc -p *.lua ../tests/*.lua
+  elif [[ "$x" == "eds"      ]]; then cd ..; vim  -u $Tmp/vimrc 
+  elif [[ "$x" == "ed0"      ]]; then vim0
   elif [[ "$x" == "ok"       ]]; then luajit ../tests/${1}ok.lua
   elif [[ "$x" == "zap"      ]]; then rm -f $Doc/*.md
   elif [[ "$x" == "pull"     ]]; then git pull

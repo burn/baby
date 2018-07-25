@@ -1,7 +1,8 @@
 require("burn")
 local lib=require("lib")
-local sorted,     min,     max = 
-      lib.sorted, lib.min, lib.max
+local 
+any,    int,    rand,    sorted,    min,    max,    slice = 
+lib.any,lib.int,lib.rand,lib.sorted,lib.min,lib.max,lib.slice
 
 -- Returns distance between rows, in objective space.
 local function dist(i, j,data)

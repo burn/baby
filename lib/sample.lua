@@ -57,10 +57,10 @@ function Sample:shows(all, widths, ps, fmt, sfmt)
   table.sort(all, function(a,b) return 
 	            a:median() < b:median() end)
   for _,one in pairs(all) do 
-    one:show(ps, width, fmt, sfmt, lo,hi) end
+    one:show(width, ps, fmt, sfmt, lo,hi) end
 end
 
-function Sample:show(ps, width, fmt, sfmt, lo, hi)
+function Sample:show(width, ps, fmt, sfmt, lo, hi)
   local t,f="-"," "
   ps    = ps or {{0.1,t},{0.3,f},{0.5,f},{0.7,t},{0.9,f}} 
   width = width or 50 
@@ -80,8 +80,8 @@ function Sample:show(ps, width, fmt, sfmt, lo, hi)
     b4,mark = now,mark1
   end
   tmp[1], tmp[ #tmp ], tmp[ pos(0.5) ] = "|", "|", "*"
-  local out= sprintf(sfmt, self.txt or "") 
-             .. ", " .. join(tmp,"")
+  local pre= self.txt and sprintf(sfmt, self.txt)..", " or "" 
+  local out= pre .. join(tmp,"")
   for _,pair in ordered(ps) do
     out = out..", "..sprintf(fmt, self:yth(pair[1])) end 
   print(out)
