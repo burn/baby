@@ -1,6 +1,13 @@
-require "csv"
-require "row"
-fastdom = require "fastdom"
+local Object=require("object")
+local Num=require("num")
+local Sym=require("sym")
+local Row=require("row")
+
+local lib=require("lib")
+local csv=require("csv")
+local fastdom = require("fastdom")
+
+local push = lib.push
 
 ------------------------------
 -- ## Data class
@@ -16,7 +23,7 @@ fastdom = require "fastdom"
 -- and many columns have multiple categories (e.g. `x.nums`,
 -- `y.less`, etc).
  
-Data = Any:new{
+local Data = Object:new{
   name, header, klass,
   rows={}, 
   all={nums={}, syms={}, cols={}}, -- all columns
@@ -88,51 +95,4 @@ function Data:bests(how,rows)
   return function(r) return r.dom >= best end
 end
 
--------------------------------------------------
--- ## Test Stuff
-local function dataOkay(f)
-  --oguesOkay()
-  return Data:new():csv("../data/".. f .. ".csv") end 
-  
-function autoOkay()      dataOkay("auto") end
-function auto10KOkay()   dataOkay("auto10K") end
-function auto1000KOkay() dataOkay("auto1000K") end
-function weatherOkay()   
-  local d = dataOkay("weather") 
-  print(#d.rows)
-  assert( close( d.all.syms[1]:ent(),  1.58, 1) ) 
-  assert( close( d.all.syms[2]:ent(),  0.98, 1) )  
-  assert( close( d.all.syms[3]:ent(),  0.94, 1) )  
-  assert( close( d.all.nums[1].mu,    73.57, 1) )
-  assert( close( d.all.nums[1]:sd(),   6.57, 1) )  end
-
-function domOkay()
-  for _,f in pairs{"auto", "auto1K", 
-	           "auto2K", "auto3K" } do
-	  --"auto10K", --"auto100K", --"auto1000K"} do
-     say(f)
-     local d = dataOkay(f)
-     local fast = {}
-     say(" " .. when(function() d:bests(true) end)) 
-     for _,row in pairs(d.rows) do
-       fast[row.id] = row.dom end
-     say(" " .. when(function() d:bests() end)) 
-     local some = Sample:new()
-     for _,row in pairs(d.rows) do
-       some:inc(row.dom - fast[row.id]) end 
-     print(" ", join(some:tiles{10,30,50,70,90}))
-  end
-end
-
-function attrOkay()
-  local d= dataOkay("auto")
-  d:bests(true)
-  local y = function(row) return w[row.id] or 0 end
-  for _, row in pairs(best) do
-     if y(row) > 0 then
-        print(ooo(row:has(d,"y","nums")), y(row)) end end
-end
--------------------------------------------------
--- ## Main Stuff
---main{data=weatherOkay}
- main{data=domOkay}
+return Data

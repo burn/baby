@@ -27,7 +27,7 @@ end
 
 function Thing:simpler(i,j) 
   local  n = self.n
-  return self.doubt() > The.ish*(i.doubt()*i.n/n + 
+  return self.doubt() > Burn.ish*(i.doubt()*i.n/n + 
                                  j.doubt()*j.n/n) 
 end
 
@@ -36,7 +36,7 @@ function Thing:norm(x) return x end
 -- ### Thing:best(rows [, o]): function
 -- Returns a function that returns true if a row selects for best ranges.
 -- o = {x,y,enough=10,min=false}
-function Thing:best(rows, enough, y, min)
+function Thing:best(rows, enough, x, y, min)
   y   = y or function (r) return r.cells[#r.cells] end
   min = min or false
   return self:best1(rows,  

@@ -3,6 +3,8 @@
 require "burn"
 Burn.sys.tests={try=0, fail=0}
 
+local match = require("lib").match
+
 local my=Burn.sys.tests
 local Test={}
 
@@ -14,6 +16,7 @@ end
 -- ### tests()
 -- Run any function ending in "Ok". Report number of failures.
 function Test.ok(t)
+  Test.rogues()
   for x,f in pairs(t) do
     print("-- Checking ".. x .."... ")
     my.try = my.try + 1
@@ -33,7 +36,7 @@ function Test.rogues()
            arg=true, debug=true, _VERSION=true, _G=true }
   for k,v in pairs( _G ) do
     if type(v) ~= "function" and not ignore[k] then
-       assert(match(k,"^[A-Z]"),"rogue local "..k) end end 
+       assert(match(k,"^[A-Z]"),"rogue local ["..k.."]") end end 
 end
 
 return Test

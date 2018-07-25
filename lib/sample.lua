@@ -60,14 +60,14 @@ function Sample:shows(all, widths, ps, fmt, sfmt)
     one:show(ps, width, fmt, sfmt, lo,hi) end
 end
 
-function Sample:show(ps, width, fmt, sfmt, lo, hi, marks)
+function Sample:show(ps, width, fmt, sfmt, lo, hi)
   local t,f="-"," "
   ps    = ps or {{0.1,t},{0.3,f},{0.5,f},{0.7,t},{0.9,f}} 
   width = width or 50 
   fmt   = fmt or "%5.0f"
   sfmt  = sfmt or "%20s"
   lo    = lo or self:yth(0)
-  hi    = hi or self:yth(0)
+  hi    = hi or self:yth(1)
   local	pos = function(y) 
      y = (self:yth(y) -lo)/(hi - lo + 10^-32)
      return int(width*y)  end

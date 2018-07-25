@@ -7,4 +7,5 @@ ok  { baseSym=function()
 		    'y','y','y','y','y','y','y','y','y',
 	            'n','n','n','n','n'}
 	assert( lib.close( s:ent() , 0.9403) )  
+        s:ent()
 end }

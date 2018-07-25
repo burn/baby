@@ -1,4 +1,4 @@
-lib= require("lib")
+local lib= require("lib")
 
 local split,     sub,     scan = 
       lib.split, lib.sub, lib.scan
@@ -15,7 +15,7 @@ local split,     sub,     scan =
 -- all such columns are ignored. The result
 -- non-ignored rows of cells are returns, one at a time. 
 return function (file)
-  io.input(file)
+  local stream = io.input(file)
   local use, cache, todo = {}, {}, io.read()
   return function ()
     while todo do
@@ -26,6 +26,7 @@ return function (file)
       if sub(txt,-1) ~= ","  then -- ... until end of row
         local txts = table.concat(cache)
         if string.len(txts) > 0 then -- non-empty lines
+	  local row,cells
           cache, row, cells = {}, {}, split(txts)
           if #use==0 then -- this is our first loop
 	    for i= 1,#cells do -- so get the columns we want
@@ -33,5 +34,10 @@ return function (file)
 	        then use[ #use+1 ] = i end end end
           for i= 1,#use do -- grab the columns we want
             row[ #row+1 ] = scan( cells[use[i]] ) end
-          return row end end end end 
+          return row 
+        end 
+      end 
+    end 
+    io.close(stream)
+  end 
 end 

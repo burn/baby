@@ -5,7 +5,7 @@ local Thing=require("thing")
 local Sym= Thing:new{counts,mode,most=0,_ent}
 
 function Sym:new(spec)
-  x = Thing.new(self, spec)
+  local x = Thing.new(self, spec)
   x.counts = {} 
   return x
 end
@@ -16,7 +16,7 @@ function Sym:ent()
   if self._ent == nil then
     self._ent=0
     for x,n in pairs(self.counts) do
-      p      = n/self.n
+      local p      = n/self.n
       self._ent = self._ent - p * math.log(p,2) end end
   return self._ent 
 end

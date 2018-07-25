@@ -1,6 +1,6 @@
-require "lib"
+local Object=require("object")
 
-Row = Any:new{cells, _dom, best=false}
+Row = Object:new{cells, _dom, best=false}
 
 -------------------------------------------------
 -- ## Row Methods
@@ -18,7 +18,7 @@ end
 -- (so should work for many more goals than just 2).
 function Row:dominates(j, data) 
   local nums = data.y.nums
-  local s1, s2, n, z = 0, 0, #nums, The.zip
+  local s1, s2, n, z = 0, 0, #nums, Burn.zip
   for _,num in pairs(nums) do
     local a = self.cells[ num.pos ]
     local b =    j.cells[ num.pos ]
@@ -38,3 +38,4 @@ function Row:ndominates(data, others)
   return n 
 end
 
+return Row

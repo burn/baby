@@ -1,8 +1,11 @@
-require "lib"
+require("burn")
+local lib=require("lib")
+local sorted,     min,     max = 
+      lib.sorted, lib.min, lib.max
 
 -- Returns distance between rows, in objective space.
 local function dist(i, j,data)
-  local d,n,z = 0,The.zip,The.zip
+  local d,n,z = 0,Burn.zip, Burn.zip
   for _,num  in pairs(data.y.nums) do
       local a = i.cells[ num.pos ]
       local b = j.cells[ num.pos ]
@@ -49,7 +52,7 @@ local function div(data,rows,few,        rank, bad, best)
     if bad:dominates(best,data) then 
       bad,best = best,bad end
     local c  = dist(bad,best, data)
-    local c1 = c + The.dom.tiny
+    local c1 = c + Burn.dom.tiny
     local tmp = {}
     for pos,row in pairs(rows) do
       local a = dist(bad,  row, data)
@@ -58,7 +61,7 @@ local function div(data,rows,few,        rank, bad, best)
 	return div(data, rows, few, rank, row,  bad) end
       if b > c1 then 
 	return div(data, rows, few, rank, row, best) end
-      local x = (a*a + c*c - b*b) / (2*c + The.zip)
+      local x = (a*a + c*c - b*b) / (2*c + Burn.zip)
       tmp[ #tmp+1 ] = {x,row} 
     end
     tmp = sorted(tmp, function(x,y) return x[1] < y[1] end)
@@ -70,11 +73,7 @@ local function div(data,rows,few,        rank, bad, best)
   return rank 
 end
 
-
--- Main function
-local function fastdom(data,rows)
-  few = max(The.dom.few, (#rows)^The.dom.power)
+return function (data,rows)
+  few = max(Burn.dom.few, (#rows)^Burn.dom.power)
   div(data, rows, few) 
 end
-
-return fastdom

@@ -12,9 +12,9 @@ Burn= {
   inf=    10^32,
   ninf=   -10^32,
   zip =   10^(-32),
-  here=   os.getenv("Lure"),
   data=   { best = 0.5 },
-  sample= { max=64,
+  sample= { max=256,
+            cliffsMax=1000, 
             cliffsDelta=0.147 -- small,medium,large=0.147,0.33,0.474
             },
   dom=    {few=20,
