@@ -20,18 +20,16 @@ local function weatherOkay()
 
 end
 
---ok {weatherData = function() dataOkay("weather")    end }
+ok {weatherData = function() dataOkay("weather")    end }
 ok {weather     = function() weatherOkay()          end }
---ok {auto        = function() dataOkay("auto")       end }
---ok {auto10K     = function() dataOkay("auto10K")    end }
---ok {auto100K    = function() dataOkay("auto100K")   end }
---ok {auto1000K   = function() dataOkay("auto1000K")  end }
-
-
+ok {auto        = function() dataOkay("auto")       end }
+ok {auto10K     = function() dataOkay("auto10K")    end }
+ok {auto100K    = function() dataOkay("auto100K")   end }
+ok {auto1000K   = function() dataOkay("auto1000K")  end }
+ok {weather     = function() weatherOkay()          end }
 
 ok {domOkay= function()
-   for _,f in pairs{"auto", "auto1K", "auto2K", "auto3K","auto5K","auto10K"} do
- 	  --"auto10K", --"auto100K", --"auto1000K"} do
+   for _,f in pairs{"auto", "auto1K", "auto2K", "auto3K"} do -- "auto5K","auto10K"} do
       local d = dataOkay(f)
       local fast = {}
       printf("%10s %10s  %.5f ", f, #d.rows, when(function() d:bests(true) end)) 
