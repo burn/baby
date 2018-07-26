@@ -79,11 +79,11 @@ function hedges(j,small)
 end
 
 -------------------------------------------------------------
-function Num:best1(rows, cut, enough, x, y)
-  local best = -1
+function Num:best1(rows,  enough,  x, y)
+  local cut, best = nil, -1
   local left = Num:new()
   local right= Num:new():incs(rows, y)
-  rows = sorted(rows, function(a,b) return x(a) < x(b) end)
+  rows = lib.sorted(rows, function(a,b) return x(a) < x(b) end)
   for i,row in pairs(rows) do
     left:inc(  y(row) )
     right:dec( y(row) )
@@ -91,10 +91,10 @@ function Num:best1(rows, cut, enough, x, y)
     if i > enough then
       local below = (left.n  / #rows) * left.mu  / right.mu 
       local above = (right.n / #rows) * right.mu / left.mu 
-      if above > best and not same(left, right) then
-	best,cut = tmp, self:gt(x, x(row), right.mu) end
-      if below > best and not same(left, right) then 
-	best,cut = tmp, self:le(x, x(row), left.mu) end end 
+      if above > best then --and not same(left, right) then
+	best,cut = tmp, self:gt(x, self.txt, x(row), copy(right)) end
+      if below > best then --and not same(left, right) then 
+	best,cut = tmp, self:le(x, self.txt, x(row), copy(left)) end end 
   end 
   return cut
 end

@@ -1,8 +1,8 @@
 require("burn")
-local lib=require("lib")
+local L=require("lib")
 local 
-any,    int,    rand,    sorted,    min,    max,    slice = 
-lib.any,lib.int,lib.rand,lib.sorted,lib.min,lib.max,lib.slice
+  any,   int,   rand,   sorted,   min,   max,   slice = 
+L.any, L.int, L.rand, L.sorted, L.min, L.max, L.slice
 
 -- Returns distance between rows, in objective space.
 local function dist(i, j,data)
@@ -36,17 +36,18 @@ local function distantPoints(data,rows,y,z)
   return y,z
 end
 
+-----------------------------------------------------------
 -- Top down bi-clustering of rows.
 -- Find two most distant points. Label them
 -- `bad` and `best` depending on who dominates wo.
 -- Divide rows into those that are nearest `bad` or `best,
 -- Recurse till too few rows. Then score each
 -- row bad to best.
-local function div(data,rows,few,        rank, bad, best)
-  rank = rank or 1
+local function div(data,rows,few,inc,      rank,bad,best)
+  rank = rank or 0
   if #rows < few then
     for _,one in pairs(rows) do
-      rank = rank + 1
+      rank = rank + inc
       one.dom = rank end
   else
     bad,best = distantPoints(data,rows,bad,best)
@@ -59,22 +60,23 @@ local function div(data,rows,few,        rank, bad, best)
       local a = dist(bad,  row, data)
       local b = dist(best, row, data)
       if a > c1 then 
-	return div(data, rows, few, rank, row,  bad) end
+	return div(data, rows, few,inc,rank, row,bad) end
       if b > c1 then 
-	return div(data, rows, few, rank, row, best) end
+	return div(data, rows, few,inc,rank, row,best) end
       local x = (a*a + c*c - b*b) / (2*c + Burn.zip)
       tmp[ #tmp+1 ] = {x,row} 
     end
     tmp = sorted(tmp, function(x,y) return x[1] < y[1] end)
     for i,one in pairs(tmp) do tmp[i] = one[2] end
     local mid = int(#rows/2)
-    rank = div(data, slice(tmp,    1, mid),  few, rank)
-    rank = div(data, slice(tmp,mid+1, #tmp), few, rank) 
+    rank = div(data, slice(tmp,    1, mid),  few,inc,rank)
+    rank = div(data, slice(tmp,mid+1, #tmp), few,inc,rank) 
   end
   return rank 
 end
 
 return function (data,rows)
-  few = max(Burn.dom.few, (#rows)^Burn.dom.power)
-  div(data, rows, few) 
+  local few = max(Burn.dom.few, (#rows)^Burn.dom.power)
+  local inc = 1/#data.rows
+  div(data, rows, few, inc) 
 end

@@ -36,42 +36,16 @@ function Thing:norm(x) return x end
 -- ### Thing:best(rows [, o]): function
 -- Returns a function that returns true if a row selects for best ranges.
 -- o = {x,y,enough=10,min=false}
+-- - assumes `y(row)` returns a positive number 0..1
 function Thing:best(rows, enough, x, y, min)
-  y   = y or function (r) return r.cells[#r.cells] end
-  min = min or false
-  return self:best1(rows,  
-      self:eq(x, x(rows[1]), 0), 
-      enough or 10,
-      function(r) return r.cells[self.pos] end,
-      function(r) return min and 1-y(r) or y(r) end)
+  enough = enough or 10
+  min    = min or false
+  x      = x or function (r) 
+	         local val = r.cells[self.pos] 
+	         return val=="?" and -10^32 or val end
+  klass  = y or function (r) return r.cells[#r.cells] end
+  y      = function(r) return min and 1-klass(r) or klass(r) end
+  return self:best1(rows, enough, x,y) 
 end
 
-local Split=Object:new{txt,rule, op, val}
-
-function Split:show() return self.txt..self.op..self.val end
-
-function Thing:eq(x, val,score)
-  return Split:new{txt=self.txt, 
-     score= score, 
-     val  = val, op="=", 
-     rule = function(r) return x(r)==val end} 
-end
-
-function Thing:gt(x, val,score)
-  return Split:new{txt=self.txt, 
-     score= score, 
-     val  = val, op=">", 
-     rule = function(r) return x(r) > val end} 
-end
-
-function Thing:le(x, val,score)
-  return Split:new{txt=self.txt, 
-     score= score, 
-     val  = val, op="<=", 
-     rule = function(r) return x(r) <= val end} 
-end
-
-return Thing,Split
-
- 
---main{thing=numIncOkay}
+return Thing

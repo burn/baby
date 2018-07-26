@@ -92,13 +92,16 @@ cat<<EOF>$Tmp/vimrc
 	Plugin 'dracula/vim'
 	Plugin 'phd'
 	Plugin 'arcticicestudio/nord-vim'
+	Plugin 'junegunn/seoul256.vim'
+	Plugin 'Zenburn'
 	" All of your Plugins must be added before the following line
 	call vundle#end()            " required
 	filetype plugin indent on    " required
 	autocmd VimEnter * NERDTree
 	autocmd VimEnter * wincmd w
 	autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-	colorscheme nord
+	"colorscheme seoul256
+	colorscheme zenburn
 	set fillchars+=vert:\ 
 	hi CursorLine cterm=NONE ctermbg=NONE ctermfg=white
 	hi VertSplit ctermfg=Black ctermbg=Black

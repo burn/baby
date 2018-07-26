@@ -1,6 +1,9 @@
 ----------------------------------------
 -- class Sym
-local Thing=require("thing") 
+local Thing = require("thing") 
+local Num   = require("num") 
+local Split = require("split") 
+local L = require("lib") 
 
 local Sym= Thing:new{counts,mode,most=0,_ent}
 
@@ -9,6 +12,7 @@ function Sym:new(spec)
   x.counts = {} 
   return x
 end
+
 
 function Sym:doubt() return self:ent() end
 
@@ -38,17 +42,20 @@ function Sym:dec1(x)
 end
 
 -----------------------------------------------------------
-function Sym:best1(rows, cut, enough, x, y)
-  local best, nums =  -1, {}
+function Sym:best1(rows, enough, x,y)
+  local cut, best, nums =  nil,-1, {}
   for _,row in pairs(rows) do
-    local num = nums[ x(row) ] or Num:new()
+    local val = x(row)
+    local num = nums[ val ] or Num:new()
     num:inc( y(row) )
-    nums[ x(row) ] = num end
+    nums[ val ] = num end
   for val,num in pairs(nums) do 
     if num.n > enough then
       local tmp = num.n/#rows * num.mu 
       if tmp > best then 
-        best, cut = tmp, self:eq(x, val, num.mu) end end end
+        best, cut = tmp, 
+	            Split.eq(x, self.txt, val, num) 
+  end end end
   return cut
 end
   

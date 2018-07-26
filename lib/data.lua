@@ -90,14 +90,14 @@ function Data:doms(fast,rows)
   then fastdom(self,rows)
   else for _,row in pairs(rows) do
          row.dom = row:ndominates(self,rows) end end
- end
+end
 
 function Data:bests(fast,rows)
   fast  = fast or false
   rows = rows or self.rows
   self:doms(fast,rows)
   rows = sorted(rows,function(a, b) return a.dom > b.dom end)
-  best = rows[ int(#rows*0.2) ].dom
+  local best = rows[ int(#rows*0.2) ].dom
   return function(r) return r.dom >= best end
 end
 

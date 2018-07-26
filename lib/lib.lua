@@ -169,6 +169,14 @@ function lib.shuffle( t )
   return t 
 end
 
+function lib.shallowCopy(t) 
+  return lib.collect(t,lib.same) 
+end
+
+function lib.copy(t)  --recursive
+  return type(t) ~= 'table' and t or lib.collect(t,lib.copy) 
+end
+--
 -------------------------------------------------------------
 -- ## Environment Stuff
 -- ### args(settings:table, ignore: table, updates:table)

@@ -34,7 +34,7 @@ end
 function Row:ndominates(data, others)
   local n = 0
   for _,row in pairs(others) do
-    if self:dominates(row, data) then n=n+1 end end 
+    if self:dominates(row, data) then n=n + 1/#data.rows end end 
   return n 
 end
 
