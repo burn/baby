@@ -30,9 +30,9 @@
       
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span></span><span class="nb">require</span> <span class="s2">&quot;lib&quot;</span>
+      <div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">Object</span><span class="o">=</span><span class="nb">require</span><span class="p">(</span><span class="s2">&quot;object&quot;</span><span class="p">)</span>
 
-<span class="n">Row</span> <span class="o">=</span> <span class="n">Any</span><span class="p">:</span><span class="n">new</span><span class="p">{</span><span class="n">cells</span><span class="p">,</span> <span class="n">_dom</span><span class="p">,</span> <span class="n">best</span><span class="o">=</span><span class="kc">false</span><span class="p">}</span></pre></div>
+<span class="n">Row</span> <span class="o">=</span> <span class="n">Object</span><span class="p">:</span><span class="n">new</span><span class="p">{</span><span class="n">cells</span><span class="p">,</span> <span class="n">_dom</span><span class="p">,</span> <span class="n">best</span><span class="o">=</span><span class="kc">false</span><span class="p">}</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -66,9 +66,9 @@ and the Zilter continuous domination indicator
 (so should work for many more goals than just 2).</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="kr">function</span> <span class="nc">Row</span><span class="p">:</span><span class="nf">dom</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span> 
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nc">Row</span><span class="p">:</span><span class="nf">dominates</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span> 
   <span class="kd">local</span> <span class="n">nums</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="n">y</span><span class="p">.</span><span class="n">nums</span>
-  <span class="kd">local</span> <span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">#</span><span class="n">nums</span><span class="p">,</span> <span class="n">The</span><span class="p">.</span><span class="n">zip</span>
+  <span class="kd">local</span> <span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">#</span><span class="n">nums</span><span class="p">,</span> <span class="n">Burn</span><span class="p">.</span><span class="n">zip</span>
   <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">num</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="kr">do</span>
     <span class="kd">local</span> <span class="n">a</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">cells</span><span class="p">[</span> <span class="n">num</span><span class="p">.</span><span class="n">pos</span> <span class="p">]</span>
     <span class="kd">local</span> <span class="n">b</span> <span class="o">=</span>    <span class="n">j</span><span class="p">.</span><span class="n">cells</span><span class="p">[</span> <span class="n">num</span><span class="p">.</span><span class="n">pos</span> <span class="p">]</span>
@@ -86,16 +86,18 @@ and the Zilter continuous domination indicator
       <div class='octowrap'>
         <a class='octothorpe' href='#section-3'>#</a>
       </div>
-      <h3>Row:ndominates(d: data): integer</h3>
+      <h4>Row:ndominates(d: data): integer</h4>
 <p>Returns a count how how rows in <code>d</code> are domianted by self.</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="kr">function</span> <span class="nc">Row</span><span class="p">:</span><span class="nf">ndom</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">others</span><span class="p">)</span>
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nc">Row</span><span class="p">:</span><span class="nf">ndominates</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">others</span><span class="p">)</span>
   <span class="kd">local</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
   <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">row</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">others</span><span class="p">)</span> <span class="kr">do</span>
-    <span class="kr">if</span> <span class="n">self</span><span class="p">:</span><span class="n">dom</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span> <span class="kr">then</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span> <span class="kr">end</span> <span class="kr">end</span> 
+    <span class="kr">if</span> <span class="n">self</span><span class="p">:</span><span class="n">dominates</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span> <span class="kr">then</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/#</span><span class="n">data</span><span class="p">.</span><span class="n">rows</span> <span class="kr">end</span> <span class="kr">end</span> 
   <span class="kr">return</span> <span class="n">n</span> 
 <span class="kr">end</span>
+
+<span class="kr">return</span> <span class="n">Row</span>
 
 </pre></div>
     </div>

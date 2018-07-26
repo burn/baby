@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>object.lua</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+
+<a href="https://github.com/burn/src"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
+    <div class='docs'><h1>object.lua</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+
+<img src=https://raw.githubusercontent.com/burn/src/master/etc/img/burn-wide.png width=500>
+<p>The file is part of the <a href="https://github.com/burn/src/blob/master/README.md">BURN</a> project (learing multi-objective rules). <br />
+<em>Because learning is not the filling  a pail, but the lighting of a fire.</em></p>
+
+<p><a href="index.html">index</a> |
+<a href="https://github.com/burn/src/issues">discuss</a> |
+<a href="https://github.com/burn/src/blob/master/LICENSE.md">license</a></p>
+      <hr />
+<h2>Object Stuff</h2>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <h3>Object:new(o)</h3>
+<p>Create the <code>any</code> base object</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kd">local</span> <span class="n">Object</span><span class="o">=</span><span class="p">{}</span>
+
+<span class="kr">function</span> <span class="nc">Object</span><span class="p">:</span><span class="nf">new</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+  <span class="n">o</span> <span class="o">=</span> <span class="n">o</span> <span class="ow">or</span> <span class="p">{}</span>   <span class="c1">-- create object if user does not provide one</span>
+  <span class="nb">setmetatable</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">self</span><span class="p">)</span>
+  <span class="kr">if</span> <span class="ow">not</span> <span class="n">self</span><span class="p">.</span><span class="n">id</span> <span class="kr">then</span> <span class="n">self</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="mi">0</span> <span class="kr">end</span>
+  <span class="n">self</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">id</span> <span class="ow">and</span> <span class="n">self</span><span class="p">.</span><span class="n">id</span><span class="o">+</span><span class="mi">1</span> <span class="ow">or</span> <span class="mi">1</span>
+  <span class="n">o</span><span class="p">.</span><span class="n">id</span>    <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">id</span>
+  <span class="n">self</span><span class="p">.</span><span class="n">__index</span> <span class="o">=</span> <span class="n">self</span>
+  <span class="kr">return</span> <span class="n">o</span>
+<span class="kr">end</span>
+
+<span class="kr">return</span> <span class="n">Object</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

@@ -1,9 +1,10 @@
 local ok=require("test").ok 
 local Data=require("data")
+local Num=require("num")
 local Sample=require("sample")
 local L=require("lib")
 
-local printf,close,say,when = L.printf,L.close,L.say,L.when
+local int,printf,close,say,when = L.int,L.printf,L.close,L.say,L.when
 
 local function dataOkay(f)
   local d=  Data:new():csv("../data/".. f .. ".csv") 
@@ -31,19 +32,41 @@ local function sensory()
 end
 
 local function autoBreaks()   
-  local key=function(split)  return split.score.mu end
+  local key=function(z)  print(z.score.mu); return z.score.mu end
   local d=dataOkay("auto")
   d:bests()
   local cols={}
-  for _,num in pairs(d.x.nums) do
-	  print(#cols + 1)
-    cols[ #cols + 1 ] = num:best(d.rows) end
-  local cols = L.sorted(cols,function(a,b) return key(a) > key(b) end)
+  for i,num in pairs(d.x.nums) do
+    print(i,num.txt, num.pos)
+    cols[ i ] = num:best(d.rows) end
+  print(key(cols[1]))
+  cols = L.sorted(cols,function(a,b) return key(a) > key(b) end)
   for _,col in pairs(cols) do
+    print(col.txt)
     L.oo(col) end
 end
 autoBreaks()
+os.exit()
 
+ok {divs= function()   
+  local d=dataOkay("auto")
+  local f=d:bests()
+  local hi,lo ={},{}
+  for _,num in pairs(d.y.nums) do 
+    print(num.pos)
+    hi[ num.pos ] = Num:new{txt=num.txt} 
+    lo[ num.pos ] = Num:new{txt=num.txt} end
+  for _,row in pairs(d.rows) do
+    local what = f(row) and hi or lo
+    for pos, num in pairs(what) do
+       num:inc(row.cells[ pos ]) end end
+  for pos,h in pairs(hi) do 
+     local l = lo[pos]
+     print()
+     print("hi",h.txt, int(h.mu), int(h:sd())) 
+     print("lo",l.txt, int(l.mu), int(l:sd())) 
+   end
+end}
 
 ok {weatherData = function() dataOkay("weather")    end }
 ok {weather     = function() weatherOkay()          end }
@@ -51,7 +74,7 @@ ok {sensory        = function() dataOkay("sensory")       end }
 ok {auto        = function() dataOkay("auto")       end }
 ok {auto10K     = function() dataOkay("auto10K")    end }
 ok {auto100K    = function() dataOkay("auto100K")   end }
-ok {auto1000K   = function() dataOkay("auto1000K")  end }
+ok {canIread_a_million_Records   = function() dataOkay("auto1000K")  end }
 ok {weather     = function() weatherOkay()          end }
 
 ok {domOkay= function()

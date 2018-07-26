@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>burn.lua</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+
+<a href="https://github.com/burn/src"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
+    <div class='docs'><h1>burn.lua</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+
+<img src=https://raw.githubusercontent.com/burn/src/master/etc/img/burn-wide.png width=500>
+<p>The file is part of the <a href="https://github.com/burn/src/blob/master/README.md">BURN</a> project (learing multi-objective rules). <br />
+<em>Because learning is not the filling  a pail, but the lighting of a fire.</em></p>
+
+<p><a href="index.html">index</a> |
+<a href="https://github.com/burn/src/issues">discuss</a> |
+<a href="https://github.com/burn/src/blob/master/LICENSE.md">license</a></p>
+      <hr />
+<h2>Defaults</h2>
+<p>usage:</p>
+<p><code>require "burn"</code></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="n">Burn</span><span class="o">=</span> <span class="p">{</span>
+  <span class="n">ignore</span><span class="o">=</span> <span class="s2">&quot;?&quot;</span><span class="p">,</span>
+  <span class="n">sep</span><span class="o">=</span>    <span class="s2">&quot;,&quot;</span><span class="p">,</span>
+  <span class="n">inf</span><span class="o">=</span>    <span class="mi">10</span><span class="o">^</span><span class="mi">32</span><span class="p">,</span>
+  <span class="n">ninf</span><span class="o">=</span>   <span class="o">-</span><span class="mi">10</span><span class="o">^</span><span class="mi">32</span><span class="p">,</span>
+  <span class="n">zip</span> <span class="o">=</span>   <span class="mi">10</span><span class="o">^</span><span class="p">(</span><span class="o">-</span><span class="mi">32</span><span class="p">),</span>
+  <span class="n">data</span><span class="o">=</span>   <span class="p">{</span> <span class="n">best</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="p">},</span>
+  <span class="n">sample</span><span class="o">=</span> <span class="p">{</span> <span class="n">max</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+            <span class="n">cliffsMax</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> 
+            <span class="n">cliffsDelta</span><span class="o">=</span><span class="mf">0.147</span> <span class="c1">-- small,medium,large=0.147,0.33,0.474</span>
+            <span class="p">},</span>
+  <span class="n">dom</span><span class="o">=</span>    <span class="p">{</span><span class="n">few</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+           <span class="n">tiny</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span>
+           <span class="n">power</span><span class="o">=</span><span class="mf">0.5</span><span class="p">},</span>
+  <span class="n">tree</span><span class="o">=</span>   <span class="p">{</span> <span class="n">ish</span><span class="o">=</span><span class="mf">1.02</span><span class="p">,</span>
+            <span class="n">min</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> 
+            <span class="n">maxDepth</span><span class="o">=</span><span class="mi">10</span><span class="p">},</span>
+  <span class="n">tbl</span><span class="o">=</span>    <span class="p">{</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span> <span class="p">},</span>
+  <span class="n">nb</span> <span class="o">=</span>    <span class="p">{</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">m</span><span class="o">=</span><span class="mi">2</span><span class="p">},</span>
+  <span class="n">chop</span><span class="o">=</span>   <span class="p">{</span> <span class="n">m</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+            <span class="n">cohen</span><span class="o">=</span><span class="mf">0.2</span><span class="p">},</span>
+  <span class="n">num</span><span class="o">=</span>    <span class="p">{</span> <span class="n">conf</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span>
+            <span class="n">small</span><span class="o">=</span><span class="mf">0.38</span><span class="p">}</span> <span class="c1">-- small,medium = 0.38,1</span>
+<span class="p">}</span>
+
+<span class="n">Burn</span><span class="p">.</span><span class="n">sys</span> <span class="o">=</span> <span class="n">Burn</span><span class="p">.</span><span class="n">sys</span> <span class="ow">or</span> <span class="p">{}</span>
+
+<span class="kr">return</span> <span class="n">Burn</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

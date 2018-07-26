@@ -1,11 +1,16 @@
 ----------------------------------------
 -- class Num
+-- Incremental collector of numeric statistics.
+-- Place to store number tricks
+--
 require("burn")
 local Thing=require("thing")
+local Split=require("split")
 local lib=require("lib")
 
-local interpolate=lib.interpolate
+local copy,interpolate=lib.copy,lib.interpolate
 
+-----------------------------------------------------------
 local Num= Thing:new{lo=Burn.inf, hi=Burn.ninf, mu=0, m2=0} 
 
 function Num:doubt() return self:sd() end
@@ -80,21 +85,24 @@ end
 
 -------------------------------------------------------------
 function Num:best1(rows,  enough,  x, y)
+  print(">>", #rows)
   local cut, best = nil, -1
   local left = Num:new()
   local right= Num:new():incs(rows, y)
   rows = lib.sorted(rows, function(a,b) return x(a) < x(b) end)
   for i,row in pairs(rows) do
+    print(i)
     left:inc(  y(row) )
     right:dec( y(row) )
-    if i > #row - enough then break end
+    if i > #rows - enough then break end
     if i > enough then
       local below = (left.n  / #rows) * left.mu  / right.mu 
       local above = (right.n / #rows) * right.mu / left.mu 
+      print(best, below, above)
       if above > best then --and not same(left, right) then
-	best,cut = tmp, self:gt(x, self.txt, x(row), copy(right)) end
+	best,cut = tmp, Split.gt(x, self.txt, x(row), copy(right)) end
       if below > best then --and not same(left, right) then 
-	best,cut = tmp, self:le(x, self.txt, x(row), copy(left)) end end 
+	best,cut = tmp, Split.le(x, self.txt, x(row), copy(left)) end end 
   end 
   return cut
 end

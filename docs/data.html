@@ -30,9 +30,17 @@
       
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span></span><span class="nb">require</span> <span class="s2">&quot;csv&quot;</span>
-<span class="nb">require</span> <span class="s2">&quot;row&quot;</span>
-<span class="n">fastdom</span> <span class="o">=</span> <span class="nb">require</span> <span class="s2">&quot;fastdom&quot;</span></pre></div>
+      <div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">Object</span><span class="o">=</span><span class="nb">require</span><span class="p">(</span><span class="s2">&quot;object&quot;</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">Num</span><span class="o">=</span><span class="nb">require</span><span class="p">(</span><span class="s2">&quot;num&quot;</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">Sym</span><span class="o">=</span><span class="nb">require</span><span class="p">(</span><span class="s2">&quot;sym&quot;</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">Row</span><span class="o">=</span><span class="nb">require</span><span class="p">(</span><span class="s2">&quot;row&quot;</span><span class="p">)</span>
+
+<span class="kd">local</span> <span class="n">lib</span><span class="o">=</span><span class="nb">require</span><span class="p">(</span><span class="s2">&quot;lib&quot;</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">csv</span><span class="o">=</span><span class="nb">require</span><span class="p">(</span><span class="s2">&quot;csv&quot;</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">fastdom</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s2">&quot;fastdom&quot;</span><span class="p">)</span>
+
+<span class="kd">local</span> <span class="n">int</span><span class="p">,</span>     <span class="n">push</span><span class="p">,</span>     <span class="n">sorted</span> <span class="o">=</span> 
+      <span class="n">lib</span><span class="p">.</span><span class="n">int</span><span class="p">,</span> <span class="n">lib</span><span class="p">.</span><span class="n">push</span><span class="p">,</span> <span class="n">lib</span><span class="p">.</span><span class="n">sorted</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -57,13 +65,18 @@ and many columns have multiple categories (e.g. <code>x.nums</code>,
     </div>
     <div class='code'>
       <div class="highlight"><pre> 
-<span class="n">Data</span> <span class="o">=</span> <span class="n">Any</span><span class="p">:</span><span class="n">new</span><span class="p">{</span>
-  <span class="n">name</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">klass</span><span class="p">,</span>
-  <span class="n">rows</span><span class="o">=</span><span class="p">{},</span> 
-  <span class="n">all</span><span class="o">=</span><span class="p">{</span><span class="n">nums</span><span class="o">=</span><span class="p">{},</span> <span class="n">syms</span><span class="o">=</span><span class="p">{},</span> <span class="n">cols</span><span class="o">=</span><span class="p">{}},</span> <span class="c1">-- all columns</span>
-  <span class="n">x</span>  <span class="o">=</span><span class="p">{</span><span class="n">nums</span><span class="o">=</span><span class="p">{},</span> <span class="n">syms</span><span class="o">=</span><span class="p">{},</span> <span class="n">cols</span><span class="o">=</span><span class="p">{}},</span> <span class="c1">-- all independents</span>
-  <span class="n">y</span>  <span class="o">=</span><span class="p">{</span><span class="n">nums</span><span class="o">=</span><span class="p">{},</span> <span class="n">syms</span><span class="o">=</span><span class="p">{},</span> <span class="n">cols</span><span class="o">=</span><span class="p">{},</span>  <span class="c1">-- all dependent columns</span>
-       <span class="n">less</span><span class="o">=</span><span class="p">{},</span> <span class="n">more</span><span class="o">=</span><span class="p">{}}}</span></pre></div>
+<span class="kd">local</span> <span class="n">Data</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="kr">function</span> <span class="nc">Data</span><span class="p">:</span><span class="nf">new</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+  <span class="kd">local</span> <span class="n">d</span><span class="o">=</span><span class="n">Object</span><span class="p">.</span><span class="n">new</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="n">spec</span><span class="p">)</span>
+  <span class="n">d</span><span class="p">.</span><span class="n">name</span><span class="p">,</span> <span class="n">d</span><span class="p">.</span><span class="n">header</span><span class="p">,</span> <span class="n">d</span><span class="p">.</span><span class="n">klass</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="kc">nil</span><span class="p">,</span> <span class="kc">nil</span>
+  <span class="n">d</span><span class="p">.</span><span class="n">rows</span><span class="o">=</span><span class="p">{}</span> 
+  <span class="n">d</span><span class="p">.</span><span class="n">all</span><span class="o">=</span><span class="p">{</span><span class="n">nums</span><span class="o">=</span><span class="p">{},</span> <span class="n">syms</span><span class="o">=</span><span class="p">{},</span> <span class="n">cols</span><span class="o">=</span><span class="p">{}}</span> <span class="c1">-- all columns</span>
+  <span class="n">d</span><span class="p">.</span><span class="n">x</span>  <span class="o">=</span><span class="p">{</span><span class="n">nums</span><span class="o">=</span><span class="p">{},</span> <span class="n">syms</span><span class="o">=</span><span class="p">{},</span> <span class="n">cols</span><span class="o">=</span><span class="p">{}}</span> <span class="c1">-- all independents</span>
+  <span class="n">d</span><span class="p">.</span><span class="n">y</span>  <span class="o">=</span><span class="p">{</span><span class="n">nums</span><span class="o">=</span><span class="p">{},</span> <span class="n">syms</span><span class="o">=</span><span class="p">{},</span> <span class="n">cols</span><span class="o">=</span><span class="p">{},</span>  <span class="c1">-- all dependent columns</span>
+         <span class="n">less</span><span class="o">=</span><span class="p">{},</span> <span class="n">more</span><span class="o">=</span><span class="p">{}}</span>  
+  <span class="kr">return</span> <span class="n">d</span>
+<span class="kr">end</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -149,199 +162,23 @@ with information from <code>row</code>'s values.</p>
     <span class="n">push</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">self</span><span class="p">.</span><span class="n">all</span><span class="p">.</span><span class="n">cols</span><span class="p">);</span> <span class="n">push</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">self</span><span class="p">[</span><span class="n">xy</span><span class="p">][</span><span class="n">ako</span><span class="p">])</span> <span class="kr">end</span> 
 <span class="kr">end</span>
 
-<span class="kr">function</span> <span class="nc">Data</span><span class="p">:</span><span class="nf">doms</span><span class="p">(</span><span class="n">how</span><span class="p">,</span><span class="n">rows</span><span class="p">)</span>
-  <span class="kr">if</span>   <span class="n">how</span>
+<span class="kr">function</span> <span class="nc">Data</span><span class="p">:</span><span class="nf">doms</span><span class="p">(</span><span class="n">fast</span><span class="p">,</span><span class="n">rows</span><span class="p">)</span>
+  <span class="kr">if</span>   <span class="n">fast</span>
   <span class="kr">then</span> <span class="n">fastdom</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="n">rows</span><span class="p">)</span>
   <span class="kr">else</span> <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">row</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span> <span class="kr">do</span>
-         <span class="n">row</span><span class="p">.</span><span class="n">dom</span> <span class="o">=</span> <span class="n">row</span><span class="p">:</span><span class="n">ndom</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">rows</span><span class="p">)</span> <span class="kr">end</span> <span class="kr">end</span>
- <span class="kr">end</span>
+         <span class="n">row</span><span class="p">.</span><span class="n">dom</span> <span class="o">=</span> <span class="n">row</span><span class="p">:</span><span class="n">ndominates</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="n">rows</span><span class="p">)</span> <span class="kr">end</span> <span class="kr">end</span>
+<span class="kr">end</span>
 
-<span class="kr">function</span> <span class="nc">Data</span><span class="p">:</span><span class="nf">bests</span><span class="p">(</span><span class="n">how</span><span class="p">,</span><span class="n">rows</span><span class="p">)</span>
-  <span class="n">how</span>  <span class="o">=</span> <span class="n">how</span> <span class="ow">or</span> <span class="kc">false</span>
+<span class="kr">function</span> <span class="nc">Data</span><span class="p">:</span><span class="nf">bests</span><span class="p">(</span><span class="n">fast</span><span class="p">,</span><span class="n">rows</span><span class="p">)</span>
+  <span class="n">fast</span>  <span class="o">=</span> <span class="n">fast</span> <span class="ow">or</span> <span class="kc">false</span>
   <span class="n">rows</span> <span class="o">=</span> <span class="n">rows</span> <span class="ow">or</span> <span class="n">self</span><span class="p">.</span><span class="n">rows</span>
-  <span class="n">self</span><span class="p">:</span><span class="n">doms</span><span class="p">(</span><span class="n">how</span><span class="p">,</span><span class="n">rows</span><span class="p">)</span>
+  <span class="n">self</span><span class="p">:</span><span class="n">doms</span><span class="p">(</span><span class="n">fast</span><span class="p">,</span><span class="n">rows</span><span class="p">)</span>
   <span class="n">rows</span> <span class="o">=</span> <span class="n">sorted</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span><span class="kr">function</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="kr">return</span> <span class="n">a</span><span class="p">.</span><span class="n">dom</span> <span class="o">&gt;</span> <span class="n">b</span><span class="p">.</span><span class="n">dom</span> <span class="kr">end</span><span class="p">)</span>
-  <span class="n">best</span> <span class="o">=</span> <span class="n">rows</span><span class="p">[</span> <span class="n">int</span><span class="p">(</span><span class="o">#</span><span class="n">rows</span><span class="o">*</span><span class="mf">0.2</span><span class="p">)</span> <span class="p">].</span><span class="n">dom</span>
+  <span class="kd">local</span> <span class="n">best</span> <span class="o">=</span> <span class="n">rows</span><span class="p">[</span> <span class="n">int</span><span class="p">(</span><span class="o">#</span><span class="n">rows</span><span class="o">*</span><span class="mf">0.2</span><span class="p">)</span> <span class="p">].</span><span class="n">dom</span>
   <span class="kr">return</span> <span class="kr">function</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="kr">return</span> <span class="n">r</span><span class="p">.</span><span class="n">dom</span> <span class="o">&gt;=</span> <span class="n">best</span> <span class="kr">end</span>
-<span class="kr">end</span></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-6'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-6'>#</a>
-      </div>
-      <p>Find the corners of the smallest hyperrectangle which bounds your points. This can be done in O(n⋅d) time (by computing the maximum and minimum values in each dimension). Note that there are 2d corners in a d−</p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-7'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-7'>#</a>
-      </div>
-      <p>dimensional hyperrrectangle.</p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-8'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-8'>#</a>
-      </div>
-      <p>Next, find a point in your data set which closest (using the Manhattan metric) to each of your 2d
-corners and lies on a face of your hyperrectangle (done in O(n⋅2d⋅d)</p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-9'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-9'>#</a>
-      </div>
-      <p>time).</p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-10'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-10'>#</a>
-      </div>
-      <p>Find the farthest points (using the Manhattan metric) amongst these 2d
-points (done in O(22d⋅d)</p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-11'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-11'>#</a>
-      </div>
-      <p>time.</p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-12'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-12'>#</a>
-      </div>
-      <p>The time complexity for this algorithm is O(n⋅d+n⋅2d⋅d+22d⋅d)=O(n⋅2d⋅d)
-if n≥2d.</p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-13'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-13'>#</a>
-      </div>
-      <hr />
-<h2>Test Stuff</h2>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre><span class="kd">local</span> <span class="kr">function</span> <span class="nf">dataOkay</span><span class="p">(</span><span class="n">f</span><span class="p">)</span></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-14'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-14'>#</a>
-      </div>
-      <p>oguesOkay()</p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre>  <span class="kr">return</span> <span class="n">Data</span><span class="p">:</span><span class="n">new</span><span class="p">():</span><span class="n">csv</span><span class="p">(</span><span class="s2">&quot;../data/&quot;</span><span class="o">..</span> <span class="n">f</span> <span class="o">..</span> <span class="s2">&quot;.csv&quot;</span><span class="p">)</span> <span class="kr">end</span> 
-  
-<span class="kr">function</span> <span class="nf">autoOkay</span><span class="p">()</span>      <span class="n">dataOkay</span><span class="p">(</span><span class="s2">&quot;auto&quot;</span><span class="p">)</span> <span class="kr">end</span>
-<span class="kr">function</span> <span class="nf">auto10KOkay</span><span class="p">()</span>   <span class="n">dataOkay</span><span class="p">(</span><span class="s2">&quot;auto10K&quot;</span><span class="p">)</span> <span class="kr">end</span>
-<span class="kr">function</span> <span class="nf">auto1000KOkay</span><span class="p">()</span> <span class="n">dataOkay</span><span class="p">(</span><span class="s2">&quot;auto1000K&quot;</span><span class="p">)</span> <span class="kr">end</span>
-<span class="kr">function</span> <span class="nf">weatherOkay</span><span class="p">()</span>   
-  <span class="kd">local</span> <span class="n">d</span> <span class="o">=</span> <span class="n">dataOkay</span><span class="p">(</span><span class="s2">&quot;weather&quot;</span><span class="p">)</span> 
-  <span class="nb">print</span><span class="p">(</span><span class="o">#</span><span class="n">d</span><span class="p">.</span><span class="n">rows</span><span class="p">)</span>
-  <span class="nb">assert</span><span class="p">(</span> <span class="n">close</span><span class="p">(</span> <span class="n">d</span><span class="p">.</span><span class="n">all</span><span class="p">.</span><span class="n">syms</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="n">ent</span><span class="p">(),</span>  <span class="mf">1.58</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="p">)</span> 
-  <span class="nb">assert</span><span class="p">(</span> <span class="n">close</span><span class="p">(</span> <span class="n">d</span><span class="p">.</span><span class="n">all</span><span class="p">.</span><span class="n">syms</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span><span class="n">ent</span><span class="p">(),</span>  <span class="mf">0.98</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="p">)</span>  
-  <span class="nb">assert</span><span class="p">(</span> <span class="n">close</span><span class="p">(</span> <span class="n">d</span><span class="p">.</span><span class="n">all</span><span class="p">.</span><span class="n">syms</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span><span class="n">ent</span><span class="p">(),</span>  <span class="mf">0.94</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="p">)</span>  
-  <span class="nb">assert</span><span class="p">(</span> <span class="n">close</span><span class="p">(</span> <span class="n">d</span><span class="p">.</span><span class="n">all</span><span class="p">.</span><span class="n">nums</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">mu</span><span class="p">,</span>    <span class="mf">73.57</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="p">)</span>
-  <span class="nb">assert</span><span class="p">(</span> <span class="n">close</span><span class="p">(</span> <span class="n">d</span><span class="p">.</span><span class="n">all</span><span class="p">.</span><span class="n">nums</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="n">sd</span><span class="p">(),</span>   <span class="mf">6.57</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="p">)</span>  <span class="kr">end</span>
+<span class="kr">end</span>
 
-<span class="kr">function</span> <span class="nf">domOkay</span><span class="p">()</span></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-15'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-15'>#</a>
-      </div>
-      <p>dataOkay("auto"):bests(true)
-dataOkay("auto10K"):bests(true)
-dataOkay("auto100K"):bests(true)</p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre>  <span class="n">dataOkay</span><span class="p">(</span><span class="s2">&quot;auto&quot;</span><span class="p">):</span><span class="n">bests</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-16'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-16'>#</a>
-      </div>
-      <p>for <em>,row in pairs(d.rows) do print(row.id, row.dom) end
-for </em>,row in pairs(d.rows) do print(row.dom) end</p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre><span class="kr">end</span>
-
-<span class="kr">function</span> <span class="nf">attrOkay</span><span class="p">()</span>
-  <span class="kd">local</span> <span class="n">d</span><span class="o">=</span> <span class="n">dataOkay</span><span class="p">(</span><span class="s2">&quot;auto&quot;</span><span class="p">)</span>
-  <span class="n">d</span><span class="p">:</span><span class="n">bests</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
-
-  <span class="kd">local</span> <span class="n">y</span> <span class="o">=</span> <span class="kr">function</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="kr">return</span> <span class="n">w</span><span class="p">[</span><span class="n">row</span><span class="p">.</span><span class="n">id</span><span class="p">]</span> <span class="ow">or</span> <span class="mi">0</span> <span class="kr">end</span>
-  <span class="kr">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">best</span><span class="p">)</span> <span class="kr">do</span>
-     <span class="kr">if</span> <span class="n">y</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="kr">then</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">ooo</span><span class="p">(</span><span class="n">row</span><span class="p">:</span><span class="n">has</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="s2">&quot;y&quot;</span><span class="p">,</span><span class="s2">&quot;nums&quot;</span><span class="p">)),</span> <span class="n">y</span><span class="p">(</span><span class="n">row</span><span class="p">))</span> <span class="kr">end</span> <span class="kr">end</span>
-<span class="kr">end</span></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-17'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-17'>#</a>
-      </div>
-      <hr />
-<h2>Main Stuff</h2>
-<p>main{data=weatherOkay}
-main{data=domOkay}</p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre><span class="n">domOkay</span><span class="p">()</span>
+<span class="kr">return</span> <span class="n">Data</span>
 
 </pre></div>
     </div>
