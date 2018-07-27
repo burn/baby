@@ -1,24 +1,28 @@
-----------------------------------------
--- class Num
+-- ## class Num
 -- Incremental collector of numeric statistics.
 -- Place to store number tricks
 --
 require("burn")
 local Thing=require("thing")
 local Split=require("split")
-local lib=require("lib")
+local L=require("lib")
 
-local copy,interpolate=lib.copy,lib.interpolate
+local copy,  interpolate,   abs,   max,   min  = 
+     L.copy, L.interpolate, L.abs, L.max, L.min
 
 -----------------------------------------------------------
+-- `Num`s are a kind of `Thing`
 local Num= Thing:new{lo=Burn.inf, hi=Burn.ninf, mu=0, m2=0} 
 
+-- Polymorphism. `doubt` is a term used for entropy and sd
 function Num:doubt() return self:sd() end
 
+-- Compute sd
 function Num:sd()
   return (self.m2/(self.n - 1 + Burn.zip))^0.5  
 end
 
+-- Add 1 number
 function Num:inc1(x)
   local d = x - self.mu
   self.mu = self.mu + d/self.n
@@ -28,14 +32,17 @@ function Num:inc1(x)
   return x
 end
 
+-- Delete 1 number
 function Num:dec1(x)
   local d = x - self.mu
   self.mu = self.mu - d/self.n
   self.m2 = self.m2 - d*(x - self.mu)
 end
 
+-- Normalize 1 number 0..1, min..max
 function Num:norm(x) 
-  return (x - self.lo)/(self.hi - self.lo + Burn.zip) end
+  return (x - self.lo)/(self.hi - self.lo + Burn.zip) 
+end
 
 -----------------------------------------------------------
 --Many distributions are not normal so I use this tTestSame as a heuristic for speed criticl calcs. E.g. in the inner inner loop of some search where i need a quick opinion, is "this" the same as "that".
@@ -59,20 +66,10 @@ function Num:ttest(j,  conf)
 end
     
 -- Hedge's rule (using g):
---    """
----    Hedges effect size test.
---    Returns true if the "i" and "j" difference is only a small effect.
---    "i" and "j" are   objects reporing mean (i.mu), standard deviation (i.s)
---    and size (i.n) of two  population of numbers.
--- - Still parametric
--- - Modifies &Delta; w.r.t. the standard deviation of both samples.
--- - Adds a correction factor c for small sample sizes.
--- - In their review of use of effect size in SE, Kampenses et al. report that many papers use something like g &lt; 0.38
---  is the boundary between small effects and bigger effects.
--- Systematic Review of Effect Size in
--- Software Engineering Experiments
+-- based on <em>Systematic Review of Effect Size in
+-- Software Engineering Experiments</em>
 -- Kampenes, Vigdis By, et al. Information and Software Technology 49.11 (2007): 1073-1086. See equations 2,3,4 and Figure 9
-function hedges(j,small)
+function Num:hedges(j,small)
     small = small or 0.38
     local i = self
     local num   = (i.n - 1)*i:sd()^2 + (j.n - 1)*j:sd()^2
@@ -84,27 +81,31 @@ function hedges(j,small)
 end
 
 -------------------------------------------------------------
-function Num:best1(rows,  enough,  x, y)
-  print(">>", #rows)
+-- ### Discretization.
+-- Find the best place to cut a column such that one of the
+-- cuts maximizes the `y` scoring function. Cuts must contain
+-- at least `enough` items.
+function Num:best1(rows,  the)
+  local enough,  x, y = the.enough, the.x, the.y
   local cut, best = nil, -1
   local left = Num:new()
   local right= Num:new():incs(rows, y)
-  rows = lib.sorted(rows, function(a,b) return x(a) < x(b) end)
+  rows = L.sorted(rows, function(a,b) return x(a) < x(b) end)
   for i,row in pairs(rows) do
-    print(i)
     left:inc(  y(row) )
     right:dec( y(row) )
     if i > #rows - enough then break end
     if i > enough then
       local below = (left.n  / #rows) * left.mu  / right.mu 
       local above = (right.n / #rows) * right.mu / left.mu 
-      print(best, below, above)
-      if above > best then --and not same(left, right) then
-	best,cut = tmp, Split.gt(x, self.txt, x(row), copy(right)) end
-      if below > best then --and not same(left, right) then 
-	best,cut = tmp, Split.le(x, self.txt, x(row), copy(left)) end end 
+      if above > best and not left:same(right) then
+	best,cut = above, Split.gt(x, self.txt, x(row), right.mu) end
+      if below > best and not left:same(right) then 
+	best,cut = below, Split.le(x, self.txt, x(row), left.mu) end end 
   end 
   return cut
 end
 
+-------------------------------------------------------------
+-- And finally...
 return Num

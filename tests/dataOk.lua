@@ -32,17 +32,16 @@ local function sensory()
 end
 
 local function autoBreaks()   
-  local key=function(z)  print(z.score.mu); return z.score.mu end
+  local key=function(z)  print(z.score); return z.score end
   local d=dataOkay("auto")
   d:bests()
   local cols={}
   for i,num in pairs(d.x.nums) do
-    print(i,num.txt, num.pos)
-    cols[ i ] = num:best(d.rows) end
-  print(key(cols[1]))
+    cols[i] = num:best(d.rows,{min=true,y=function(row) return row.dom end}) 
+  end
   cols = L.sorted(cols,function(a,b) return key(a) > key(b) end)
   for _,col in pairs(cols) do
-    print(col.txt)
+    say(col.txt .." " )
     L.oo(col) end
 end
 autoBreaks()

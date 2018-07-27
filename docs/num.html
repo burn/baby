@@ -27,9 +27,8 @@
 <p><a href="index.html">index</a> |
 <a href="https://github.com/burn/src/issues">discuss</a> |
 <a href="https://github.com/burn/src/blob/master/LICENSE.md">license</a></p>
-      <hr />
-<p>class Num
-Incremental collector of numeric statistics.
+      <h2>class Num</h2>
+<p>Incremental collector of numeric statistics.
 Place to store number tricks</p>
     </div>
     <div class='code'>
@@ -48,33 +47,10 @@ Place to store number tricks</p>
         <a class='octothorpe' href='#section-1'>#</a>
       </div>
       <hr />
+<p><code>Num</code>s are a kind of <code>Thing</code></p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="kd">local</span> <span class="n">Num</span><span class="o">=</span> <span class="n">Thing</span><span class="p">:</span><span class="n">new</span><span class="p">{</span><span class="n">lo</span><span class="o">=</span><span class="n">Burn</span><span class="p">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">hi</span><span class="o">=</span><span class="n">Burn</span><span class="p">.</span><span class="n">ninf</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">m2</span><span class="o">=</span><span class="mi">0</span><span class="p">}</span> 
-
-<span class="kr">function</span> <span class="nc">Num</span><span class="p">:</span><span class="nf">doubt</span><span class="p">()</span> <span class="kr">return</span> <span class="n">self</span><span class="p">:</span><span class="n">sd</span><span class="p">()</span> <span class="kr">end</span>
-
-<span class="kr">function</span> <span class="nc">Num</span><span class="p">:</span><span class="nf">sd</span><span class="p">()</span>
-  <span class="kr">return</span> <span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">m2</span><span class="o">/</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">Burn</span><span class="p">.</span><span class="n">zip</span><span class="p">))</span><span class="o">^</span><span class="mf">0.5</span>  
-<span class="kr">end</span>
-
-<span class="kr">function</span> <span class="nc">Num</span><span class="p">:</span><span class="nf">inc1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-  <span class="kd">local</span> <span class="n">d</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">self</span><span class="p">.</span><span class="n">mu</span>
-  <span class="n">self</span><span class="p">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">mu</span> <span class="o">+</span> <span class="n">d</span><span class="o">/</span><span class="n">self</span><span class="p">.</span><span class="n">n</span>
-  <span class="n">self</span><span class="p">.</span><span class="n">m2</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">m2</span> <span class="o">+</span> <span class="n">d</span><span class="o">*</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">self</span><span class="p">.</span><span class="n">mu</span><span class="p">)</span>
-  <span class="kr">if</span>    <span class="n">x</span> <span class="o">&gt;</span> <span class="n">self</span><span class="p">.</span><span class="n">hi</span> <span class="kr">then</span> <span class="n">self</span><span class="p">.</span><span class="n">hi</span> <span class="o">=</span> <span class="n">x</span> <span class="kr">end</span>
-  <span class="kr">if</span>    <span class="n">x</span> <span class="o">&lt;</span> <span class="n">self</span><span class="p">.</span><span class="n">lo</span> <span class="kr">then</span> <span class="n">self</span><span class="p">.</span><span class="n">lo</span> <span class="o">=</span> <span class="n">x</span> <span class="kr">end</span>
-  <span class="kr">return</span> <span class="n">x</span>
-<span class="kr">end</span>
-
-<span class="kr">function</span> <span class="nc">Num</span><span class="p">:</span><span class="nf">dec1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-  <span class="kd">local</span> <span class="n">d</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">self</span><span class="p">.</span><span class="n">mu</span>
-  <span class="n">self</span><span class="p">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">mu</span> <span class="o">-</span> <span class="n">d</span><span class="o">/</span><span class="n">self</span><span class="p">.</span><span class="n">n</span>
-  <span class="n">self</span><span class="p">.</span><span class="n">m2</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">m2</span> <span class="o">-</span> <span class="n">d</span><span class="o">*</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">self</span><span class="p">.</span><span class="n">mu</span><span class="p">)</span>
-<span class="kr">end</span>
-
-<span class="kr">function</span> <span class="nc">Num</span><span class="p">:</span><span class="nf">norm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> 
-  <span class="kr">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">self</span><span class="p">.</span><span class="n">lo</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">hi</span> <span class="o">-</span> <span class="n">self</span><span class="p">.</span><span class="n">lo</span> <span class="o">+</span> <span class="n">Burn</span><span class="p">.</span><span class="n">zip</span><span class="p">)</span> <span class="kr">end</span></pre></div>
+      <div class="highlight"><pre><span class="kd">local</span> <span class="n">Num</span><span class="o">=</span> <span class="n">Thing</span><span class="p">:</span><span class="n">new</span><span class="p">{</span><span class="n">lo</span><span class="o">=</span><span class="n">Burn</span><span class="p">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">hi</span><span class="o">=</span><span class="n">Burn</span><span class="p">.</span><span class="n">ninf</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">m2</span><span class="o">=</span><span class="mi">0</span><span class="p">}</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -82,6 +58,81 @@ Place to store number tricks</p>
     <div class='docs'>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>Polymorphism. <code>doubt</code> is a term used for entropy and sd</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nc">Num</span><span class="p">:</span><span class="nf">doubt</span><span class="p">()</span> <span class="kr">return</span> <span class="n">self</span><span class="p">:</span><span class="n">sd</span><span class="p">()</span> <span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>Compute sd</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nc">Num</span><span class="p">:</span><span class="nf">sd</span><span class="p">()</span>
+  <span class="kr">return</span> <span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">m2</span><span class="o">/</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">Burn</span><span class="p">.</span><span class="n">zip</span><span class="p">))</span><span class="o">^</span><span class="mf">0.5</span>  
+<span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>Add 1 number</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nc">Num</span><span class="p">:</span><span class="nf">inc1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+  <span class="kd">local</span> <span class="n">d</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">self</span><span class="p">.</span><span class="n">mu</span>
+  <span class="n">self</span><span class="p">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">mu</span> <span class="o">+</span> <span class="n">d</span><span class="o">/</span><span class="n">self</span><span class="p">.</span><span class="n">n</span>
+  <span class="n">self</span><span class="p">.</span><span class="n">m2</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">m2</span> <span class="o">+</span> <span class="n">d</span><span class="o">*</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">self</span><span class="p">.</span><span class="n">mu</span><span class="p">)</span>
+  <span class="kr">if</span>    <span class="n">x</span> <span class="o">&gt;</span> <span class="n">self</span><span class="p">.</span><span class="n">hi</span> <span class="kr">then</span> <span class="n">self</span><span class="p">.</span><span class="n">hi</span> <span class="o">=</span> <span class="n">x</span> <span class="kr">end</span>
+  <span class="kr">if</span>    <span class="n">x</span> <span class="o">&lt;</span> <span class="n">self</span><span class="p">.</span><span class="n">lo</span> <span class="kr">then</span> <span class="n">self</span><span class="p">.</span><span class="n">lo</span> <span class="o">=</span> <span class="n">x</span> <span class="kr">end</span>
+  <span class="kr">return</span> <span class="n">x</span>
+<span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>Delete 1 number</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nc">Num</span><span class="p">:</span><span class="nf">dec1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+  <span class="kd">local</span> <span class="n">d</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">self</span><span class="p">.</span><span class="n">mu</span>
+  <span class="n">self</span><span class="p">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">mu</span> <span class="o">-</span> <span class="n">d</span><span class="o">/</span><span class="n">self</span><span class="p">.</span><span class="n">n</span>
+  <span class="n">self</span><span class="p">.</span><span class="n">m2</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">m2</span> <span class="o">-</span> <span class="n">d</span><span class="o">*</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">self</span><span class="p">.</span><span class="n">mu</span><span class="p">)</span>
+<span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p>Normalize 1 number 0..1, min..max</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nc">Num</span><span class="p">:</span><span class="nf">norm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> 
+  <span class="kr">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">self</span><span class="p">.</span><span class="n">lo</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">hi</span> <span class="o">-</span> <span class="n">self</span><span class="p">.</span><span class="n">lo</span> <span class="o">+</span> <span class="n">Burn</span><span class="p">.</span><span class="n">zip</span><span class="p">)</span> 
+<span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
       </div>
       <hr />
 <p>Many distributions are not normal so I use this tTestSame as a heuristic for speed criticl calcs. E.g. in the inner inner loop of some search where i need a quick opinion, is "this" the same as "that".
@@ -108,24 +159,14 @@ But when assessing experimental results after all the algorithms have terminated
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-3'>
+  <div class='section' id='section-8'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-3'>#</a>
+        <a class='octothorpe' href='#section-8'>#</a>
       </div>
       <p>Hedge's rule (using g):
-   """
--    Hedges effect size test.
-   Returns true if the "i" and "j" difference is only a small effect.
-   "i" and "j" are   objects reporing mean (i.mu), standard deviation (i.s)
-   and size (i.n) of two  population of numbers.
-- Still parametric
-- Modifies &Delta; w.r.t. the standard deviation of both samples.
-- Adds a correction factor c for small sample sizes.
-- In their review of use of effect size in SE, Kampenses et al. report that many papers use something like g &lt; 0.38
- is the boundary between small effects and bigger effects.
-Systematic Review of Effect Size in
-Software Engineering Experiments
+based on <em>Systematic Review of Effect Size in
+Software Engineering Experiments</em>
 Kampenes, Vigdis By, et al. Information and Software Technology 49.11 (2007): 1073-1086. See equations 2,3,4 and Figure 9</p>
     </div>
     <div class='code'>
@@ -142,12 +183,16 @@ Kampenes, Vigdis By, et al. Information and Software Technology 49.11 (2007): 10
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-4'>
+  <div class='section' id='section-9'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-4'>#</a>
+        <a class='octothorpe' href='#section-9'>#</a>
       </div>
       <hr />
+<h3>Discretization.</h3>
+<p>Find the best place to cut a column such that one of the
+cuts maximizes the <code>y</code> scoring function. Cuts must contain
+at least <code>enough</code> items.</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre><span class="kr">function</span> <span class="nc">Num</span><span class="p">:</span><span class="nf">best1</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span>  <span class="n">enough</span><span class="p">,</span>  <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
@@ -171,9 +216,20 @@ Kampenes, Vigdis By, et al. Information and Software Technology 49.11 (2007): 10
 	<span class="n">best</span><span class="p">,</span><span class="n">cut</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">,</span> <span class="n">Split</span><span class="p">.</span><span class="n">le</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">self</span><span class="p">.</span><span class="n">txt</span><span class="p">,</span> <span class="n">x</span><span class="p">(</span><span class="n">row</span><span class="p">),</span> <span class="n">copy</span><span class="p">(</span><span class="n">left</span><span class="p">))</span> <span class="kr">end</span> <span class="kr">end</span> 
   <span class="kr">end</span> 
   <span class="kr">return</span> <span class="n">cut</span>
-<span class="kr">end</span>
-
-<span class="kr">return</span> <span class="n">Num</span>
+<span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <hr />
+<p>And finally...</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">return</span> <span class="n">Num</span>
 
 </pre></div>
     </div>

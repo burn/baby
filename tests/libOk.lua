@@ -28,4 +28,9 @@ ok {minmax= function()
   assert(lib.max(2,3) == 3)
 end}
 
-
+ok { deepcopy = function()
+  local b4 = {a={b={c={d=1},k=20}}, m=50}
+  local now=lib.copy(b4)
+  b4.a.b.c.d =10
+  assert( b4.a.b.c.d != now.a.b.c.d )
+end }

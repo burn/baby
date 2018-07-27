@@ -37,15 +37,18 @@ function Thing:norm(x) return x end
 -- Returns a function that returns true if a row selects for best ranges.
 -- o = {x,y,enough=10,min=false}
 -- - assumes `y(row)` returns a positive number 0..1
-function Thing:best(rows, enough, x, y, min)
-  enough = enough or 10
-  min    = min or false
-  x      = x or function (r) 
-	         local val = r.cells[self.pos] 
-	         return val=="?" and -10^32 or val end
-  klass  = y or function (r) return r.cells[#r.cells] end
-  y      = function(r) return min and 1-klass(r) or klass(r) end
-  return self:best1(rows, enough, x,y) 
+function Thing:best(rows, the)
+  local min   = the.min or false
+  local xval  = function (r) 
+                  local  z = r.cells[self.pos]
+                  return z=="?" and -10^32 or z 
+	        end
+  local klass = the.y or function (r) return r.cells[#r.cells] end
+  local yval  = function(r) 
+                  return min  and 1-klass(r) or klass(r) end
+  return self:best1(rows, {enough = the.enough or (#rows)*0.2, 
+                           x = the.x or xval, 
+	                   y = yval})
 end
 
 return Thing

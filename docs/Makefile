@@ -4,7 +4,7 @@ Fork=../etc/fork.html#
 Pat=*.lua#
 Lib=../lib#
 
-go: files adds index clean save 
+go: files adds index clean 
 
 clean:
 	rm *-e
@@ -28,8 +28,3 @@ body:
 adds:
 	@$(foreach f,$F, sed -i -e '19r $(Header)' $f;)
 	@$(foreach f,$F, sed -i -e '11r $(Fork)' $f;)
-
-save:
-	git add *
-	git commit -am "HTML updates"
-	git push
