@@ -257,6 +257,22 @@ function lib.ooo(data)
   return go(data,"{","") 
 end  
 
+function lib.cols(t)
+  local w={}
+  for i,_ in pairs(t[1]) do w[i] = 0 end
+  for _,line in pairs(t) do
+    for j,cell in pairs(line) do 
+      w[j] = lib.max( w[j], #tostring(cell) ) end
+  for i,cell in pairs(w) do w[i] = "%"..w[i].."s" end 
+  for _,line in pairs(t) do
+    local txt,sep="",""
+    for j,cell in pairs(line) do
+      print(txt,sep)
+      txt = txt .. sep .. lib.sprintf(w[j], cell)
+      sep = "," end 
+    print(txt) end end
+end
+
 -------------------------------------------------------------
 -- ## Meta  Stuff
 

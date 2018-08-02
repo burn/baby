@@ -32,5 +32,12 @@ ok { deepcopy = function()
   local b4 = {a={b={c={d=1},k=20}}, m=50}
   local now=lib.copy(b4)
   b4.a.b.c.d =10
-  assert( b4.a.b.c.d != now.a.b.c.d )
+  assert( b4.a.b.c.d ~= now.a.b.c.d )
 end }
+
+ok { cols = function()
+     local t={ {"name", "age", "shoesize"},
+               {"tim Menzies", 20, 40},
+	       {"jane", 2.312211, 20 } }
+     lib.cols(t)
+end}

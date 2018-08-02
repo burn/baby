@@ -1,4 +1,5 @@
 local Object=require("object")
+local L=require("lib")
 
 Row = Object:new{cells, _dom, best=false}
 
@@ -38,14 +39,14 @@ function Row:ndominates(data, others)
   return n 
 end
 
--------------------------------------------------
+------------------------------------------------------------
 function Row:distance(row,things,k)
-  local d,n = 0, Burn.zip
+  local d, n, k = 0, Burn.zip, k or 2
   local x,y = self.cells, row.cells
   for _,t in pairs(things) do
-    local d1,n1 = t:distance( x[t.pos], y[t.pos], k ) end
-    d, n = d+d1, n+n1
-  return d^k / n^k
+    local d1,n1 = t:distance( x[t.pos], y[t.pos], k ) 
+    d, n = d + d1, n + n1 end
+  return (d^k) / (n^k)
 end
 
 function Row:nearest(rows, things, k, best, better)

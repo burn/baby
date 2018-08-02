@@ -51,9 +51,9 @@ ok { dist=function()
      row2,d2 = row1:furthest(d.rows, d.x.cols)
      row3,d3 = row1:nearest( d.rows, d.x.cols)
      print()
-     print(join(row1.cells))
-     print(join(row2.cells), d2)
-     print(join(row3.cells), d3) end
+     print(L.join(row1.cells))
+     print(L.join(row3.cells), d3) 
+     print(L.join(row2.cells), d2) end
  end}
 
 os.exit()

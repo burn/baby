@@ -80,7 +80,6 @@ cat<<EOF>$Tmp/vimrc
 	set hlsearch
 	set hlsearch!
 	nnoremap <F3> :set hlsearch!<CR>
-	set ruler
 	set formatoptions+=cro
 	set rtp+=~/.vim/bundle/Vundle.vim
 	call vundle#begin()
@@ -107,9 +106,10 @@ cat<<EOF>$Tmp/vimrc
 	hi VertSplit ctermfg=Black ctermbg=Black
 	set mouse+=a
 	if &term =~ '^screen'
-		    " tmux knows the extended mouse mode
-		        set ttymouse=xterm2
-		endif
+	    " tmux knows the extended mouse mode
+	    set ttymouse=xterm2
+	endif
+	set ruler
 EOF
 vim0() {
   if  [ ! -d "$HOME/.vim/bundle/Vundle.vim" ]; then
