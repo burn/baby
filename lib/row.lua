@@ -38,4 +38,31 @@ function Row:ndominates(data, others)
   return n 
 end
 
+-------------------------------------------------
+function Row:distance(row,things,k)
+  local d,n = 0, Burn.zip
+  local x,y = self.cells, row.cells
+  for _,t in pairs(things) do
+    local d1,n1 = t:distance( x[t.pos], y[t.pos], k ) end
+    d, n = d+d1, n+n1
+  return d^k / n^k
+end
+
+function Row:nearest(rows, things, k, best, better)
+   best   = best   or Burn.inf
+   better = better or function(x,y) return x < y end
+   local out = self
+   for _,row in pairs(rows) do 
+     if self.id ~= row.id then
+       local tmp = self:distance(row, things, k)
+       if better(tmp, best) then
+         best, out = tmp, row end end end
+   return out,best 
+end
+
+function Row:furthest(rows,things,k)
+  return self:nearest(rows,things,k, -1, 
+                      function(x,y) return x > y end)
+end
+
 return Row

@@ -45,6 +45,22 @@ function Num:norm(x)
 end
 
 -----------------------------------------------------------
+function Num:distance(i,j,k) 
+  local k = k or 2
+  local no = Burn.ignore
+  if j == no and i == no then return 0,0  end
+  if j == no then
+    i = self:norm(i)
+    j =  i < 0.5 and 1 or 0
+  elseif i == no then
+    j = self:norm(j)
+    i = j < 0.5 and 1 or 0
+  else
+    i,j = self:norm(i), self:norm(j)
+  end
+  return math.abs(i-j)^k,1 end 
+
+-----------------------------------------------------------
 --Many distributions are not normal so I use this tTestSame as a heuristic for speed criticl calcs. E.g. in the inner inner loop of some search where i need a quick opinion, is "this" the same as "that".
 -- But when assessing experimental results after all the algorithms have terminated, I use a much safer, but somewhat slower, procedure (bootstrap)
 function Num:same(j,  conf,  small)

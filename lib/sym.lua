@@ -42,6 +42,16 @@ function Sym:dec1(x)
 end
 
 -----------------------------------------------------------
+function Sym:distance(i,j) 
+  local no = Burn.ignore
+  if     j == no and i == no then return 0,0  
+  elseif j == no             then return 1,1
+  elseif i == no             then return 1,1 
+  elseif i ==j               then return 0,1 
+  else                            return 1,1 end 
+end
+
+-----------------------------------------------------------
 function Sym:best1(rows, enough, x,y)
   local cut, best, nums =  nil,-1, {}
   for _,row in pairs(rows) do

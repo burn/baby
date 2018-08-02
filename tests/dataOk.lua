@@ -31,7 +31,7 @@ local function sensory()
     L.oo(col) end
 end
 
-local function autoBreaks()   
+ok { autoBreaks= function ()   
   local key=function(z)  print(z.score); return z.score end
   local d=dataOkay("auto")
   d:bests()
@@ -43,8 +43,19 @@ local function autoBreaks()
   for _,col in pairs(cols) do
     say(col.txt .." " )
     L.oo(col) end
-end
-autoBreaks()
+end}
+
+ok { dist=function()
+  local d = dataOkay("auto")
+  for _,row1 in pairs(d.rows) do
+     row2,d2 = row1:furthest(d.rows, d.x.cols)
+     row3,d3 = row1:nearest( d.rows, d.x.cols)
+     print()
+     print(join(row1.cells))
+     print(join(row2.cells), d2)
+     print(join(row3.cells), d3) end
+ end}
+
 os.exit()
 
 ok {divs= function()   
