@@ -269,7 +269,7 @@ function lib.cols(t)
     for j,cell in pairs(line) do
       print(txt,sep)
       txt = txt .. sep .. lib.sprintf(w[j], cell)
-      sep = "," end 
+      sep = "," end  
     print(txt) end end
 end
 
