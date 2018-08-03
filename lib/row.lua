@@ -50,15 +50,15 @@ function Row:distance(row,things,k)
 end
 
 function Row:nearest(rows, things, k, best, better)
-   best   = best   or Burn.inf
-   better = better or function(x,y) return x < y end
-   local out = self
-   for _,row in pairs(rows) do 
-     if self.id ~= row.id then
-       local tmp = self:distance(row, things, k)
-       if better(tmp, best) then
-         best, out = tmp, row end end end
-   return out,best 
+  best   = best   or Burn.inf
+  better = better or function(x,y) return x < y end
+  local out = self
+  for _,row in pairs(rows) do 
+    if self.id ~= row.id then
+      local tmp = self:distance(row, things, k)
+      if better(tmp, best) then
+        best, out = tmp, row end end end
+  return out,best 
 end
 
 function Row:furthest(rows,things,k)

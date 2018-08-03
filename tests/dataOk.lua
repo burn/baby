@@ -47,13 +47,13 @@ end}
 
 ok { dist=function()
   local d = dataOkay("auto")
-  for _,row1 in pairs(d.rows) do
+  for _,row1 in pairs(L.shuffle(d.rows)) do
      row2,d2 = row1:furthest(d.rows, d.x.cols)
      row3,d3 = row1:nearest( d.rows, d.x.cols)
      print()
-     print(L.join(row1.cells))
-     print(L.join(row3.cells), d3) 
-     print(L.join(row2.cells), d2) end
+     print(row1.id,",",L.join(row1.cells))
+     print(row3.id,",",L.join(row3.cells), ",lo,",L.round(d3,0.01)) 
+     print(row2.id,",",L.join(row2.cells), ",hi,",L.round(d2,0.01)) end
  end}
 
 os.exit()

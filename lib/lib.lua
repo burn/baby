@@ -257,21 +257,33 @@ function lib.ooo(data)
   return go(data,"{","") 
 end  
 
-function lib.cols(t)
+-- ## col(t [,numfmt [, noline ]])
+-- Pretty print the list of lists in `t`.
+-- If `numfmt` suppied, use it to format numbers.
+-- If `noline` then suppress the underlines beneath row1.
+function lib.cols(t,     numfmt, noline)
   local w={}
   for i,_ in pairs(t[1]) do w[i] = 0 end
-  for _,line in pairs(t) do
+  for i,line in pairs(t) do
     for j,cell in pairs(line) do 
+      if type(cell)=="number" and numfmt then
+	cell    = lib.sprintf(numfmt, cell) 
+	t[i][j] = cell end
       w[j] = lib.max( w[j], #tostring(cell) ) end end
-  for i,cell in pairs(w) do w[i] = "%"..w[i].."s" end 
-  for _,line in pairs(t) do
+  for n,line in pairs(t) do
     local txt,sep="",""
     for j,cell in pairs(line) do
-      print(txt,sep)
-      txt = txt .. sep .. lib.sprintf(w[j], cell)
+      local fmt = "%" .. (w[j]+1) .. "s"
+      txt = txt .. sep .. lib.sprintf(fmt, cell)
       sep = "," 
     end  
-    print(txt) end 
+    print(txt) 
+    if (n==1 and not noline) then
+      local sep="#"
+      for _,w1 in pairs(w) do
+	io.write(sep .. string.rep("-",w1)  ) 
+        sep=", " end
+      print("") end end 
 end
 
 -------------------------------------------------------------

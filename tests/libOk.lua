@@ -39,5 +39,5 @@ ok { cols = function()
      local t={ {"name", "age", "shoesize"},
                {"tim Menzies", 20, 40},
 	       {"jane", 2.312211, 20 } }
-     lib.cols(t)
+     lib.cols(t, "%20.2f")
 end}
