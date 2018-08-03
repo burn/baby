@@ -1,7 +1,7 @@
-local lib= require("lib")
+local Lib= require("lib")
 
 local split,     sub,     scan = 
-      lib.split, lib.sub, lib.scan
+      Lib.split, Lib.sub, Lib.scan
 
 -------------------------------------------------------
 -- ### csv(file: string)
@@ -34,10 +34,7 @@ return function (file)
 	        then use[ #use+1 ] = i end end end
           for i= 1,#use do -- grab the columns we want
             row[ #row+1 ] = scan( cells[use[i]] ) end
-          return row 
-        end 
-      end 
+          return row end end 
     end 
-    io.close(stream)
-  end 
+    io.close(stream) end 
 end 

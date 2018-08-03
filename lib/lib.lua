@@ -15,6 +15,9 @@ local lib= {
 -------------------------------------------------------------
 -- ## Maths Stuff
 
+-- ### round(m:number, n:number): number
+-- Returns `m` rounded to the nearest `n`. E.g.
+-- `round(32.7812, 0.1)` returns 32.8.
 function lib.round(exact, quantum)
     local quant,frac = math.modf(exact/quantum)
     return quantum * (quant + (frac > 0.5 and 1 or 0))
@@ -28,9 +31,10 @@ function lib.close(m,n,e)
   return lib.abs(m-n)/n <= e/100 
 end
 
--- ### min(x:number, y:number): number
 -- ### max(x:number, y:number): number
 function lib.max(a,b) return a > b and a or b end
+
+-- ### min(x:number, y:number): number
 function lib.min(a,b) return a < b and a or b end
 
 -- ### rand()
@@ -47,23 +51,18 @@ do
     return seed / modulus end 
 end
 
--- *** interpolate(x, xs:table, ys:table): number
+-- ### interpolate(x, xs:table, ys:table): number
 -- Return a `y` value for `x` by interpolating across the points in `xs,ys`.
 -- E.g. 
---
--- ```
--- interpolate(3, {1,2,4}, {10,20,40}) -- returns  30
--- ```                     
---
+-- ``interpolate(3,{1,2,4},{10,20,40})`` returns  30,
 -- This function assumes that `y` changes linearly between the
 -- points records in `xs,ys`. Also, anything less or more than
--- the first and last values in `xs` are capped to the `ys[1]` or `ys[#ys]
+-- the first and last values in `xs` are capped to the `ys[1]` or `ys[#ys]`
 -- values, respectively.
 function lib.interpolate(x,xs,ys,          x1,y1)
   local x0, y0 = xs[1], ys[1]
   if x <= x0 then return y0  end
   if x > xs[ #xs ] then return ys[ #ys ] end
-  --if x >= xs[#xs] then return ys[#xs] end
   for i = 1, #xs do
     x1,y1 = xs[i],ys[i]
     if x0 <= x and x < x1 then break end
@@ -71,16 +70,27 @@ function lib.interpolate(x,xs,ys,          x1,y1)
   return y0 +  (x - x0)/(x1 - x0) * (y1 - y0)
 end
  
--- weibull(x,l,k): number
+-- ### weibull(x,l,k): number
+-- Weibul distributuion.
 function lib.weibull(x,l,k)
   return x < 0 and 0 or k/l*(x/l)^(k-1)*E^(-1*(x/l)^k)
 end
 
+-- ### weibullCdf(x,l,k): number
+-- Weibul cumulative probability distributuion.
+function lib.weibullCdf(x,l,k)
+  return x < 0 and 0 or 1 - E^(-(x/l)^k)
+end
+
+-- ### normal(x, mu, sigma): number
+-- Normal probability distributuion.
 function lib.normal(x, mu, sigma)
     return E^(-.5 * (x-mu)*(x-mu)/(sigma*sigma)) / 
            math.sqrt(2.0*math.pi*sigma*sigma)
 end
 
+-- ### normCdf(x, mu, sigma): number
+-- Normal cumulative probability distributuion.
 function lib.normCdf(x, mu, sigma)
     return 0.5 * (1.0 + E^((x-mu)/math.sqrt(2*sigma*sigma)))
 end
@@ -136,14 +146,14 @@ function lib.join(t, sep)
   return table.concat(u, sep or ", ") 
 end
 
---- ### any(t: table): table
+-- ### any(t: table): table
 -- Extract any one item from a table
 function lib.any(t)
   local pos =  math.floor(0.5 + lib.rand() * #t)
   return t[ lib.min(#t,lib.max(1,pos)) ] 
 end
 
---- ### anys(t: table, n:integer): table
+-- ### anys(t: table, n:integer): table
 -- Extract any `n` items from  `t` (using sampling with replacement).
 function lib.anys(t,n)
   t = lib.shuffle(t)
@@ -169,15 +179,19 @@ function lib.shuffle( t )
   return t 
 end
 
+-- ### shallowCopy(t)
+-- Returns a duplicate of `t`.
 function lib.shallowCopy(t) 
   return lib.collect(t,lib.same) 
 end
 
+-- ### copy(t)
+-- Returns a duplicate of `t`, and all its conctents (recursively).
 function lib.copy(t)  --recursive
   return type(t) ~= 'table' and t or lib.collect(t,lib.copy) 
 end
---
--------------------------------------------------------------
+
+------------------------------------------------------------
 -- ## Environment Stuff
 -- ### args(settings:table, ignore: table, updates:table)
 -- Reading from `updates` (or, if missing, `arg`),
@@ -193,7 +207,8 @@ function lib.args(settings,ignore, updates)
     local b4   = #flag
     flag = flag:gsub("^[-]+","")
     if not lib.member(flag,ignore) then
-      if settings[flag] == nil then error("unknown flag '" .. flag .. "'")
+      if settings[flag] == nil then 
+	error("unknown flag '" .. flag .. "'")
       else
         if b4 - #flag == 2     then settings[flag] = true
         elseif b4 - #flag == 1 then
@@ -205,7 +220,7 @@ function lib.args(settings,ignore, updates)
   return settings 
 end
 
--------------------------------------------------------------
+------------------------------------------------------------
 -- ## String  Stuff
 
 -- ### say(s)
@@ -257,7 +272,7 @@ function lib.ooo(data)
   return go(data,"{","") 
 end  
 
--- ## col(t [,numfmt [, noline ]])
+-- ### col(t [,numfmt [, noline ]])
 -- Pretty print the list of lists in `t`.
 -- If `numfmt` suppied, use it to format numbers.
 -- If `noline` then suppress the underlines beneath row1.
@@ -325,6 +340,9 @@ function lib.reject(t,f)
   return lib.select(t, function(v) return not f(v) end)
 end
 
+-- ### when(f,  r) 
+-- Reports time required to fun function `f`, `r` times
+-- (and `r` defaults to 1).
 function lib.when(f, r)
    r= r or 1
    local t1=os.clock()
@@ -332,4 +350,5 @@ function lib.when(f, r)
    return (os.clock() - t1)/ r
 end
 
+-------------------------------------------------------------
 return lib

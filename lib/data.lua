@@ -3,12 +3,12 @@ local Num=require("num")
 local Sym=require("sym")
 local Row=require("row")
 
-local lib=require("lib")
-local csv=require("csv")
-local fastdom = require("fastdom")
+local Lib=require("lib")
+local Csv=require("csv")
+local Fastdom = require("fastdom")
 
 local int,     push,     sorted = 
-      lib.int, lib.push, lib.sorted
+      Lib.int, Lib.push, Lib.sorted
 
 ------------------------------
 -- ## Data class
@@ -40,7 +40,7 @@ end
 -- ### Data:csv(file: string)
 -- Read data in  from `file`. Return `self`.
 function Data:csv(file)
-  for row in csv(file) do self:inc(row) end 
+  for row in Csv(file) do self:inc(row) end 
   return self 
 end
 
@@ -87,7 +87,7 @@ end
 
 function Data:doms(fast,rows)
   if   fast
-  then fastdom(self,rows)
+  then Fastdom(self,rows)
   else for _,row in pairs(rows) do
          row.dom = row:ndominates(self,rows) end end
 end

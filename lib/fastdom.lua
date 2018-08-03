@@ -1,10 +1,13 @@
 require("burn")
-local L=require("lib")
-local 
-  any,   int,   rand,   sorted,   min,   max,   slice = 
-L.any, L.int, L.rand, L.sorted, L.min, L.max, L.slice
+local Lib=require("lib")
 
+local any, int, rand  = Lib.any, Lib.int, Lib.rand
+local sorted          = Lib.sorted
+local min, max, slice = Lib.min, Lib.max, Lib.slice
+
+-- ### dist(row1, row2, data): num
 -- Returns distance between rows, in objective space.
+-- This will  a number between 0 and 1.
 local function dist(i, j,data)
   local d,n,z = 0,Burn.zip, Burn.zip
   for _,num  in pairs(data.y.nums) do
@@ -17,7 +20,8 @@ local function dist(i, j,data)
   return d^0.5 / n^0.5 
 end
 
--- Returns  furthest poinf from i, in objective space.
+-- ### furthest(row : row, rows: list of row, data)
+-- Returns furthest poinf from i, in objective space.
 local function furthest(i, lst, data)
   local most,out = -1,i
   for _,j in pairs(lst) do
@@ -26,6 +30,7 @@ local function furthest(i, lst, data)
   return out
 end
 
+-- ### distantPoints(data, row :  list of row, x,y:point)
 -- Pick anything. Find the `y` furthest from anything.
 -- Find the `z` furthest from `y`. 
 -- Return `y,z`
@@ -34,6 +39,20 @@ local function distantPoints(data,rows,y,z)
   y = y or furthest(x, rows, data)
   z = z or furthest(y, rows, data)
   return y,z
+end
+
+-- ### remotePoints(data, row :  list of row, x,y:point)
+-- Returns two points that are far apart (generated via
+-- a random sample of size `n`).  Ignores the bottom, top
+-- `i`-th percent of data (to dodge outliers).
+local function remotePoints(data,rows, n,i)
+  local some, n = {}, n or 100
+  for _ = 1,n do
+    local a,b = any(rows), any(rows)
+    some[ #some+1 ] = {dist(a,b, data), a, b} 
+  end
+  some = sorted(some, function(a,b) return a[1] < b[1] end)
+  return some[ int(n*i) ], some[ int(n*(1-i)) ]
 end
 
 -----------------------------------------------------------
