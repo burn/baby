@@ -41,12 +41,13 @@ local function distantPoints(data,rows,y,z)
   return y,z
 end
 
--- ### remotePoints(data, row :  list of row, x,y:point)
+-- ### distantishPoints(data, row :  list of row, x,y:point)
 -- Returns two points that are far apart (generated via
 -- a random sample of size `n`).  Ignores the bottom, top
 -- `i`-th percent of data (to dodge outliers).
-local function remotePoints(data,rows, n,i)
-  local some, n = {}, n or 100
+local function distantishPoints(data,rows, n,i)
+  local n,i  = n or 100, i or 0.05
+  local some = {}
   for _ = 1,n do
     local a,b = any(rows), any(rows)
     some[ #some+1 ] = {dist(a,b, data), a, b} 
