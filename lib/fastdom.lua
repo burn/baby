@@ -95,8 +95,13 @@ local function div(data,rows,few,inc,      rank,bad,best)
   return rank 
 end
 
-return function (data,rows)
+-----------------------------------------------------------
+-- ## Main driver: fastdom(data, rows)
+-- Top-level driver. Adds a `dom` index to items in `rows`.
+local function fastdom(data,rows)
   local few = max(Burn.dom.few, (#rows)^Burn.dom.power)
   local inc = 1/#data.rows
   div(data, rows, few, inc) 
 end
+
+return fastdom
