@@ -16,7 +16,11 @@ end
 -----------------------------------------------------------
 function Abcd:has(x)
   if not self.known[x] then
-    self.a[x], self.b[x], self.c[x], self.d[x] = 0,0,0,0
+    self.a[x] = 0
+    print(2000)
+    self.b[x] = 0
+    self.c[x] = 0
+    self.d[x] = 0
     self.known[x] = 0
   end
   self.known[x] = self.known[x] + 1

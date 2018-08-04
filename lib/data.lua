@@ -16,7 +16,7 @@ local int,     push,     sorted =
 -- Data columns are classified in numerous ways.
 -- 
 -- - Independent and depdendent columns are labelled `x,y` (respectively);
--- - `nums` and `syms` hold numeric or symbolic columns,
+-- - `nums` and `syms` hold numeric or :e symbolic columns,
 -- - goals to be maximized/minimized are held in `less,more`
 -- - If the data has a class, that is held in `klass`. 
 --
@@ -40,25 +40,30 @@ end
 -- ### Data:csv(file: string)
 -- Read data in  from `file`. Return `self`.
 function Data:csv(file)
-  for row in Csv(file) do self:inc(row) end 
+	print(40)
+  for row in Csv(file) do print(41) self:inc(row) end 
   return self 
 end
 
 -- ### Data:inc(row: list)
 -- If this is the first row, interpret `row` as the column headers.
 -- Otherwise, read `row` as data.
-function Data:inc(row)
-  if   self.header then self:data(row) 
-  else self.header=row; self:head(row) end 
+function Data:inc(cells)
+  if   self.header then self:data(cells) 
+  else self.header=cells; self:head(cells) end 
 end
 
--- ### Data:data(row: list)
--- Add `row` to `self.rows`. Increment the header statistics
--- with information from `row`'s values.
-function Data:data(row) 
-   push( Row:new{cells=row}, self.rows )
+-- ### Data:data(cells: list): row
+-- Add a row containng `cells` to `self.rows`. 
+-- Increment the header statistics
+-- with information from `cell`'s values.
+-- Returns the new row.
+function Data:data(cells) 
+   local row = Row:new{cells=cells}
+   push(row, self.rows)
    for _,thing in pairs(self.all.cols) do
-     thing:inc( row[thing.pos ] ) end 
+     thing:inc( cells[ thing.pos ] ) end 
+   return row
 end
 
 -- ### Data:head(row: list)
@@ -74,6 +79,7 @@ function Data:head(columns)
                {"!" ,Sym, "y","syms", klass}}
   local function which(txt)
     for i=2,#all do
+	    print(i,txt)
       if string.find(txt,all[i][1]) then return all[i] end end
     return all[1] end -- first item is the default
 
