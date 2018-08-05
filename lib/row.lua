@@ -39,6 +39,8 @@ function Row:ndominates(data, others)
   return n 
 end
 
+function Row:klass(d) return self.class[d.klass.pos] end
+
 ------------------------------------------------------------
 function Row:distance(row,things,p)
   local d, n, p = 0, Burn.zip, p or 2

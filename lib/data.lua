@@ -40,8 +40,7 @@ end
 -- ### Data:csv(file: string)
 -- Read data in  from `file`. Return `self`.
 function Data:csv(file)
-	print(40)
-  for row in Csv(file) do print(41) self:inc(row) end 
+  for row in Csv(file) do self:inc(row) end 
   return self 
 end
 
@@ -49,8 +48,8 @@ end
 -- If this is the first row, interpret `row` as the column headers.
 -- Otherwise, read `row` as data.
 function Data:inc(cells)
-  if   self.header then self:data(cells) 
-  else self.header=cells; self:head(cells) end 
+  if   self.header then return self:data(cells) 
+  else self.header=cells; return self:head(cells) end 
 end
 
 -- ### Data:data(cells: list): row
