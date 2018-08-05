@@ -19,7 +19,6 @@ end
 
 local function Learn(file, learners, era)
   local era   = era or 20
-  local klass = function(r) return r.cells[d.klass.pos] end
   local test  = function(todo)  
     for _,row in pairs(todo) do
       for _,x in pairs(learners) do x.test(row) end end
@@ -40,6 +39,7 @@ local function Learn(file, learners, era)
 end
 
 local function xx(file)
+  local klass = function(r) return r.cells[d.klass.pos] end
   k = Learner:new(file,"knn")
   k.test= function(row)
             local x= row:nearest(k.d.rows, k.d.x.cols)
