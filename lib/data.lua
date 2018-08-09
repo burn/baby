@@ -28,28 +28,40 @@ local Data = {}
 
 function Data:new(spec)
   local d=Object.new(self,spec)
-  d.name, d.header, d.klass = nil, nil, nil
+  d.name, d.header, d._class = nil, nil, nil
   d.rows={} 
   d.all={nums={}, syms={}, cols={}} -- all columns
   d.x  ={nums={}, syms={}, cols={}} -- all independents
   d.y  ={nums={}, syms={}, cols={},  -- all dependent columns
          less={}, more={}}  
+  d.keep = true
   return d
 end
 
+function Data:class(row) return row.cells[ self._class.pos ] end
+
 -- ### Data:csv(file: string)
 -- Read data in  from `file`. Return `self`.
-function Data:csv(file)
-  for row in Csv(file) do self:inc(row) end 
+function Data:csv(file, b4, after, finale)
+  for row in Csv(file) do self:inc(row,b4,after) end 
+  if finale then finale(data) end
   return self 
 end
 
 -- ### Data:inc(row: list)
 -- If this is the first row, interpret `row` as the column headers.
 -- Otherwise, read `row` as data.
-function Data:inc(cells)
-  if   self.header then return self:data(cells) 
-  else self.header=cells; return self:head(cells) end 
+function Data:inc(cells,b4, after)
+  local row = Row:new{cells=cells}
+  if self.header then 
+     if b4 then b4(row,self) end
+     self:data(row) 
+     if after then after(row, self) end
+     return row
+  else 
+     self.header=cells 
+     return self:head(cells) 
+  end 
 end
 
 -- ### Data:data(cells: list): row
@@ -57,25 +69,24 @@ end
 -- Increment the header statistics
 -- with information from `cell`'s values.
 -- Returns the new row.
-function Data:data(cells) 
-   local row = Row:new{cells=cells}
-   push(row, self.rows)
+function Data:data(row) 
+   if self.keep then push(row, self.rows) end
    for _,thing in pairs(self.all.cols) do
-     thing:inc( cells[ thing.pos ] ) end 
+     thing:inc( row.cells[ thing.pos ] ) end 
    return row
 end
 
 -- ### Data:head(row: list)
 -- Build the data headers.
 function Data:head(columns)
-  local less= function (i) push(i, self.y.less); i.w= -1 end
-  local more= function (i) push(i, self.y.more) end
-  local klass=function (i) self.klass = i end
+  local less = function (i) push(i, self.y.less); i.w= -1 end
+  local more = function (i) push(i, self.y.more) end
+  local class= function (i) self._class = i end
   local all = {{".", Sym, "x","syms"      }, -- default
 	       {"%$",Num, "x","nums"      },
                {"<" ,Num, "y","nums", less},
                {">" ,Num, "y","nums", more},
-               {"!" ,Sym, "y","syms", klass}}
+               {"!" ,Sym, "y","syms", class}}
   local function which(txt)
     for i=2,#all do
 	    print(i,txt)

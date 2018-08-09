@@ -1,30 +1,25 @@
 local Data = require("data")
 local Abcd = require("abcd")
+local Object  = require("object")
 local Lib  = require("lib")
 
-Knn=Data:new{era=1}
+Knn=Object:new()
 
-function Knn:new()
-  local k  = Data.new(self)
-  k.log = nil
-  return k
+function Knn:new(enough, file)
+  local x     = Object.new(self)
+  local test  = function(row, data) x:test( row, data) end
+  x.log       = Abcd:new(file, "knn") 
+  x.enough    = enough 
+  Data:new():csv(file, test)
+  return x
 end
 
-function Knn:csv(file)
-  self.log = Abcd:new(file, "knn") 
-  print(1)
-  Data.csv(self,file)
-  print(2)
-  return self.log
+function Knn:test(row, data)
+  if #data.rows > self.enough then
+    local near = row:nearest(data.rows, data.x.cols)
+    self.log:inc( data:class(row), data:class(near) )
+  end 
 end
-
-function Knn:data(cells)
-  local row  = Data.data(self,cells)
-  local near = row:nearest(self.rows, self.x.cols)
-  local want = row[  self.klass.pos ]
-  local got  = near[ self.klass.pos ] 
-  self.log:inc( want, got )
-  return row
-end
+ 
 
 return Knn

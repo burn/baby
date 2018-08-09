@@ -1,6 +1,5 @@
 local Object=require("object")
 local Lib=require("lib")
-local sprintf = Lib.sprintf
 
 -----------------------------------------------------------
 local Abcd = Object:new{yes=0, no=0}
@@ -73,4 +72,10 @@ function Abcd:report()
   return out
 end
 
+-----------------------------------------------------------
+function Abcd:show()
+  Lib.cols( self:report(), "%5.2f" ) 
+end
+
+-----------------------------------------------------------
 return Abcd
