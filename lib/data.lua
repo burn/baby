@@ -42,21 +42,18 @@ function Data:class(row) return row.cells[ self._class.pos ] end
 
 -- ### Data:csv(file: string)
 -- Read data in  from `file`. Return `self`.
-function Data:csv(file, b4, after, finale)
-  for row in Csv(file) do self:inc(row,b4,after) end 
-  if finale then finale(data) end
+function Data:csv(file)
+  for row in Csv(file) do self:inc(row) end 
   return self 
 end
 
 -- ### Data:inc(row: list)
 -- If this is the first row, interpret `row` as the column headers.
 -- Otherwise, read `row` as data.
-function Data:inc(cells,b4, after)
+function Data:inc(cells)
   local row = Row:new{cells=cells}
   if self.header then 
-     if b4 then b4(row,self) end
      self:data(row) 
-     if after then after(row, self) end
      return row
   else 
      self.header=cells 
@@ -89,7 +86,6 @@ function Data:head(columns)
                {"!" ,Sym, "y","syms", class}}
   local function which(txt)
     for i=2,#all do
-	    print(i,txt)
       if string.find(txt,all[i][1]) then return all[i] end end
     return all[1] end -- first item is the default
 

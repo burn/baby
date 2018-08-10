@@ -16,7 +16,6 @@ end
 function Abcd:has(x)
   if not self.known[x] then
     self.a[x] = 0
-    print(2000)
     self.b[x] = 0
     self.c[x] = 0
     self.d[x] = 0
@@ -51,8 +50,6 @@ function Abcd:report()
   local p = function(x) return 100*x end
   local n = function(x) return x     end
   local out = {}
-  out[1] = {"db", "rx","num","a","b","c","d",
-            "acc","prec","pd","pf","f","class"}
   for x,_ in pairs(self.known) do
     local pd,pf,pn,prec,g,f,acc = 0,0,0,0,0,0,0
     local a,b,c,d = self.a[x], self.b[x], 
@@ -65,16 +62,32 @@ function Abcd:report()
     if prec+pd > 0 then f=2*prec*pd / (prec + pd)   end
     if self.yes + self.no > 0 then 
        acc  = self.yes / (self.yes + self.no) end
-    out[#out+1] = {
-       self.db, self.rx, a+b+c+d, a, b, c, d, 
-       p(acc),  p(prec), p(pd),  p(pf), p(f),  x}
+    out[x] = {
+       db=self.db, rx=self.rx, num=a+b+c+d, a=a, b=b, 
+       c=c, d=d, acc=p(acc),  prec=p(prec), pd=p(pd),  
+       pf=p(pf), f=p(f)}
   end
   return out
 end
 
 -----------------------------------------------------------
 function Abcd:show()
-  Lib.cols( self:report(), "%5.2f" ) 
+  local head={"db", "rx", "num", "a", "b", 
+       "c", "d", "acc",  "prec", "pd",  
+       "pf", "f"}
+  local t={}
+  t[1] = head
+  t[1][#head+1] = "class"
+  local j
+  for class,row in pairs(self:report()) do
+     new={}
+     for k,f in pairs(head) do
+       j=k
+       new[k] = row[f] end 
+       new[ #new+1 ] = class
+     t[ #t+1] = new
+  end
+  Lib.cols( t , "%5.0f" ) 
 end
 
 -----------------------------------------------------------

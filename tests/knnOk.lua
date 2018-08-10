@@ -1,5 +1,7 @@
 local Ok   = require("test").ok 
 local Knn  = require("knn")
+local Lib  = require("lib")
+local Csv  = require("csv")
 
 local function dataOkay(f)
   local d = Knn:new():csv("../data/".. f .. ".csv") 
@@ -7,8 +9,10 @@ local function dataOkay(f)
   return d
 end 
 
-Ok{ knn = function()
-	    local x= Knn:new(5, "../data/diabetes.csv")
-	    x.log:show()
+-- XXX add in the tiles report
 
-end }
+Ok { eras = function()
+	Lib.rseed(1)
+	local k=Knn:new()
+	Knn.nways(k,"../data/diabetes.csv", 10,64)
+	 end }

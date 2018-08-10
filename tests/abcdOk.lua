@@ -14,7 +14,7 @@ ok { abcd = function ()
   for _ = 1,2 do x:inc("no",    "no")    end
   for _ = 1,5 do x:inc("maybe", "maybe") end
   x:inc("maybe","no")
-  lib.cols( x:report(), "%5.0f" )
+  x:show()
 end }
 --
 -- === Detailed Accuracy By Class ===

@@ -100,16 +100,16 @@ cat<<EOF>$Tmp/vimrc
 	autocmd VimEnter * wincmd w
 	autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 	"colorscheme seoul256
-	colorscheme delek
-	set fillchars+=vert:\ 
-	hi CursorLine cterm=NONE ctermbg=NONE ctermfg=white
-	hi VertSplit ctermfg=Black ctermbg=Black
 	set mouse+=a
 	if &term =~ '^screen'
 	    " tmux knows the extended mouse mode
 	    set ttymouse=xterm2
 	endif
 	set ruler
+	colorscheme torte
+	set fillchars+=vert:\ 
+	hi CursorLine cterm=NONE ctermbg=NONE ctermfg=white
+	hi VertSplit ctermfg=Black ctermbg=Black
 EOF
 vim0() {
   if  [ ! -d "$HOME/.vim/bundle/Vundle.vim" ]; then

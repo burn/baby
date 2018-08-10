@@ -109,6 +109,24 @@ function lib.ordered(t)
       i=i+1; return tmp[i], t[tmp[i]] end end 
 end
 
+function lib.eras(src,era)
+  local era = era or 32
+  local e,tmp,out,one = 0,{},{},src()
+  return function()
+    while one do 
+      tmp[ #tmp+1 ] = one
+      one = src()
+      if #tmp >= era then
+	out = lib.shuffle(lib.copy(tmp))
+	tmp,e = {},e+1
+        return out,e end 
+    end
+    if #tmp > 0 then 
+      out = lib.shuffle(lib.copy(tmp))
+      tmp,e = {},e+1
+      return out,e end end
+end
+
 -- ### sorted(t:table [,f:function]): table
 -- Returns table `t`, sorted using `f` (defaults to "`lt`").
 function lib.sorted(t, f)
@@ -303,6 +321,8 @@ end
 
 -------------------------------------------------------------
 -- ## Meta  Stuff
+
+function lib.same(x) return x end
 
 -- ### map(t: table, f:function): nil
 -- For each item `v` call `f(v)`.
