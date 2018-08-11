@@ -4,6 +4,8 @@ local Object=require("object")
 
 local Thing=Object:new{pos,txt,w=1,n=0}
 
+function Thing:nump() return false end
+
 function Thing:incs(t, f)
   f = f or function (z) return z end
   for _,v in pairs(t) do self:inc( f(v) ) end 

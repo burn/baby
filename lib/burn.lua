@@ -17,6 +17,8 @@ Burn= {
             cliffsMax=1000, 
             cliffsDelta=0.147 -- small,medium,large=0.147,0.33,0.474
             },
+  nb=     {k=1,
+           m=2},
   dom=    {few=20,
            tiny=0.02,
            power=0.5},

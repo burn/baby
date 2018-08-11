@@ -13,6 +13,7 @@ function Sym:new(spec)
   return x
 end
 
+function Sym:nump() return true end
 
 function Sym:doubt() return self:ent() end
 

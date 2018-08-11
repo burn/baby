@@ -38,6 +38,12 @@ function Data:new(spec)
   return d
 end
 
+function Data:clone()
+  local d=Data:new()
+  d:inc(self.header)
+  return d
+end
+
 function Data:class(row) return row.cells[ self._class.pos ] end
 
 -- ### Data:csv(file: string)

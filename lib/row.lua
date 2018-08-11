@@ -39,9 +39,29 @@ function Row:ndominates(data, others)
   return n 
 end
 
+--------- --------- --------- --------- --------- --------- 
 function Row:klass(d) return self.class[d.klass.pos] end
 
-------------------------------------------------------------
+--------- --------- --------- --------- --------- --------- 
+function Row:like(row, cols, prior)
+  local m,k = Burn.nb.m, Burn.nb.k
+  local like  = math.log(prior)
+  for i,col in pairs(cols) do
+    local x, inc = row.cells[ col.pos ]
+    if x ~= Burn.ignore then
+      like = col:like(x, prior)
+      if numcol(col) then
+      like= like + math.log(normpdf(x,col.log))
+    else
+      local f = col.log.counts[x] or 0
+      like= like +
+              math.log((f + m*prior) / (#t.rows + m)) 
+    end end end
+    return like
+
+end
+
+--------- --------- --------- --------- --------- --------- 
 function Row:distance(row,things,p)
   local d, n, p = 0, Burn.zip, p or 2
   local x,y = self.cells, row.cells
