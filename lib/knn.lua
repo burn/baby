@@ -6,8 +6,8 @@ local Lib  = require("lib")
 
 rand, say,eras = Lib.rand, Lib.say, Lib.eras
 
+--------- --------- --------- --------- --------- --------- 
 Knn=Object:new()
-
 
 function Knn:train(cells, era, data)
   data:inc(cells)
@@ -24,11 +24,38 @@ end
 function Knn:report(era,log)
   print("\n"..era)
   for _,log1 in pairs(log) do
-    r=log1:report()
+    local r=log1:report()
     if r["tested_positive"] then
      print(r["tested_positive"].f) end
   end
 end
+
+--------- --------- --------- --------- --------- --------- 
+ZeroR = Object:new()
+
+function ZeroR:train(cells, era, data)
+   data:inc(cells)
+   self.xpect = data._class.mode
+end
+
+function ZeroR:test(row, era, data, log)
+  if era > 0 and #data.rows > 0 then
+    local row= Row:new{cells=row}
+    log:inc( data:class(row), self.xpect )
+  end 
+end
+
+function ZeroR:report(era,log)
+  print("\n"..era)
+  for _,log1 in pairs(log) do
+    local r=log1:report()
+    if r["tested_positive"] then
+     print(r["tested_positive"].f) end
+  end
+end
+
+--------- --------- --------- --------- --------- --------- 
+Nb = Object:new()
 
 function Knn.nways(learner,file,ways,era, silent)
   ways = ways or 3

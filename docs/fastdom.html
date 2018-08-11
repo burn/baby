@@ -31,10 +31,11 @@
     </div>
     <div class='code'>
       <div class="highlight"><pre><span></span><span class="nb">require</span><span class="p">(</span><span class="s2">&quot;burn&quot;</span><span class="p">)</span>
-<span class="kd">local</span> <span class="n">L</span><span class="o">=</span><span class="nb">require</span><span class="p">(</span><span class="s2">&quot;lib&quot;</span><span class="p">)</span>
-<span class="kd">local</span> 
-  <span class="n">any</span><span class="p">,</span>   <span class="n">int</span><span class="p">,</span>   <span class="n">rand</span><span class="p">,</span>   <span class="n">sorted</span><span class="p">,</span>   <span class="n">min</span><span class="p">,</span>   <span class="n">max</span><span class="p">,</span>   <span class="n">slice</span> <span class="o">=</span> 
-<span class="n">L</span><span class="p">.</span><span class="n">any</span><span class="p">,</span> <span class="n">L</span><span class="p">.</span><span class="n">int</span><span class="p">,</span> <span class="n">L</span><span class="p">.</span><span class="n">rand</span><span class="p">,</span> <span class="n">L</span><span class="p">.</span><span class="n">sorted</span><span class="p">,</span> <span class="n">L</span><span class="p">.</span><span class="n">min</span><span class="p">,</span> <span class="n">L</span><span class="p">.</span><span class="n">max</span><span class="p">,</span> <span class="n">L</span><span class="p">.</span><span class="n">slice</span></pre></div>
+<span class="kd">local</span> <span class="n">Lib</span><span class="o">=</span><span class="nb">require</span><span class="p">(</span><span class="s2">&quot;lib&quot;</span><span class="p">)</span>
+
+<span class="kd">local</span> <span class="n">any</span><span class="p">,</span> <span class="n">int</span><span class="p">,</span> <span class="n">rand</span>  <span class="o">=</span> <span class="n">Lib</span><span class="p">.</span><span class="n">any</span><span class="p">,</span> <span class="n">Lib</span><span class="p">.</span><span class="n">int</span><span class="p">,</span> <span class="n">Lib</span><span class="p">.</span><span class="n">rand</span>
+<span class="kd">local</span> <span class="n">sorted</span>          <span class="o">=</span> <span class="n">Lib</span><span class="p">.</span><span class="n">sorted</span>
+<span class="kd">local</span> <span class="n">min</span><span class="p">,</span> <span class="n">max</span><span class="p">,</span> <span class="n">slice</span> <span class="o">=</span> <span class="n">Lib</span><span class="p">.</span><span class="n">min</span><span class="p">,</span> <span class="n">Lib</span><span class="p">.</span><span class="n">max</span><span class="p">,</span> <span class="n">Lib</span><span class="p">.</span><span class="n">slice</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -43,7 +44,9 @@
       <div class='octowrap'>
         <a class='octothorpe' href='#section-1'>#</a>
       </div>
-      <p>Returns distance between rows, in objective space.</p>
+      <h3>dist(row1, row2, data): num</h3>
+<p>Returns distance between rows, in objective space.
+This will  a number between 0 and 1.</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre><span class="kd">local</span> <span class="kr">function</span> <span class="nf">dist</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span><span class="n">data</span><span class="p">)</span>
@@ -65,7 +68,8 @@
       <div class='octowrap'>
         <a class='octothorpe' href='#section-2'>#</a>
       </div>
-      <p>Returns  furthest poinf from i, in objective space.</p>
+      <h3>furthest(row : row, rows: list of row, data)</h3>
+<p>Returns furthest poinf from i, in objective space.</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre><span class="kd">local</span> <span class="kr">function</span> <span class="nf">furthest</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">lst</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
@@ -83,7 +87,8 @@
       <div class='octowrap'>
         <a class='octothorpe' href='#section-3'>#</a>
       </div>
-      <p>Pick anything. Find the <code>y</code> furthest from anything.
+      <h3>distantPoints(data, row :  list of row, x,y:point)</h3>
+<p>Pick anything. Find the <code>y</code> furthest from anything.
 Find the <code>z</code> furthest from <code>y</code>. 
 Return <code>y,z</code></p>
     </div>
@@ -101,6 +106,30 @@ Return <code>y,z</code></p>
     <div class='docs'>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <h3>distantishPoints(data, row :  list of row, x,y:point)</h3>
+<p>Returns two points that are far apart (generated via
+a random sample of size <code>n</code>).  Ignores the bottom, top
+<code>i</code>-th percent of data (to dodge outliers).</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kd">local</span> <span class="kr">function</span> <span class="nf">distantishPoints</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">rows</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span><span class="n">i</span><span class="p">)</span>
+  <span class="kd">local</span> <span class="n">n</span><span class="p">,</span><span class="n">i</span>  <span class="o">=</span> <span class="n">n</span> <span class="ow">or</span> <span class="mi">100</span><span class="p">,</span> <span class="n">i</span> <span class="ow">or</span> <span class="mf">0.05</span>
+  <span class="kd">local</span> <span class="n">some</span> <span class="o">=</span> <span class="p">{}</span>
+  <span class="kr">for</span> <span class="n">_</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">n</span> <span class="kr">do</span>
+    <span class="kd">local</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span> <span class="o">=</span> <span class="n">any</span><span class="p">(</span><span class="n">rows</span><span class="p">),</span> <span class="n">any</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+    <span class="n">some</span><span class="p">[</span> <span class="o">#</span><span class="n">some</span><span class="o">+</span><span class="mi">1</span> <span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">dist</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span> <span class="n">data</span><span class="p">),</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">}</span> 
+  <span class="kr">end</span>
+  <span class="n">some</span> <span class="o">=</span> <span class="n">sorted</span><span class="p">(</span><span class="n">some</span><span class="p">,</span> <span class="kr">function</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span> <span class="kr">return</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="kr">end</span><span class="p">)</span>
+  <span class="kr">return</span> <span class="n">some</span><span class="p">[</span> <span class="n">int</span><span class="p">(</span><span class="n">n</span><span class="o">*</span><span class="n">i</span><span class="p">)</span> <span class="p">],</span> <span class="n">some</span><span class="p">[</span> <span class="n">int</span><span class="p">(</span><span class="n">n</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">i</span><span class="p">))</span> <span class="p">]</span>
+<span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
       </div>
       <hr />
 <p>Top down bi-clustering of rows.
@@ -141,13 +170,27 @@ row bad to best.</p>
     <span class="n">rank</span> <span class="o">=</span> <span class="n">div</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">slice</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span><span class="n">mid</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="o">#</span><span class="n">tmp</span><span class="p">),</span> <span class="n">few</span><span class="p">,</span><span class="n">inc</span><span class="p">,</span><span class="n">rank</span><span class="p">)</span> 
   <span class="kr">end</span>
   <span class="kr">return</span> <span class="n">rank</span> 
-<span class="kr">end</span>
-
-<span class="kr">return</span> <span class="kr">function</span> <span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">rows</span><span class="p">)</span>
+<span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <hr />
+<h2>Main driver: fastdom(data, rows)</h2>
+<p>Top-level driver. Adds a <code>dom</code> index to items in <code>rows</code>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kd">local</span> <span class="kr">function</span> <span class="nf">fastdom</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">rows</span><span class="p">)</span>
   <span class="kd">local</span> <span class="n">few</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">Burn</span><span class="p">.</span><span class="n">dom</span><span class="p">.</span><span class="n">few</span><span class="p">,</span> <span class="p">(</span><span class="o">#</span><span class="n">rows</span><span class="p">)</span><span class="o">^</span><span class="n">Burn</span><span class="p">.</span><span class="n">dom</span><span class="p">.</span><span class="n">power</span><span class="p">)</span>
   <span class="kd">local</span> <span class="n">inc</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/#</span><span class="n">data</span><span class="p">.</span><span class="n">rows</span>
   <span class="n">div</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">few</span><span class="p">,</span> <span class="n">inc</span><span class="p">)</span> 
 <span class="kr">end</span>
+
+<span class="kr">return</span> <span class="n">fastdom</span>
 
 </pre></div>
     </div>
