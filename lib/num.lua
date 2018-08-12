@@ -14,6 +14,8 @@ local copy,  interpolate,   abs,   max,   min  =
 -- `Num`s are a kind of `Thing`
 local Num= Thing:new{lo=Burn.inf, hi=Burn.ninf, mu=0, m2=0} 
 
+function Thing:nump() return true end
+
 -- Polymorphism. `doubt` is a term used for entropy and sd
 function Num:doubt() return self:sd() end
 

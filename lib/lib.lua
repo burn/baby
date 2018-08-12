@@ -73,26 +73,26 @@ end
 -- ### weibull(x,l,k): number
 -- Weibul distributuion.
 function lib.weibull(x,l,k)
-  return x < 0 and 0 or k/l*(x/l)^(k-1)*E^(-1*(x/l)^k)
+  return x < 0 and 0 or k/l*(x/l)^(k-1)*lib.E^(-1*(x/l)^k)
 end
 
 -- ### weibullCdf(x,l,k): number
 -- Weibul cumulative probability distributuion.
 function lib.weibullCdf(x,l,k)
-  return x < 0 and 0 or 1 - E^(-(x/l)^k)
+  return x < 0 and 0 or 1 - lib.E^(-(x/l)^k)
 end
 
 -- ### normal(x, mu, sigma): number
 -- Normal probability distributuion.
 function lib.normal(x, mu, sigma)
-    return E^(-.5 * (x-mu)*(x-mu)/(sigma*sigma)) / 
-           math.sqrt(2.0*math.pi*sigma*sigma)
+    return lib.E^(-.5 * (x-mu)*(x-mu)/(sigma*sigma)) / 
+           math.sqrt(2.0*lib.PI*sigma*sigma)
 end
 
 -- ### normCdf(x, mu, sigma): number
 -- Normal cumulative probability distributuion.
 function lib.normCdf(x, mu, sigma)
-    return 0.5 * (1.0 + E^((x-mu)/math.sqrt(2*sigma*sigma)))
+    return 0.5 * (1.0 + lib.E^((x-mu)/math.sqrt(2*sigma*sigma)))
 end
 
 -------------------------------------------------------------

@@ -31,6 +31,7 @@ function Sym:inc1(x)
   local old = self.counts[x] 
   local new = old and old + 1 or 1
   self.counts[x] = new
+  self.mode = self.mode or x
   if new > self.most then
     self.most, self.mode = new, x end 
   return x

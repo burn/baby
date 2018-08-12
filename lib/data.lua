@@ -27,6 +27,7 @@ local int,     push,     sorted =
 local Data = {}
 
 function Data:new(spec)
+  spec = spec or {}
   local d=Object.new(self,spec)
   d.name, d.header, d._class = nil, nil, nil
   d.rows={} 
@@ -34,7 +35,7 @@ function Data:new(spec)
   d.x  ={nums={}, syms={}, cols={}} -- all independents
   d.y  ={nums={}, syms={}, cols={},  -- all dependent columns
          less={}, more={}}  
-  d.keep = true
+  d.keep = spec.keep or true
   return d
 end
 

@@ -66,7 +66,7 @@ function Row:distance(row,things,p)
   local d, n, p = 0, Burn.zip, p or 2
   local x,y = self.cells, row.cells
   for _,t in pairs(things) do
-    local d1,n1 = t:distance( x[t.pos], y[t.pos], k ) 
+    local d1,n1 = t:distance( x[t.pos], y[t.pos], p ) 
     d, n = d + d1, n + n1 end
   return (d^p) / (n^p)
 end
