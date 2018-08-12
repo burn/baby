@@ -5,10 +5,10 @@
 require("burn")
 local Thing=require("thing")
 local Split=require("split")
-local L=require("lib")
+local Lib=require("lib")
 
 local copy,  interpolate,   abs,   max,   min  = 
-     L.copy, L.interpolate, L.abs, L.max, L.min
+     Lib.copy, Lib.interpolate, Lib.abs, Lib.max, Lib.min
 
 -----------------------------------------------------------
 -- `Num`s are a kind of `Thing`
@@ -108,7 +108,7 @@ function Num:best1(rows,  the)
   local cut, best = nil, -1
   local left = Num:new()
   local right= Num:new():incs(rows, y)
-  rows = L.sorted(rows, function(a,b) return x(a) < x(b) end)
+  rows = Lib.sorted(rows, function(a,b) return x(a) < x(b) end)
   for i,row in pairs(rows) do
     left:inc(  y(row) )
     right:dec( y(row) )
