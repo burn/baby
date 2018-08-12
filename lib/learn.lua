@@ -1,54 +1,73 @@
-Lib    = require("lib")
-Object = require("object")
-Data   = require("data")
-Abcd   = require("abcd")
-Csv    = require("csv")
+local Csv = require("csv")
+local Abcd = require("abcd")
+local Data = require("data")
+local Lib    = require("lib")
+local Sample = require("sample")
 
-Learner = Object:new{train,test,log}
+rand, say,eras = Lib.rand, Lib.say, Lib.eras
 
-function Learner:new(file,rx)
-  local x = Object.new(self)
-  x._log = Abcd:new(file, rx)
-  x.data = Data:new()
-  return x
-end
+Learn = {}
 
-function Learner:log(want,got)
-  self._log:inc(want,got)
-end
-
-local function Learn(file, learners, era)
-  local era   = era or 20
-  local test  = function(todo)  
-    for _,row in pairs(todo) do
-      for _,x in pairs(learners) do x.test(row) end end
+--------- --------- --------- --------- --------- --------- 
+function Learn.report(era,log,name,k)
+  say(era.." " .. Lib.sprintf("%8s ",name))
+  local s = Sample:new()
+  for _,log1 in pairs(log) do
+    local r=log1:report()
+    s:inc(r[k].f)
   end
-  local todo={}
-  local keep= function(row)
-    todo[ #todo+1 ] = row
-    if #todo > era then test(todo) ; todo={} end
-  end
-  local n=0
-  for row in Csv(file) do
-    for _,x in pairs(learners) do x.train(row) end
-    if n > 0 then keep(row) end
-    n = n + 1
-  end
-  for _,x in pairs(learners) do 
-    Lib.cols( x._log:report(), "%5.0f" ) end
+  s:show(25, 
+         {{0.25,"-"}, {0.50,"-"}, {0.75," "}},
+	 "%4.0f", "%20s",0,100)
 end
 
-local function xx(file)
-  local klass = function(r) return r.cells[d.klass.pos] end
-  k = Learner:new(file,"knn")
-  k.test= function(row)
-            local x= row:nearest(k.d.rows, k.d.x.cols)
-	    k.log( row:klass(k.d), x:klass(k.d) ) end
-  k.train= function(row) 
-	     return k.d:inc(row) end
-  Learn(file, {k})
+--------- --------- --------- --------- --------- --------- 
+function Learn.nways(learners,goal,file,ways,era, silent,logger)
+  ways   = ways or 3
+  era    = era  or 10^32
+  logger = logger or Abcd
+  local src    = Csv(file)
+  local header = src()   -- first line is special. read it first
+  local log,data = {},{}
+  for l,learner in pairs(learners) do
+    log[l]={}
+    data[l]={}
+    for w = 1,ways do  -- make "ways" data stores
+      log[l][w]  = logger:new(file, learner.name) -- one log shared for all
+      data[l][w] = Data:new()
+      data[l][w]:inc(header) 
+    end
+  end
+  local line=0
+  for rows,era1 in eras(src, era) do
+    for _,cells in pairs(rows) do
+      line=line+1
+      for w = 1,ways do
+        if rand() < 1/ways then 
+          if era1 > 0 then
+	    -- spin learners
+            for l,learner in pairs(learners) do
+	      if #(data[l][w].rows) >0 then
+	        local got = learner:predict(cells, data[l][w]) 
+                local want= cells[ data[l][w]._class.pos ]
+                log[l][w]:inc(want,got) 
+	      end
+	    end
+          end
+        else 
+	  -- spin learners
+	  for l,learner in pairs(learners) do
+	    learner:inc(cells, data[l][w]) end
+	end
+      end
+    end
+    -- spin learners
+    -- spin over all logs of a learner
+    print()
+    for l,learner in pairs(learners) do
+      learner:report(line, goal,log[l])
+    end
+  end
 end
-
-xx("../data/diabetes.csv")
-
-return Learn    
+ 
+return Learn
