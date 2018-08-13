@@ -3,6 +3,7 @@
 -- Place to store number tricks
 --
 require("burn")
+local Burn=require("burn")
 local Thing=require("thing")
 local Split=require("split")
 local Lib=require("lib")

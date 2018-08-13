@@ -164,6 +164,10 @@ function lib.join(t, sep)
   return table.concat(u, sep or ", ") 
 end
 
+function lib.joint(t, sep)
+  print(lib.join(t,sep))
+end
+
 -- ### any(t: table): table
 -- Extract any one item from a table
 function lib.any(t)

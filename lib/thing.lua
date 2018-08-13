@@ -31,7 +31,7 @@ function Thing:simpler(i,j)
   local  n = self.n
   return self.doubt() > Burn.ish*(i.doubt()*i.n/n + 
                                  j.doubt()*j.n/n) 
-end
+end 
 
 function Thing:norm(x) return x end
 
@@ -40,6 +40,7 @@ function Thing:norm(x) return x end
 -- o = {x,y,enough=10,min=false}
 -- - assumes `y(row)` returns a positive number 0..1
 function Thing:best(rows, the)
+  the = the or {}
   local min   = the.min or false
   local xval  = function (r) 
                   local  z = r.cells[self.pos]

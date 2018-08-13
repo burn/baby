@@ -1,6 +1,6 @@
 local Object=require("object")
 
-local Split=Object:new{txt,rule, op, val}
+local Split=Object:new{txt,rule, op, val,score}
 
 function Split:show() return self.txt..self.op..self.val end
 

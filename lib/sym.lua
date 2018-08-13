@@ -49,12 +49,13 @@ function Sym:distance(i,j)
   if     j == no and i == no then return 0,0  
   elseif j == no             then return 1,1
   elseif i == no             then return 1,1 
-  elseif i ==j               then return 0,1 
+  elseif i == j              then return 0,1 
   else                            return 1,1 end 
 end
 
 -----------------------------------------------------------
-function Sym:best1(rows, enough, x,y)
+function Sym:best1(rows, the)
+  local enough, x,y = the.enough, the.x, the.y
   local cut, best, nums =  nil,-1, {}
   for _,row in pairs(rows) do
     local val = x(row)
@@ -66,7 +67,7 @@ function Sym:best1(rows, enough, x,y)
       local tmp = num.n/#rows * num.mu 
       if tmp > best then 
         best, cut = tmp, 
-	            Split.eq(x, self.txt, val, num) 
+	            Split.eq(x, self.txt, val, num.mu) 
   end end end
   return cut
 end
