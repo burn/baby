@@ -47,6 +47,7 @@ function Fft.controls(depth)
   return out
 end
 
+--assumes rows have a score 0..1 where 1 is desired.
 function Fft:csv(file,goal,depth)
   local data = Data:new()
   local y=function(r) return goal==data:class(r) and 1 or 0 end
