@@ -6,8 +6,8 @@ local Num=require("num")
 local Sym=require("sym")
 local Object=require("object")
 
-local say, rep, reject , sprintf = 
-      Lib.say, Lib.rep, Lib.reject, Lib.sprintf
+local say, rep, reject , sprintf,copy = 
+      Lib.say, Lib.rep, Lib.reject, Lib.sprintf,Lib.shallowCopy
 
 --------- --------- --------- --------- --------- --------- 
 
@@ -16,66 +16,83 @@ local Fft ={}
 
 Fft = Object:new{ data, root, growths,depth=4}
 
+local Frule={}
+Frule = Object:new{ steps, score=0}
 
--- function Fft:new(spec)
---   x = Any.new(self, spec)
---   x.root = Fft1:new()
---   return x
--- end
--- 
--- Fft1 = BTree:new{ key,value, l,r}
--- 
--- ### control(num: number, bits: integer): table
--- Returns an array of size `2^bits` whose `i-th` element is true if the `i`-th bit is set. 
--- - e.g. sets(3,2) ==> {true,false}    
--- - e.g. sets(16,4) ==> {true, true, true, true}
-function Fft.control(num, bits)
-    bits = bits or math.max(1, select(2, math.frexp(num)))
-    local out = {} 
-    for b = bits, 1, -1 do
-        out[b] = math.fmod(num, 2) 
-        num = math.floor((num - out[b]) / 2)
-	out[b] = out[b] > 0 end
-    return out
+function Frule:new()
+  local f=Object.new(self)
+  f.steps={}
+  return f
 end
 
-function Fft.controls(depth) 
-  depth = depth or 4
-  local max = 2^depth
-  local out={}
-  for j=0,max-1 do out[j+1]=Fft.control(j,depth) end
-  return out
+function Frule:inc(policy,s,n)
+  if policy then
+    self.score = self.score + s.score*n end
+  self.steps[ #self.steps+1 ] = {policy,s}
+end
+
+function Frule:copy()
+  local f = Frule:new()
+  f.score = self.score
+  f.steps = copy(self.steps)
+  return f
+end
+
+function Frule:show()
+  local pre="if"
+  print()
+  print(self.score)
+  for i=1,(#self.steps) - 1 do
+    print(pre, self.steps[i][2]:show(),"then",self.steps[i][1])  
+    pre="else if"
+  end
+  print("else",self.steps[#self.steps][1])
+end
+
+function Frule:last()
+  return self.steps[ #self.steps ][1]
 end
 
 --assumes rows have a score 0..1 where 1 is desired.
 function Fft:csv(file,goal,depth)
   local data = Data:new()
-  local y=function(r) return goal==data:class(r) and 1 or 0 end
   for cells in Csv(file) do self:inc(cells, data) end
-  for _,policies in pairs(self.controls(depth)) do
-    print()
-    self:grow(data,policies,y)
+  self:learn(data,goal,depth)
+end
+
+function Fft:learn(data,goal,depth)
+  local y=function(r) return goal==data:class(r) and 1 or 0 end
+  local one,out=Frule:new(),{}
+  self:grow(data,y,depth,one,out)
+  for _,tree in pairs(out) do
+    tree:show()
   end
 end
 
-function Fft:grow(data,policies,y,rows,depth,above,min)
+function  Fft:grow(data,y,depth,one,out,rows,min,last)
   rows  = rows or data.rows
-  depth = depth or 1
   last  = last or true
-  min   = min or (#rows)^0.5
-  local pre= sprintf("%4s :", #rows) .. rep(" |.. ",depth-1) .. " "
-  if #rows < min or depth > #policies then
-    print(" " .. pre .. "==> ", not above)
+  min   = min  or (#rows)^0.5
+  if #rows < min or depth == 0  then
+    last = one:last()
+    local two = one:copy()
+    two:inc(not last, {score=Num:new():incs(rows,y).mu} ,#rows)
+    out[ #out + 1 ] = two
   else
-    local policy = policies[depth]
+    two,three = one:copy(), one:copy()
+    self:grow1(true, data,y,depth-1,two,   out,rows,min,last)
+    self:grow1(false,data,y,depth-1,three ,out,rows,min,last)
+  end
+end
+
+function Fft:grow1(policy,data,y,depth,one,out,rows,min,last)
     local s = self:split( policy, data, rows, y )   
     if s then
-      for _,w in pairs{pre,s:show(), "==>", 
-  	             policy, sprintf("%4.2f",s.score)} do
-  	  say( " " .. tostring(w) ) end; print()
-      rows= reject(rows, s.rule) -- <<= XXX wrong. need to compute the rejected set
-      self:grow(data,policies,y,rows,depth+1,policy,min) end
-  end
+      local b4=#rows
+      rows= reject(rows, s.rule) 
+      one:inc(policy, s, b4 - #rows )
+      self:grow(data,y,depth, one,out,rows,min,policy )
+    end
 end
 
 function Fft:split(policy,data,rows,y)
