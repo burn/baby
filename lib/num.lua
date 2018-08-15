@@ -118,9 +118,9 @@ function Num:best1(rows,  the)
       local below = (left.n  / #rows) * left.mu  / right.mu 
       local above = (right.n / #rows) * right.mu / left.mu 
       if above > best and not left:same(right) then
-	best,cut = above, Split.gt(x, self.txt, x(row), right.mu) end
+	best,cut = above, Split.gt(x, self.txt, x(row), right.n, right.mu) end
       if below > best and not left:same(right) then 
-	best,cut = below, Split.le(x, self.txt, x(row), left.mu) end end 
+	best,cut = below, Split.le(x, self.txt, x(row), left.n, left.mu) end end 
   end 
   return cut
 end

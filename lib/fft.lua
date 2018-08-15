@@ -25,84 +25,89 @@ function Frule:new()
   return f
 end
 
-function Frule:inc(policy,s,n)
-  if policy then
-    self.score = self.score + s.score*n end
-  self.steps[ #self.steps+1 ] = {policy,s}
-end
-
-function Frule:copy()
-  local f = Frule:new()
-  f.score = self.score
-  f.steps = copy(self.steps)
-  return f
+function Frule:inc(todo,s,xpect)
+  local old = self.score
+  if todo then
+    self.score = self.score + xpect end
+  self.steps[ #self.steps+1 ] = {todo, s}
+  return self,self.score - old
 end
 
 function Frule:show()
+  --for _,x in pairs(self.steps) do Lib.oo(x) end
+  --if true then return true end
   local pre="if"
   print()
   print(self.score)
-  for i=1,(#self.steps) - 1 do
+  for i=#self.steps,2,-1 do
     print(pre, self.steps[i][2]:show(),"then",self.steps[i][1])  
     pre="else if"
   end
-  print("else",self.steps[#self.steps][1])
+  print("else",self.steps[1][1])
 end
 
-function Frule:last()
-  return self.steps[ #self.steps ][1]
+function Fft.policies(depth,  f)
+  local out ={}
+  local add=function(t,x) 
+    local u=copy(t) 
+    u[#u+1]=x 
+    return u 
+  end
+  f=function(d, path)
+    if   d > depth 
+    then out[#out+1] = path 
+    else 
+      f(d+1,add(path,false))
+      f(d+1,add(path,true))
+    end
+  end
+  f(1,{})
+  return out
 end
 
 --assumes rows have a score 0..1 where 1 is desired.
 function Fft:csv(file,goal,depth)
   local data = Data:new()
   for cells in Csv(file) do self:inc(cells, data) end
-  self:learn(data,goal,depth)
+  return self:learn(data,goal,depth)
 end
 
 function Fft:learn(data,goal,depth)
-  local y=function(r) return goal==data:class(r) and 1 or 0 end
-  local one,out=Frule:new(),{}
-  self:grow(data,y,depth,one,out)
-  for _,tree in pairs(out) do
-    tree:show()
+  self.y=function(r) return goal==data:class(r) and 1 or 0 end
+  self.enough = (#data.rows)^0.5
+  self.data = data
+  local out,tmp,best= nil, nil,-1
+  for _,policy in pairs(Fft.policies(depth)) do
+    tmp = self:grow(depth,policy,data.rows, true)
+    if tmp.score >= best then
+      out,best = tmp, tmp.score end
   end
+  return out
 end
 
-function  Fft:grow(data,y,depth,one,out,rows,min,last)
-  rows  = rows or data.rows
-  last  = last or true
-  min   = min  or (#rows)^0.5
-  if #rows < min or depth == 0  then
-    last = one:last()
-    local two = one:copy()
-    two:inc(not last, {score=Num:new():incs(rows,y).mu} ,#rows)
-    out[ #out + 1 ] = two
-  else
-    two,three = one:copy(), one:copy()
-    self:grow1(true, data,y,depth-1,two,   out,rows,min,last)
-    self:grow1(false,data,y,depth-1,three ,out,rows,min,last)
-  end
-end
-
-function Fft:grow1(policy,data,y,depth,one,out,rows,min,last)
-    local s = self:split( policy, data, rows, y )   
+function  Fft:grow(d,todos,rows,last)
+  local todo=todos[d]
+  if #rows >= self.enough and d > 0  then
+    local s = self:bestSplit( todo, rows )   
     if s then
-      local b4=#rows
-      rows= reject(rows, s.rule) 
-      one:inc(policy, s, b4 - #rows )
-      self:grow(data,y,depth, one,out,rows,min,policy )
-    end
+      rows1= reject(rows, s.rule) 
+      local tmp = self:grow(d-1,todos,reject(rows,s.rule), todo )
+      tmp,improvement = tmp:inc(todo, s, s:xpect() )
+      if improvement > 0 then return tmp end
+    end end
+  local stats= Num:new():incs(rows,self.y)
+  local proxy ={ score=stats.mu }
+  return Frule:new():inc(not last,proxy, stats.mu * stats.n )
 end
 
-function Fft:split(policy,data,rows,y)
+function Fft:bestSplit(todo,rows)
   local all={}
-  for _,col in pairs(data.x.cols) do
-     local s = col:best(rows,{y=y,min=not policy})
+  for _,col in pairs(self.data.x.cols) do
+     local s = col:best(rows,{y=self.y,min=not todo,enough=self.enough})
      if s then all[ #all+1 ] = s end
   end
   table.sort(all,function(a,b)  return a.score < b.score end) 
-  return policy and all[#all] or all[1]
+  return todo and all[#all] or all[1]
 end 
 
 

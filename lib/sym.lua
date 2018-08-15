@@ -67,7 +67,7 @@ function Sym:best1(rows, the)
       local tmp = num.n/#rows * num.mu 
       if tmp > best then 
         best, cut = tmp, 
-	            Split.eq(x, self.txt, val, num.mu) 
+	            Split.eq(x, self.txt, val, num.n,num.mu) 
   end end end
   return cut
 end

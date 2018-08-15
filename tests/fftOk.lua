@@ -5,10 +5,12 @@ local Lib=require("lib")
 
 
 local function f1()
-	Fft:new():csv("../data/diabetes.csv","tested_positive",3)
+	Fft:new():csv("../data/diabetes.csv","tested_positive",3):show()
 end
 local function f2()
-	Fft:new():csv("../data/weatherLong.csv","yes",2)
+	Fft:new():csv("../data/weatherLong.csv","yes",4):show()
 end
+
+f1()
 
 f2()
